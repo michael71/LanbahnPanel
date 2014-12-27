@@ -31,10 +31,10 @@ public class LanbahnPanelApplication extends Application {
 	public static final String TAG = "LanbahnPanelActivity";
 	public static String selectedStyle = "US"; // German style or USS style
 
-	public static ArrayList<PanelElement> panelElements = new ArrayList<PanelElement>();
-	public static ArrayList<Route> routes = new ArrayList<Route>();
-	public static ArrayList<CompRoute> compRoutes = new ArrayList<CompRoute>();
-    public static ArrayList<LampGroup> lampButtons = new ArrayList<LampGroup>();
+	public static ArrayList<PanelElement> panelElements = new ArrayList<>();
+	public static ArrayList<Route> routes = new ArrayList<>();
+	public static ArrayList<CompRoute> compRoutes = new ArrayList<>();
+    public static ArrayList<LampGroup> lampButtons = new ArrayList<>();
     public static final int MAX_LAMP_BUTTONS = 4;
 
 	public static String panelName = "";
@@ -45,9 +45,7 @@ public class LanbahnPanelApplication extends Application {
 	public static boolean saveStates;
 
 	// preferences
-	public static final String KEY_IP = "ipPref";
-	public static final String KEY_PORT = "portPref";
-	public static final String KEY_LOCO_ADR = "locoAdrPref";
+	// public static final String KEY_LOCO_ADR = "locoAdrPref";
 	public static final String KEY_DRAW_ADR = "drawAddressesPref";
 	public static final String KEY_DRAW_ADR2 = "drawAddressesPref2";
 	public static final String KEY_STYLE_PREF = "selectStylePref";
@@ -66,11 +64,12 @@ public class LanbahnPanelApplication extends Application {
 	// connection state
 	public static LanbahnClientThread client;
 	private static long timeOfLastReceivedMessage = 0;
-	public static final BlockingQueue<String> sendQ = new ArrayBlockingQueue<String>(
+	public static final BlockingQueue<String> sendQ = new ArrayBlockingQueue<>(
 			200);
 
 	public static final int TYPE_STATUS_MSG = 0;
 	public static final int TYPE_ROUTE_MSG = 1;
+    public static final int TYPE_FEEDBACK_MSG = 2;
 
 	public static String connString = "";
 
@@ -88,9 +87,8 @@ public class LanbahnPanelApplication extends Application {
 
 	public static final int INVALID_INT = -9999;
 
-	public static final Hashtable<String, Bitmap> bitmaps = new Hashtable<String, Bitmap>();
+	public static final Hashtable<String, Bitmap> bitmaps = new Hashtable<>();
 
-	public static boolean firstStart = true;
 	public static boolean zoomEnabled;
 	public static float scale = 1.0f; // user selectable scaling of panel area
 
@@ -124,8 +122,7 @@ public class LanbahnPanelApplication extends Application {
 
 	public static Context appContext;
 	
-	public static boolean lampState[];
-	public static boolean lamp551state = false;
+	public static boolean lampState[];   // TODO
 
 	// @SuppressLint("HandlerLeak")
 	@Override
@@ -162,7 +159,13 @@ public class LanbahnPanelApplication extends Application {
 							rt.updateData(data);
 						}
 					}
-				}
+				} else if (what == TYPE_FEEDBACK_MSG) {
+                    for (PanelElement pe : panelElements) {
+                        if (pe.getAdr() == chan) {
+                            pe.updateData(data);
+                        }
+                    }
+                }
 
 			}
 		};
@@ -181,13 +184,13 @@ public class LanbahnPanelApplication extends Application {
 			if (e instanceof ActivePanelElement) {
 				// add its address to list of interesting addresses
 				// only needed for active elements, not for tracks
-				int a = ((ActivePanelElement) e).getAdr();
+				int a = e.getAdr();
 
 				if ((a != INVALID_INT) && ((ActivePanelElement) e).isExpired()) {
 					boolean success = sendQ.offer("R " + a); // request data for
 																// all active
 																// addresses
-					if (success == false)
+					if (!success)
 						Log.e(TAG, "sendQ full");
 				}
 			}
@@ -210,10 +213,10 @@ public class LanbahnPanelApplication extends Application {
 	}
 
 	
-	public static boolean isPowerOn() {
+	/* public static boolean isPowerOn() {
 		return true; // TODO must evaluate stored lanbahn messages
 
-	}
+	}  */
 
 	public void saveZoomEtc() {
 		SharedPreferences prefs = PreferenceManager
@@ -265,12 +268,7 @@ public class LanbahnPanelApplication extends Application {
 	}
 
 	public static boolean connectionIsAlive() {
-		if ((System.currentTimeMillis() - timeOfLastReceivedMessage) < 30 * 1000) {
-			return true;
-		} else {
-			// if (DEBUG) Log.d(TAG,"connection no longer alive.");
-			return false;
-		}
+		return ((System.currentTimeMillis() - timeOfLastReceivedMessage) < 30*000);
 	}
 
 

@@ -31,7 +31,6 @@ public class LanbahnClientThread extends Thread {
 	// threading und BlockingQueue siehe
 	// http://www.javamex.com/tutorials/blockingqueue_example.shtml
 
-	private volatile boolean shuttingDown, clientTerminated;
 	private Context context;
 	private boolean shutdownFlag;
 	protected InetAddress mgroup;
@@ -43,21 +42,11 @@ public class LanbahnClientThread extends Thread {
 		if (DEBUG)
 			Log.d(TAG, "LanbahnClientThread constructor.");
 		this.context = context;
-		shuttingDown = false;
-		clientTerminated = false;
 		shutdownFlag = false;
 		// create timer for periodically checking if there are new messages turnout
 		// send
 		timer = new Timer();
 		timer.scheduleAtFixedRate(new mySendTimer(), 100, 100);
-	}
-
-	public boolean isConnected() {
-		if (multicastsocket != null) {
-			return multicastsocket.isConnected();
-		} else {
-			return false;
-		}
 	}
 
 	public void shutdown() {
@@ -69,7 +58,6 @@ public class LanbahnClientThread extends Thread {
 		if (DEBUG)
 			Log.d(TAG, "LanbahnClientThread run.");
 		shutdownFlag = false;
-		clientTerminated = false;
 		connect();
 
 		byte[] buf = new byte[1024];
@@ -77,7 +65,7 @@ public class LanbahnClientThread extends Thread {
 				LANBAHN_PORT);
 
 		try {
-			while ((shutdownFlag == false)
+			while (!shutdownFlag
 					&& (!Thread.currentThread().isInterrupted())) {
 				multicastsocket.receive(packet);
 				String message = new String(packet.getData(), 0,
@@ -107,7 +95,10 @@ public class LanbahnClientThread extends Thread {
 		} else if (com.equals("st") || (com.equals("s ")) ) {
 			// (sensor) or turnout status or set message or route message
 			sendMessageToUIThread(msg,TYPE_STATUS_MSG);
-		} else if  (com.equals("f ")) {
+	    } else if (com.equals("OK")  ) {
+            // feedback message
+            sendMessageToUIThread(msg,TYPE_FEEDBACK_MSG);
+        } else if  (com.equals("f ")) {
 			// (sensor) or turnout status or set message or route message
 			sendMessageToUIThread(msg,TYPE_ROUTE_MSG);
 		} else if  (com.equals("c ")) {
@@ -121,7 +112,6 @@ public class LanbahnClientThread extends Thread {
 		String [] configString = msg.split(" ");
 		if (configString.length != 3) {
 			Log.e(TAG,"Error: cannot interpret config message");
-			return;
 		} else {
 			Log.d(TAG,"configServer = "+ configString[1]+ " - info not used!");
 			Log.d(TAG,"configFilename = "+ configString[2] + " - info not used!");
@@ -182,7 +172,7 @@ public class LanbahnClientThread extends Thread {
 		}
 	}
 
-	public void disconnectContext() {
+/*	public void disconnectContext() {
 		this.context = null;
 		Log.d(TAG, "lost context, stopping thread");
 		shutdown();
@@ -196,15 +186,15 @@ public class LanbahnClientThread extends Thread {
 			return;
 		String command = "R " + adr;
 		sendQ.add(command);
-	}
+	}  */
 
 	/**
 	 * Sends a Lanbahn UDP command
 	 * 
-	 * @param message
+	 * @param command
 	 *            the message turnout send (multicast). It can't be null or
 	 *            0-characters long.
-	 * @return
+	 * @return true, if sending was successful
 	 */
 	public boolean immediateSend(String command) {
 		if (command == null || command.length() == 0) {
@@ -212,7 +202,7 @@ public class LanbahnClientThread extends Thread {
 			return false;
 		}
 
-		if (checkWifi() == false) {
+		if (!checkWifi()) {
 			Log.e(TAG, "imm.Send: no WiFi.)");
 			return false;
 		}
@@ -286,7 +276,7 @@ public class LanbahnClientThread extends Thread {
 		public void run() {
 
 			// check send queue for messages turnout send turnout Lanbahn multicast group
-			while (shutdownFlag == false) {
+			while (!shutdownFlag ) {
 				while (!sendQ.isEmpty()) {
 					String command = sendQ.poll();
 					immediateSend(command);
