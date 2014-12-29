@@ -20,7 +20,7 @@ public class LanbahnPanelApplication extends Application {
 
 	public static final boolean DEBUG = true; // enable or disable debugging
 												// with file
-	public static final boolean DEBUG_COMM = false; // debugging of all lanbahn
+	public static final boolean DEBUG_COMM = true; // debugging of all lanbahn
 													// msgs
 	public static boolean demoFlag = false;
 
@@ -70,6 +70,7 @@ public class LanbahnPanelApplication extends Application {
 	public static final int TYPE_STATUS_MSG = 0;
 	public static final int TYPE_ROUTE_MSG = 1;
     public static final int TYPE_FEEDBACK_MSG = 2;
+    public static final int TYPE_ERROR_MSG = 3;
 
 	public static String connString = "";
 
@@ -160,9 +161,17 @@ public class LanbahnPanelApplication extends Application {
 						}
 					}
 				} else if (what == TYPE_FEEDBACK_MSG) {
+                    if (DEBUG) Log.d(TAG,"feedback msg "+chan+" "+data);
                     for (PanelElement pe : panelElements) {
                         if (pe.getAdr() == chan) {
                             pe.updateData(data);
+                        }
+                    }
+                }  else if (what == TYPE_ERROR_MSG) {
+                    if (DEBUG) Log.d(TAG,"error msg "+chan+" "+data);
+                    for (PanelElement pe : panelElements) {
+                        if (pe.getAdr() == chan) {
+                            pe.updateData(STATE_UNKNOWN);
                         }
                     }
                 }
@@ -172,7 +181,7 @@ public class LanbahnPanelApplication extends Application {
 
 	}
 
-	@Override
+
 	public void onTerminate() {
 		super.onTerminate();
 		Log.d(TAG, "AndroPanelApp - terminating.");

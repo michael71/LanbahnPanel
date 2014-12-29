@@ -95,11 +95,14 @@ public class LanbahnClientThread extends Thread {
 		} else if (com.equals("st") || (com.equals("s ")) ) {
 			// (sensor) or turnout status or set message or route message
 			sendMessageToUIThread(msg,TYPE_STATUS_MSG);
-	    } else if (com.equals("OK")  ) {
+	    } else if (com.equals("ok")  ) {
             // feedback message
             sendMessageToUIThread(msg,TYPE_FEEDBACK_MSG);
+        } else if (com.equals("e")  ) {
+            // feedback message
+            sendMessageToUIThread(msg,TYPE_ERROR_MSG);
         } else if  (com.equals("f ")) {
-			// (sensor) or turnout status or set message or route message
+			// route message
 			sendMessageToUIThread(msg,TYPE_ROUTE_MSG);
 		} else if  (com.equals("c ")) {
 			// (sensor) or turnout status or set message or route message
@@ -120,6 +123,7 @@ public class LanbahnClientThread extends Thread {
 	}
 
 	private void sendMessageToUIThread(String msg, int what) {
+        // TODO proper response to ERROR message "E 720 ?" or "E 720 99"
 		if (DEBUG_COMM) Log.d(TAG,"set/status msg=" + msg);
 		if (context == null) {
 			Log.e(TAG, "interpretStatus msg: context=null");
