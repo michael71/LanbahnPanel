@@ -14,3 +14,6 @@ example under
 
          /app/src/main/assets/demo-panel.xml
 
+License: GPL v3
+
+(c) Michael Blank - 2014
