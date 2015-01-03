@@ -84,7 +84,7 @@ public class TurnoutElement extends ActivePanelElement {
 
 	public static TurnoutElement findTurnoutByAddress(int address) {
 		for (PanelElement pe: panelElements) {
-			if ( pe instanceof SignalElement )  {
+			if ( pe instanceof TurnoutElement )  {
 				if (pe.getAdr() == address) {
 					return (TurnoutElement)pe;
 				}

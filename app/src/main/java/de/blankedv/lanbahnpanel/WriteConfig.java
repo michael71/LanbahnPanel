@@ -1,14 +1,10 @@
 package de.blankedv.lanbahnpanel;
 
 import static de.blankedv.lanbahnpanel.LanbahnPanelApplication.*;
-
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
-
 import org.xmlpull.v1.XmlSerializer;
-
 import android.os.Environment;
 import android.util.Log;
 import android.util.Xml;
@@ -34,19 +30,23 @@ public class WriteConfig {
 
 	public static boolean writeToXML() {
 
-		boolean mExternalStorageWriteable = false;
+		boolean mExternalStorageWriteable;
 		String state = Environment.getExternalStorageState();
 
-		if (Environment.MEDIA_MOUNTED.equals(state)) {
-			// We can read and write the media
-			mExternalStorageWriteable = true;
-		} else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-			// We can only read the media
-			mExternalStorageWriteable = false;
-		} else {
-			// Something else is wrong.
-			mExternalStorageWriteable = false;
-		}
+        switch (state) {
+            case Environment.MEDIA_MOUNTED:
+                // We can read and write the media
+                mExternalStorageWriteable = true;
+                break;
+            case Environment.MEDIA_MOUNTED_READ_ONLY:
+                // We can only read the media
+                mExternalStorageWriteable = false;
+                break;
+            default:
+                // Something else is wrong.
+                mExternalStorageWriteable = false;
+                break;
+        }
 
 		if (mExternalStorageWriteable) {
 			

@@ -15,6 +15,7 @@ import android.util.Log;
  * @author mblank
  * 
  */
+@SuppressWarnings("ForLoopReplaceableByForEach")
 public class Route {
 
 	public int id; // must be unique
@@ -32,16 +33,16 @@ public class Route {
 
 
 	// sensors turnout activate for the display of this route
-	private ArrayList<SensorElement> rtSensors = new ArrayList<SensorElement>();
+	private ArrayList<SensorElement> rtSensors = new ArrayList<>();
 
 	// signals of this route
-	private ArrayList<RouteSignal> rtSignals = new ArrayList<RouteSignal>();
+	private ArrayList<RouteSignal> rtSignals = new ArrayList<>();
 
 	// turnouts of this route
-	private ArrayList<RouteTurnout> rtTurnouts = new ArrayList<RouteTurnout>();
+	private ArrayList<RouteTurnout> rtTurnouts = new ArrayList<>();
 
 	// offending routes
-	private ArrayList<Route> rtOffending = new ArrayList<Route>();
+	private ArrayList<Route> rtOffending = new ArrayList<>();
 
 	int btn1, btn2;
 
@@ -295,11 +296,11 @@ public class Route {
 		// check for auto reset of routes
 		for (Route rt : routes) {
 			if (((System.currentTimeMillis() - rt.timeSet) > 30 * 1000L)
-					&& (rt.active == true)) {
+					&& (rt.active)) {
 				rt.clear();
 			}
 			// update dependencies
-			if (rt.active == true) rt.updateDependencies();
+			if (rt.active) rt.updateDependencies();
 		}
 		
 	}

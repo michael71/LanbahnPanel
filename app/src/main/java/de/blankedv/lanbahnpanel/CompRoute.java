@@ -1,10 +1,7 @@
 package de.blankedv.lanbahnpanel;
 
 import static de.blankedv.lanbahnpanel.LanbahnPanelApplication.*;
-import static de.blankedv.lanbahnpanel.ActivePanelElement.*;
-
 import java.util.ArrayList;
-
 import android.util.Log;
 
 /**
@@ -22,7 +19,7 @@ public class CompRoute {
 	String routesString = ""; // identical to config string
 
 	// route is comprised of a list of routes
-	private ArrayList<Route> myroutes = new ArrayList<Route>();
+	private ArrayList<Route> myroutes = new ArrayList<>();
 
 	/**
 	 * constructs a composite route
@@ -43,7 +40,8 @@ public class CompRoute {
 
 		// routes = "12,13": these routes need to be activated.
 		String[] iID = routesString.split(",");
-		for (int i = 0; i < iID.length; i++) {
+        //noinspection ForLoopReplaceableByForEach
+        for (int i = 0; i < iID.length; i++) {
 			int routeID = Integer.parseInt(iID[i]);
 			for (Route rt : routes) {
 				try {

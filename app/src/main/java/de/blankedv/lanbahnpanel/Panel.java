@@ -84,7 +84,7 @@ public class Panel extends SurfaceView implements SurfaceHolder.Callback {
 		}
 	}
 
-	public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(MotionEvent event) {
         // Let the ScaleGestureDetector inspect all events.
         mScaleDetector.onTouchEvent(event);
         
@@ -135,9 +135,9 @@ public class Panel extends SurfaceView implements SurfaceHolder.Callback {
             mLastTouchX = x;
             mLastTouchY = y;
             
-            if (enableEdit) {
-            	//selSxAddress.dismiss();
-            }
+            /*if (enableEdit) {
+            	selSxAddress.dismiss();
+            } */
   
             break;
         }

@@ -31,20 +31,22 @@ import static de.blankedv.lanbahnpanel.LanbahnPanelApplication.*;
 
 public class AboutActivity extends Activity {
 
-	private Button cancel;
-	private String vinfo="";
-	private TextView versTv,connTo;
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+        Button cancel;
+        String vinfo="";
+        TextView versTv,connTo;
+
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.about);
 		versTv = (TextView)findViewById(R.id.version);
 		connTo = (TextView)findViewById(R.id.connected_to);
 		
-		int version = -1;
-		String vName="";
+		int version;
+		String vName;
 
 		PackageInfo pInfo;
 		try {
@@ -57,7 +59,7 @@ public class AboutActivity extends Activity {
 			e.printStackTrace();
 		}
 		 
-		versTv.setText(vinfo.toString());
+		versTv.setText(vinfo);
 		
 		if (connString.length() >0) { 
 			connTo.setText("connected turnout: "+connString);
@@ -75,22 +77,7 @@ public class AboutActivity extends Activity {
 			}
 		});
 		
-//		upload = (Button)findViewById(R.id.upload);
-		
-//		if ((DEBUG) && (debugFileEnabled) ){
-//			upload.setVisibility(View.VISIBLE);
-//
-//			upload.setOnClickListener(new View.OnClickListener() {
-//				public void onClick(View v) {  
-//					app.uploadDebugFile();
-//				}
-//
-//			});
-//		}
-//		else  {
-//			// don't show upload button when there is no debug log file.
-//			upload.setVisibility(View.GONE);
-//		}
+
 	}
 
 }

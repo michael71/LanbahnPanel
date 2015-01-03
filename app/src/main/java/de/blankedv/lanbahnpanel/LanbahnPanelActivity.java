@@ -19,7 +19,6 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import static de.blankedv.lanbahnpanel.LanbahnPanelApplication.*;
-import static de.blankedv.lanbahnpanel.ActivePanelElement.STATE_UNKNOWN;
 
 /**
  * LanbahnPanelActivity is the MAIN activity of the lanbahn panel
@@ -216,7 +215,7 @@ public class LanbahnPanelActivity extends Activity {
 		for (PanelElement pe : panelElements) {
 			if (pe.getAdr() != INVALID_INT) {
 				if (pe.getState() != INVALID_INT)
-					sb.append(pe.getAdr() + "," + pe.getState() + ";");
+					sb.append(pe.getAdr()).append(",").append(pe.getState()).append(";");
 			}
 
 		}

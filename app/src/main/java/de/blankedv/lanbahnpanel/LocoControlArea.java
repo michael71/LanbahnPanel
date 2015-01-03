@@ -1,34 +1,15 @@
 package de.blankedv.lanbahnpanel;
 
 import static de.blankedv.lanbahnpanel.LanbahnPanelApplication.*;
-import static de.blankedv.lanbahnpanel.Panel.controlAreaRect;
-
-import java.util.ArrayList;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas; 
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.Toast;
+
 
 public final class LocoControlArea {
 
-	private static Paint green, white, editPaint, demoPaint;
+	private static Paint editPaint, demoPaint;
 /*	private static Paint paintLocoAdrTxt, paintLocoSpeedTxt, paintLocoSpeed;
 	private static int sliderXoff, sliderYoff;
 
@@ -57,19 +38,9 @@ public final class LocoControlArea {
 	//private int selectedLoco=0;
 
 	public LocoControlArea() {
-		/*
-        sliderXoff =  bitmaps.get("slider").getWidth()/2;
-		sliderYoff =  bitmaps.get("slider").getHeight()/2;
+        Paint green, white,
 
-		// define some paints for the loco controls and texts
-		paintLocoSpeed  = new Paint();
-		paintLocoSpeed.setColor(0xff22ff22);
-
-		paintLocoAdrTxt  = new Paint();
-		paintLocoAdrTxt.setColor(Color.BLACK);
-		paintLocoAdrTxt.setTextSize(30);  */
-
-		editPaint  = new Paint();
+        editPaint  = new Paint();
 		editPaint.setColor(Color.RED);
 		editPaint.setTextSize(30);
 		editPaint.setTypeface(Typeface.DEFAULT_BOLD);
@@ -235,7 +206,7 @@ public final class LocoControlArea {
 	*/
 	public void checkTouch(float x, float y) {
 		if ( (enableRoutes) && (clearRoutesBtn.isTouched(x, y))) {
-			if (clearRouteButtonActive== false) {
+			if (!clearRouteButtonActive) {
 				clearRouteButtonActive = true;
 			} else {
 				// actual clear route is done in "RouteButtonElement" class

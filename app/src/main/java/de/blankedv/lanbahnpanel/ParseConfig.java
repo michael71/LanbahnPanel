@@ -88,35 +88,37 @@ public class ParseConfig {
 
 		// TODO determine whether we can read a config file from a web server
 
-		boolean mExternalStorageAvailable = false;
+		boolean mExternalStorageAvailable;
 		String state = Environment.getExternalStorageState();
-        String error = "";
-        
-		if (Environment.MEDIA_MOUNTED.equals(state)) {
-			// We can read and write the media
-			mExternalStorageAvailable = true;
-		} else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-			// We can only read the media
-			mExternalStorageAvailable = true;
-		} else {
-			// Something else is wrong. It may be one of many other states, but
-			// all we need to know is we can neither read nor write
-			mExternalStorageAvailable = false;
-		}
+        String error;
+
+        switch (state) {
+            case Environment.MEDIA_MOUNTED:
+                // We can read and write the media
+                mExternalStorageAvailable = true;
+                break;
+            case Environment.MEDIA_MOUNTED_READ_ONLY:
+                // We can only read the media
+                mExternalStorageAvailable = true;
+                break;
+            default:
+                // Something else is wrong. It may be one of many other states, but
+                // all we need to know is we can neither read nor write
+                mExternalStorageAvailable = false;
+                break;
+        }
 
 		if (mExternalStorageAvailable) {
 			try {
 				File f = new File(Environment.getExternalStorageDirectory()
 						+ "/" + LOCAL_DIRECTORY + "/"+ CONFIG_FILENAME);
 				FileInputStream fis;
-				InputStream demoIs = null;
 				if (!f.exists()) {
 					Log.e(TAG,"config file="+CONFIG_FILENAME+" not found, using demo data.");
-					demoIs = context.getAssets().open(DEMO_FILE);
+                    InputStream demoIs = context.getAssets().open(DEMO_FILE);
 					configHasChanged = true;
 					error=readXMLConfigFile(demoIs);
-					if (demoIs != null)
-						demoIs.close();
+					demoIs.close();
 				} else {
 					fis = new FileInputStream(f);
 					error=readXMLConfigFile(fis);
@@ -133,7 +135,6 @@ public class ParseConfig {
 					Toast.LENGTH_LONG).show();
 			return "ERROR:External storage not readable";
 		}
-
 
 		return error;
 	}
@@ -172,7 +173,7 @@ public class ParseConfig {
 
 	private static ArrayList<PanelElement> parsePanelElements(Document doc) {
 		// assemble new ArrayList of tickets.
-		ArrayList<PanelElement> pes = new ArrayList<PanelElement>();
+		ArrayList<PanelElement> pes = new ArrayList<>();
 		NodeList items;
 		Element root = doc.getDocumentElement();
 
@@ -506,11 +507,11 @@ public class ParseConfig {
 
 	private static ArrayList<Route> parseRoutes(Document doc) {
 		// assemble new ArrayList of tickets.
-		ArrayList<Route> myroutes = new ArrayList<Route>();
+		ArrayList<Route> myroutes = new ArrayList<>();
 		NodeList items;
 		Element root = doc.getDocumentElement();
 
-		items = root.getElementsByTagName("panel");
+		// items = root.getElementsByTagName("panel");
 
 		// look for routes - this is the lowest layer
 		items = root.getElementsByTagName("route");
@@ -585,11 +586,9 @@ public class ParseConfig {
 
 	private static ArrayList<CompRoute> parseCompRoutes(Document doc) {
 		// assemble new ArrayList of tickets.
-		ArrayList<CompRoute> myroutes = new ArrayList<CompRoute>();
+		ArrayList<CompRoute> myroutes = new ArrayList<>();
 		NodeList items;
 		Element root = doc.getDocumentElement();
-
-		items = root.getElementsByTagName("panel");
 
 		// look for comp routes - this is the lowest layer
 		items = root.getElementsByTagName("comproute");
@@ -656,11 +655,9 @@ public class ParseConfig {
 
 	private static ArrayList<LampGroup> parseLampGroups(Document doc) {
 		// assemble new ArrayList of tickets.
-		ArrayList<LampGroup> lampGroups = new ArrayList<LampGroup>();
+		ArrayList<LampGroup> lampGroups = new ArrayList<>();
 		NodeList items;
 		Element root = doc.getDocumentElement();
-
-		items = root.getElementsByTagName("panel");
 
 		// look for comp routes - this is the lowest layer
 		items = root.getElementsByTagName("lampgroup");
@@ -742,7 +739,7 @@ public class ParseConfig {
 			AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
 			HttpGet request = new HttpGet();
 
-			HttpResponse response = null;
+			HttpResponse response;
 			
 			// do not log password, log only search expression
 			if (DEBUG) Log.d(TAG, "http request string=" + req[0]);
@@ -759,6 +756,7 @@ public class ParseConfig {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+                return "ERROR";
 			}
 			String status = response.getStatusLine().toString();
 			if (DEBUG)
@@ -769,14 +767,11 @@ public class ParseConfig {
 				instream = response.getEntity().getContent();
 				Log.d(TAG,"reading config data from server.");
 				readXMLConfigFile(instream);
-			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
+			} catch (IllegalStateException | IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			client.close();
+            client.close();
 			return status;
 		}
 

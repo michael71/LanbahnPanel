@@ -157,7 +157,8 @@ public abstract class ActivePanelElement extends PanelElement {
 			int minx = Utils.min(x, xt, x2);
 			int maxx = Utils.max(x, xt, x2);
 
-			int miny = Utils.min(y, yt, y2);
+            //noinspection SuspiciousNameCombination
+            int miny = Utils.min(y, yt, y2);
 			int maxy = Utils.max(y, yt, y2);
 
 			// Rect rect = new Rect(left, top, right, bottom)
@@ -200,12 +201,7 @@ public abstract class ActivePanelElement extends PanelElement {
 	 *               during in the last 20 seconds
 	 */
 	public boolean isExpired() {
-		if ((System.currentTimeMillis() - lastUpdateTime) > 20 * 1000) {
-			// update of data for this element is older than 20 seconds
-			return true;
-		} else {
-			return false;
-		}
+		return ((System.currentTimeMillis() - lastUpdateTime) > 20 * 1000);
 	}
 
 }

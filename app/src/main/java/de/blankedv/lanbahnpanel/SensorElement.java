@@ -51,7 +51,7 @@ public class SensorElement extends ActivePanelElement {
 			// draw lamp type of sensor
 
 			// read data from SX bus and set bitmap accordingly
-			int h = 0, w = 0;
+			int h, w;
 			Bitmap bm;
 			StringBuilder bmName = new StringBuilder(type);
 			// TODO proper handling of "unknown"
@@ -62,14 +62,16 @@ public class SensorElement extends ActivePanelElement {
 			}
 
 			bm = bitmaps.get(bmName.toString());
-			if (bm == null)
-				Log.e(TAG,
-						"error, bitmap not found with name="
-								+ bmName.toString());
-			h = bm.getHeight() / 2;
-			w = bm.getWidth() / 2;
-			canvas.drawBitmap(bm, x * prescale - w, y * prescale - h, null); // center
-																				// bitmap
+			if (bm == null) {
+                Log.e(TAG,
+                        "error, bitmap not found with name="
+                                + bmName.toString());
+            } else {
+                h = bm.getHeight() / 2;
+                w = bm.getWidth() / 2;
+                canvas.drawBitmap(bm, x * prescale - w, y * prescale - h, null); // center
+                // bitmap
+            }
 		}
 		if (drawAddresses2)
 			doDrawAddresses(canvas);

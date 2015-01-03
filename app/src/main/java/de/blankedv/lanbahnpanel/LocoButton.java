@@ -75,7 +75,7 @@ public class LocoButton {
 	
 	public void doDraw(Canvas c, boolean state) {
 		
-		if (state == true) {
+		if (state) {
 			c.drawBitmap(bmON,x, y,  null);
 			
 		} else {
@@ -90,7 +90,7 @@ public class LocoButton {
 			blink = System.currentTimeMillis();
 		} 
 
-		if (state == true) {
+		if (state) {
 			if (toggleBlink) {
 				c.drawBitmap(bmOFF,x, y,  null);
 			} else {

@@ -36,7 +36,7 @@ public class LampGroup {
 	}
 
 	public void switchOff() {
-		if (isOn == false)
+		if (!isOn)
 			return;
 
 		isOn = false;

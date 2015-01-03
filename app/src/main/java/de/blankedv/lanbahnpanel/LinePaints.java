@@ -14,10 +14,9 @@ public class LinePaints {
 	public static int BG_COLOR;
 	public static Paint bgPaint, addressBGPaint, signalLine, greyPaint,
 			whitePaint, greenSignal, redSignal, yellowPaint, yellowSignal;
-	public static TextPaint addressPaint, panelNamePaint; // used for displaying
-															// SX address on
-															// panel and for
-															// panel Name
+
+    // used for displaying addresses on panel and for panel Name
+	public static TextPaint addressPaint, panelNamePaint;
 
 	public static void init(int prescale) {
 

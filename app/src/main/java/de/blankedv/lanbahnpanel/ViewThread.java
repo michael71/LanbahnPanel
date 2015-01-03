@@ -20,9 +20,8 @@ public class ViewThread extends Thread {
 	 
 	    @Override
 	    public void run() {
-	        Canvas canvas = null;
 	        while (mRun) {
-	            canvas = mHolder.lockCanvas();
+                Canvas canvas = mHolder.lockCanvas();
 	            if (canvas != null) {
 	                mPanel.doDraw(canvas);
 	                mHolder.unlockCanvasAndPost(canvas);

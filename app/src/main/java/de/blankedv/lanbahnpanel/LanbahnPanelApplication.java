@@ -281,7 +281,7 @@ public class LanbahnPanelApplication extends Application {
 	}
 
 	public static boolean connectionIsAlive() {
-		return ((System.currentTimeMillis() - timeOfLastReceivedMessage) < 30*000);
+		return ((System.currentTimeMillis() - timeOfLastReceivedMessage) < 30*1000);
 	}
 
 

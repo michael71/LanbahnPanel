@@ -89,22 +89,29 @@ public class LanbahnClientThread extends Thread {
 
 	public boolean interpretMsg(String msg) {
 		String com[] = msg.split(" ");
-		if (com[0].equals("a ") || com[0].equals("an")) {
-			if (DEBUG_COMM) Log.d(TAG, "announce msg: " + com);
-			// TODO interpretAnnounceMsg(msg);// announce
-		} else if (com[0].equals("set") ) {
-			// (sensor) or turnout status or set message or route message
-			sendMessageToUIThread(msg,TYPE_STATUS_MSG);
-	    } else if (com[0].equals("fb")  ) {
-            // feedback message
-            sendMessageToUIThread(msg,TYPE_FEEDBACK_MSG);
-        } else if  (com[0].equals("rt")) {
-			// route message
-			sendMessageToUIThread(msg,TYPE_ROUTE_MSG);
-	/*	} else if  (com[0].equals("c ")) {
-			// (sensor) or turnout status or set message or route message
-			storeConfigFileLocation(msg); */
-		}
+        switch (com[0]) {
+            case "a ":
+            case "an":
+                if (DEBUG_COMM) Log.d(TAG, "announce msg: " + msg);
+                // TODO interpretAnnounceMsg(msg);// announce
+                break;
+            case "set":
+                // (sensor) or turnout status or set message or route message
+                sendMessageToUIThread(msg, TYPE_STATUS_MSG);
+                break;
+            case "fb":
+                // feedback message
+                sendMessageToUIThread(msg, TYPE_FEEDBACK_MSG);
+                break;
+            case "rt":
+                // route message
+                sendMessageToUIThread(msg, TYPE_ROUTE_MSG);
+                break;
+	/*	    case "c ":
+			    // (sensor) or turnout status or set message or route message
+			    storeConfigFileLocation(msg);
+                break;  */
+        }
 		return true;
 	}
 
