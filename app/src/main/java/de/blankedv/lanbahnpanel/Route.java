@@ -146,14 +146,14 @@ public class Route {
 		// deactivate sensors
 		for (SensorElement se : rtSensors) {
 			se.setState(STATE_FREE);
-			String cmd = "S " + se.adr + " " + STATE_FREE;
+			String cmd = "SET " + se.adr + " " + STATE_FREE;
 			sendQ.add(cmd);
 		}
 
 		// set signals turnout red
 		for (RouteSignal rs : rtSignals) {
 			rs.signal.setState(STATE_RED);
-			String cmd = "S " + rs.signal.adr + " " + STATE_RED;
+			String cmd = "SET " + rs.signal.adr + " " + STATE_RED;
 			sendQ.add(cmd);
 		}
 
@@ -167,7 +167,7 @@ public class Route {
 
 		active = false;
 		// notify that route was cleared
-		String cmd = "F " + id + " 0";
+		String cmd = "RT " + id + " 0";
 		sendQ.add(cmd);
 	}
 
@@ -196,7 +196,7 @@ public class Route {
 			Log.d(TAG, "setting route id=" + id);
 
 		// notify that route is set
-		String cmd = "F " + id + " 1";
+		String cmd = "RT " + id + " 1";
 		sendQ.add(cmd);
 		active = true;
 
@@ -205,13 +205,13 @@ public class Route {
 		// activate sensors
 		for (SensorElement se : rtSensors) {
 			se.setState(STATE_INROUTE);
-			cmd = "S " + se.adr + " " + STATE_INROUTE;
+			cmd = "SET " + se.adr + " " + STATE_INROUTE;
 			sendQ.add(cmd);
 		}
 
 		// set signals
 		for (RouteSignal rs : rtSignals) {
-			cmd = "S " + rs.signal.adr + " " + rs.dynamicValueToSetForRoute();
+			cmd = "SET " + rs.signal.adr + " " + rs.dynamicValueToSetForRoute();
 			if (DEBUG)
 				Log.d(TAG, "setting route signal " + cmd);
 			sendQ.add(cmd);
@@ -219,7 +219,7 @@ public class Route {
 		}
 		// set and // TODO lock turnouts
 		for (RouteTurnout rtt : rtTurnouts) {
-			cmd = "S " + rtt.turnout.adr + " " + rtt.valueToSetForRoute;
+			cmd = "SET " + rtt.turnout.adr + " " + rtt.valueToSetForRoute;
 			sendQ.add(cmd);
 		}
 
@@ -272,7 +272,7 @@ public class Route {
 			if (rs.depFrom != INVALID_INT) {
 				if (rs.signal.getState() != rs.dynamicValueToSetForRoute()) {
 					rs.signal.state = rs.dynamicValueToSetForRoute();
-				    String cmd = "S " + rs.signal.adr + " " + rs.signal.state;
+				    String cmd = "SET " + rs.signal.adr + " " + rs.signal.state;
 					if (DEBUG)
 						Log.d(TAG, "setting route signal dep.("+rs.depFrom+ ") "+ cmd);
 					sendQ.add(cmd);

@@ -95,7 +95,7 @@ public abstract class ActivePanelElement extends PanelElement {
 		this.state = STATE_UNKNOWN;
 		this.lastUpdateTime = System.currentTimeMillis();
 		if (adr != INVALID_INT) {
-			sendQ.add("R " + adr); // request update for this element
+			sendQ.add("READ " + adr); // request update for this element
 		}
 	}
 
@@ -107,7 +107,11 @@ public abstract class ActivePanelElement extends PanelElement {
 
 	@Override
 	public void updateData(int data) {
-		state = data;
+        if (data == INVALID_LANBAHN_DATA) {
+            state = STATE_UNKNOWN;
+        } else {
+            state = data;
+        }
 		lastUpdateTime = System.currentTimeMillis();
 	}
 

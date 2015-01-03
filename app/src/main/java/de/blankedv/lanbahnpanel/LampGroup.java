@@ -30,7 +30,7 @@ public class LampGroup {
 		isOn = true;
 		// set all lamps to on
 		for (int i : lampAddrs) {
-			sendQ.add("S " + i + " 1");
+			sendQ.add("SET " + i + " 1");
 		}
 
 	}
@@ -42,7 +42,7 @@ public class LampGroup {
 		isOn = false;
 		// set all lamps to on
 		for (int i : lampAddrs) {
-			sendQ.add("S " + i + " 0");
+			sendQ.add("SET " + i + " 0");
 		}
 
 	}

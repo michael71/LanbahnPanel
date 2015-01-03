@@ -16,6 +16,9 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import static de.blankedv.lanbahnpanel.ActivePanelElement.STATE_UNKNOWN;
 
+/** Lanbahn Panel
+ * Rev 2.0 - 03 Jan 2015 - now using LANBAHN protocol Rev. 2.0
+ */
 public class LanbahnPanelApplication extends Application {
 
 	public static final boolean DEBUG = true; // enable or disable debugging
@@ -87,6 +90,7 @@ public class LanbahnPanelApplication extends Application {
 	// if true, then a new config file is written at the end of the Activity
 
 	public static final int INVALID_INT = -9999;
+    public static final int INVALID_LANBAHN_DATA = 999;
 
 	public static final Hashtable<String, Bitmap> bitmaps = new Hashtable<>();
 
@@ -196,7 +200,7 @@ public class LanbahnPanelApplication extends Application {
 				int a = e.getAdr();
 
 				if ((a != INVALID_INT) && ((ActivePanelElement) e).isExpired()) {
-					boolean success = sendQ.offer("R " + a); // request data for
+					boolean success = sendQ.offer("READ " + a); // request data for
 																// all active
 																// addresses
 					if (!success)

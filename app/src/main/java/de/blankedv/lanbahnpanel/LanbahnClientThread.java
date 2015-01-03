@@ -88,25 +88,22 @@ public class LanbahnClientThread extends Thread {
 	}
 
 	public boolean interpretMsg(String msg) {
-		String com = msg.substring(0, 2);
-		if (com.equals("a ") || com.equals("an")) {
+		String com[] = msg.split(" ");
+		if (com[0].equals("a ") || com[0].equals("an")) {
 			if (DEBUG_COMM) Log.d(TAG, "announce msg: " + com);
 			// TODO interpretAnnounceMsg(msg);// announce
-		} else if (com.equals("st") || (com.equals("s ")) ) {
+		} else if (com[0].equals("set") ) {
 			// (sensor) or turnout status or set message or route message
 			sendMessageToUIThread(msg,TYPE_STATUS_MSG);
-	    } else if (com.equals("ok")  ) {
+	    } else if (com[0].equals("fb")  ) {
             // feedback message
             sendMessageToUIThread(msg,TYPE_FEEDBACK_MSG);
-        } else if (com.equals("e")  ) {
-            // feedback message
-            sendMessageToUIThread(msg,TYPE_ERROR_MSG);
-        } else if  (com.equals("f ")) {
+        } else if  (com[0].equals("rt")) {
 			// route message
 			sendMessageToUIThread(msg,TYPE_ROUTE_MSG);
-		} else if  (com.equals("c ")) {
+	/*	} else if  (com[0].equals("c ")) {
 			// (sensor) or turnout status or set message or route message
-			storeConfigFileLocation(msg);
+			storeConfigFileLocation(msg); */
 		}
 		return true;
 	}
@@ -123,7 +120,6 @@ public class LanbahnClientThread extends Thread {
 	}
 
 	private void sendMessageToUIThread(String msg, int what) {
-        // TODO proper response to ERROR message "E 720 ?" or "E 720 99"
 		if (DEBUG_COMM) Log.d(TAG,"set/status msg=" + msg);
 		if (context == null) {
 			Log.e(TAG, "interpretStatus msg: context=null");
@@ -188,7 +184,7 @@ public class LanbahnClientThread extends Thread {
 					+ " clientTerm=" + clientTerminated);
 		if (shutdownFlag || clientTerminated || (adr == INVALID_INT))
 			return;
-		String command = "R " + adr;
+		String command = "READ " + adr;
 		sendQ.add(command);
 	}  */
 

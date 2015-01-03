@@ -78,7 +78,7 @@ public class TurnoutElement extends ActivePanelElement {
 		}	
 		
 		// state = STATE_UNKNOWN; // until updated via lanbahn message
-		sendQ.add("S "+adr+" "+state);  // ==> send changed data over network turnout interface
+		sendQ.add("SET "+adr+" "+state);  // ==> send changed data over network turnout interface
 		if (DEBUG) Log.d(TAG,"toggle(adr="+adr+") new state="+state);
 	}
 

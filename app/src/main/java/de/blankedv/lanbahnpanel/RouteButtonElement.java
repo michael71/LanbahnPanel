@@ -203,7 +203,7 @@ public class RouteButtonElement extends ActivePanelElement {
 		}	
 		
 		// state = STATE_UNKNOWN; // until updated via lanbahn message
-		// sendQ.add("S "+adr+" "+state);  // ==> send changed data over network 
+		// sendQ.add("SET "+adr+" "+state);  // ==> send changed data over network
 		if (DEBUG) Log.d(TAG,"toggle(adr="+adr+") new state="+state+" time="+lastToggle);
 	}
 
