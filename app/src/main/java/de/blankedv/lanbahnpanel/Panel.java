@@ -15,7 +15,7 @@ import static de.blankedv.lanbahnpanel.LanbahnPanelApplication.*;
 import static de.blankedv.lanbahnpanel.LinePaints.*;
 
 /**
- * the main panel of the application is comprised of two parts: a (small height) LOCO CONTROL area
+ * the main panel of the application is comprised of two parts: a (small height) CONTROL area
  *  at the top and the larger part with the main SWITCH PANEL at the bottom, handles all touch events
  */
 public class Panel extends SurfaceView implements SurfaceHolder.Callback {
@@ -43,7 +43,7 @@ public class Panel extends SurfaceView implements SurfaceHolder.Callback {
 	
 	private static final long SCALING_WAIT = 1000L;
 	
-	LocoControlArea locoControlArea;
+	ControlArea controlArea;
 
 	//@TargetApi(8)
 	public Panel(Context context) {
@@ -54,7 +54,7 @@ public class Panel extends SurfaceView implements SurfaceHolder.Callback {
 		paintControlAreaBG  = new Paint();
 		paintControlAreaBG.setColor(0xff224422);
         
-        locoControlArea = new LocoControlArea();
+        controlArea = new ControlArea();
          
 		LanbahnPanelApplication.updatePanelData();
 		getHolder().addCallback(this);
@@ -129,7 +129,7 @@ public class Panel extends SurfaceView implements SurfaceHolder.Callback {
                // invalidate();
               // if (DEBUG)  Log.d(TAG,"mPosX="+mPosX+" mPosY="+mPosY);
                 // no loco control
-                //locoControlArea.checkSpeedMove(x, y);
+                //controlArea.checkSpeedMove(x, y);
             }
 
             mLastTouchX = x;
@@ -151,8 +151,8 @@ public class Panel extends SurfaceView implements SurfaceHolder.Callback {
 			if (!mScaleDetector.isInProgress() )  { //&& (deltaT > SCALING_WAIT)) {
 				// assuming control area is always at the top !!
 				if (mLastTouchY < controlAreaRect.bottom)  {
-					Log.d(TAG,"ACTION_UP _Checking Loco Control  at: mlastTouchX="+mLastTouchX+"  mLastTouchY"+mLastTouchY);   	
-					locoControlArea.checkTouch(mLastTouchX,mLastTouchY);
+					Log.d(TAG,"ACTION_UP _Checking Control  at: mlastTouchX="+mLastTouchX+"  mLastTouchY"+mLastTouchY);
+					controlArea.checkTouch(mLastTouchX,mLastTouchY);
 				} else {
 					//Log.d(TAG,"ACTION_UP _Checking panel elements at: mlastTouchX="+mLastTouchX+"  mLastTouchY"+mLastTouchY);   
 					int xs = Math.round(((mLastTouchX-xoff)/scale)/prescale); // reduced by overall dimension scaling factors
@@ -221,7 +221,7 @@ public class Panel extends SurfaceView implements SurfaceHolder.Callback {
         mWidth = width;
         mHeight = height;
         controlAreaRect = new Rect(0,0,mWidth,mHeight/8);
-        locoControlArea.recalcGeometry();
+        controlArea.recalcGeometry();
 	}
 
 
@@ -253,7 +253,7 @@ public class Panel extends SurfaceView implements SurfaceHolder.Callback {
 		canvas.drawBitmap(myBitmap,matrix, null);	
 		canvas.drawRect(controlAreaRect, paintControlAreaBG);
        
-	    locoControlArea.draw(canvas); // NOT scaled with zoom
+	    controlArea.draw(canvas); // NOT scaled with zoom
 
 	}
 

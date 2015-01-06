@@ -10,14 +10,14 @@ import static de.blankedv.lanbahnpanel.LanbahnPanelApplication.sendQ;
  */
 public class LampGroup {
 
-	public LocoButton btn;
+	public ControlButton btn;
 	public boolean isOn = false;
 	public int btnPos;   // position in the row of lamp buttons
 
 	int[] lampAddrs;
 
 	public LampGroup(int btnPos, int[] lamps) {
-		btn = new LocoButton(0.35f + (0.1f * btnPos), 0.5f,
+		btn = new ControlButton(0.35f + (0.1f * btnPos), 0.5f,
 				bitmaps.get("lamp_on"), bitmaps.get("lamp_off"));
 		lampAddrs = lamps;
 		this.btnPos = btnPos;

@@ -25,6 +25,8 @@ public class LanbahnPanelApplication extends Application {
 												// with file
 	public static final boolean DEBUG_COMM = true; // debugging of all lanbahn
 													// msgs
+    public static boolean comm1;
+
 	public static boolean demoFlag = false;
 
 	public static final int LANBAHN_PORT = 27027;
@@ -225,8 +227,7 @@ public class LanbahnPanelApplication extends Application {
 		}
 	}
 
-	
-	/* public static boolean isPowerOn() {
+   	/* public static boolean isPowerOn() {
 		return true; // TODO must evaluate stored lanbahn messages
 
 	}  */
@@ -283,63 +284,5 @@ public class LanbahnPanelApplication extends Application {
 	public static boolean connectionIsAlive() {
 		return ((System.currentTimeMillis() - timeOfLastReceivedMessage) < 30*1000);
 	}
-
-
-
-	/* DISABLE ALL LOCO Control */
-	/*
-	 * public static void stopLoco() { int data = sxData[locoAdr] & 0xe0; if
-	 * (client != null) client.sendCommand(locoAdr, data);
-	 * 
-	 * } public static void incrLocoSpeed() { int speed = sxData[locoAdr] &
-	 * 0x1f; boolean back = ((sxData[locoAdr] & 0x20) == 0x20);
-	 * 
-	 * if ((speed == 0) && (back==true)) back=false; // change direction
-	 * 
-	 * 
-	 * if (back) { speed = speed - 3; } else { speed = speed +3; } if (speed <
-	 * 0) speed =0; if (speed >31) speed =31;
-	 * 
-	 * if (back) speed |= 0x20; setLocoSpeed(speed);
-	 * 
-	 * 
-	 * } public static void decrLocoSpeed() { int speed = sxData[locoAdr] &
-	 * 0x1f; boolean back = ((sxData[locoAdr] & 0x20) == 0x20);
-	 * 
-	 * if ((speed == 0) && (back==false)) back=true; //change direction
-	 * 
-	 * if (back) { speed = speed + 3; } else { speed = speed - 3; } if (speed <
-	 * 0) speed =0; if (speed >31) speed =31;
-	 * 
-	 * if (back) speed |= 0x20; setLocoSpeed(speed);
-	 * 
-	 * }
-	 * 
-	 * public static void toggleLocoLamp() { if ((System.currentTimeMillis() -
-	 * lastToggleTime) > 250) { // entprellen
-	 * 
-	 * int data = sxData[locoAdr]; Log.d(TAG,"toggleLamp data="+data); if ((data
-	 * & 0x40) == 0) { data |= 0x40; } else { data &= 0xbf; }
-	 * Log.d(TAG,"toggleLamp data="+data); if (client != null)
-	 * client.sendCommand(locoAdr, data);
-	 * lastToggleTime=System.currentTimeMillis(); } }
-	 * 
-	 * public static void toggleFunc() { if ((System.currentTimeMillis() -
-	 * lastToggleTime) > 250) { // entprellen
-	 * 
-	 * int data = sxData[locoAdr]; Log.d(TAG,"toggleFunc data="+data); if ((data
-	 * & 0x80) == 0) { data |= 0x80; } else { data &= 0x7f; }
-	 * Log.d(TAG,"toggleFunc data="+data); if (client != null)
-	 * client.sendCommand(locoAdr, data);
-	 * lastToggleTime=System.currentTimeMillis(); } }
-	 * 
-	 * public static void setLocoSpeed(int speedBits) { if( (sxData[locoAdr] &
-	 * 0x3f) == speedBits) return; // no change, do nothing
-	 * Log.d(TAG,"sending new SX speed bits="+speedBits); int data =
-	 * sxData[locoAdr] & 0xC0; // mask 2 highest bits. data |= speedBits; if
-	 * (client != null) client.sendCommand(locoAdr, data);
-	 * 
-	 * }
-	 */
 
 }

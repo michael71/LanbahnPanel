@@ -6,7 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.Log;
 
-public class LocoButton {
+public class ControlButton {
     private float xrel, yrel;  // relative position in control area.
     private Bitmap bmON, bmOFF;
     private int w=10,h=10; // half of the bitmap width and height
@@ -14,7 +14,7 @@ public class LocoButton {
 	private boolean toggleBlink;
     // x and y are actual position of bitmap placing, NOT the center!
     public float x=0,y=0;
-	public LocoButton(float x2, float y2, Bitmap on, Bitmap off) {
+	public ControlButton(float x2, float y2, Bitmap on, Bitmap off) {
 		this.xrel = x2;
 		this.yrel = y2;
 		bmON = on;
@@ -27,7 +27,7 @@ public class LocoButton {
 
 	}
     
-    public LocoButton(float x2, float y2, Bitmap on) {
+    public ControlButton(float x2, float y2, Bitmap on) {
  		this.xrel = x2;
  		this.yrel = y2;
  		bmON = on;
@@ -39,7 +39,7 @@ public class LocoButton {
 
  	}
     
-    public LocoButton(float x2, float y2) {
+    public ControlButton(float x2, float y2) {
   		this.xrel = x2;
   		this.yrel = y2;
   		bmON = bitmaps.get("button100");

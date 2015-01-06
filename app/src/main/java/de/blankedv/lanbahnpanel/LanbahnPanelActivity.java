@@ -150,6 +150,10 @@ public class LanbahnPanelActivity extends Activity {
 
 		((LanbahnPanelApplication) getApplication()).loadZoomEtc();
 
+        if (enableRoutes == false) {
+            RouteButtonElement.autoReset();  // this will also reset the sensors to STATE_FREE
+        }
+
 		if (saveStates)
 			loadStates();
 

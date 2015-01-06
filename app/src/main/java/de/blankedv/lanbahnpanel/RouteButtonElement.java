@@ -125,7 +125,7 @@ public class RouteButtonElement extends ActivePanelElement {
 				} 
 			}
 			if ( !routeFound ) {
-				LocoControlArea.dispErrorMsg("keine passende Fahrstrasse.");
+				ControlArea.dispErrorMsg("keine passende Fahrstrasse.");
 				findRouteButtonByAddress(adrFirstBtn).reset();  // clear the button also
 				findRouteButtonByAddress(adrSecondBtn).reset();  // clear the button also
 			}
@@ -138,7 +138,7 @@ public class RouteButtonElement extends ActivePanelElement {
 					((RouteButtonElement)pe).reset();
 				}
 			}
-			LocoControlArea.dispErrorMsg("zu viele Buttons.");
+			ControlArea.dispErrorMsg("zu viele Buttons.");
 		}
 		
 

@@ -179,22 +179,6 @@ public class LanbahnClientThread extends Thread {
 		}
 	}
 
-/*	public void disconnectContext() {
-		this.context = null;
-		Log.d(TAG, "lost context, stopping thread");
-		shutdown();
-	}
-
-	public void readChannel(int adr) {
-		if (DEBUG_COMM)
-			Log.d(TAG, "readChannel a=" + adr + " shutd.=" + shuttingDown
-					+ " clientTerm=" + clientTerminated);
-		if (shutdownFlag || clientTerminated || (adr == INVALID_INT))
-			return;
-		String command = "READ " + adr;
-		sendQ.add(command);
-	}  */
-
 	/**
 	 * Sends a Lanbahn UDP command
 	 * 
