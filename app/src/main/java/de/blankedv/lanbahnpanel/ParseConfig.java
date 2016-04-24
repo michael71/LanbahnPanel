@@ -112,6 +112,7 @@ public class ParseConfig {
 			try {
 				File f = new File(Environment.getExternalStorageDirectory()
 						+ "/" + LOCAL_DIRECTORY + "/"+ CONFIG_FILENAME);
+				// auf dem Nexus 7 unter /mnt/shell/emulated/0/lanbahnpanel
 				FileInputStream fis;
 				if (!f.exists()) {
 					Log.e(TAG,"config file="+CONFIG_FILENAME+" not found, using demo data.");

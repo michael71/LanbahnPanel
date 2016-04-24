@@ -7,6 +7,10 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 
 
+/**
+ * control area - fixed geometry, above the panel
+ */
+
 public final class ControlArea {
 
 	private static Paint editPaint, demoPaint;
@@ -23,9 +27,9 @@ public final class ControlArea {
 
 
 	public ControlArea() {
-        Paint green, white,
+        Paint green, white;
 
-        editPaint  = new Paint();
+        editPaint = new Paint();
 		editPaint.setColor(Color.RED);
 		editPaint.setTextSize(30);
 		editPaint.setTypeface(Typeface.DEFAULT_BOLD);
