@@ -37,13 +37,12 @@ public class AboutActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
         Button cancel;
         String vinfo="";
-        TextView versTv,connTo;
+        TextView versTv;
 
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.about);
 		versTv = (TextView)findViewById(R.id.version);
-		connTo = (TextView)findViewById(R.id.connected_to);
 		
 		int version;
 		String vName;
@@ -60,14 +59,6 @@ public class AboutActivity extends Activity {
 		}
 		 
 		versTv.setText(vinfo);
-		
-		if (connString.length() >0) { 
-			connTo.setText("connected turnout: "+connString);
-		}
-		else
-		{
-			connTo.setText("currently not connected turnout any SXnet server");
-		}
 
 		cancel = (Button)findViewById(R.id.cancel);
 
