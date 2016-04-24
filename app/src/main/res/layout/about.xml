@@ -9,9 +9,6 @@
 		<TextView android:id="@+id/title" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:text="@string/lanbahnpanelTitleString"
 			android:textSize="22sp" /> 
-		<TextView android:id="@+id/connected_to" android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:text="@string/unknown"
-			android:textSize="12sp" android:paddingTop="8sp" />
 		<TextView android:id="@+id/version" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:text="@string/versionUnknown"
 			android:textSize="14sp" android:paddingTop="8sp" />

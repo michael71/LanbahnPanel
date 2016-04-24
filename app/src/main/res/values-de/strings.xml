@@ -32,7 +32,7 @@
     <string name="sel_style">Anzeige Stil wählen</string>
     <string name="sel_style_default">US</string>
     <string name="aboutString">"LanbahnPanel is free software - you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3. Andropanel is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  For details about the GNU General Public License see http://www.gnu.org/licenses "</string>
-    <string name="copyrightString">Copyright 2014-2015 - Michael Blank - mblank@bawue.de</string>
+    <string name="copyrightString">Copyright 2014-2016 - Michael Blank - mblank@bawue.de</string>
     <string name="moreInfoString">more info on http://www.oscale.net/android</string>
     <string name="lanbahnpanelTitleString">LanbahnPanel</string>
     <string name="versionUnknown">version x.x</string>
