@@ -37,5 +37,6 @@
     <string name="lanbahnpanelTitleString">LanbahnPanel</string>
     <string name="versionUnknown">version x.x</string>
     <string name="unknown">-?-</string>
+    <string name="wifi_disconnected">Kein WLAN !</string>
 
 </resources>

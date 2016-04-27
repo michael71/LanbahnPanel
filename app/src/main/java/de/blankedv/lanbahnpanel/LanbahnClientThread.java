@@ -16,8 +16,11 @@ import java.util.TimerTask;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * network thread for sending and receiving multicast messages
@@ -35,6 +38,7 @@ public class LanbahnClientThread extends Thread {
 	private boolean shutdownFlag;
 	protected InetAddress mgroup;
 	protected MulticastSocket multicastsocket;
+	private long toastTimer = 0;
 
 	Timer timer;
 
@@ -115,6 +119,16 @@ public class LanbahnClientThread extends Thread {
 		return true;
 	}
 
+	protected void postToastMessage(final String message) {
+		Handler handler = new Handler(Looper.getMainLooper());
+
+		handler.post(new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+			}
+		});
+	}
 	private void storeConfigFileLocation(String msg) {
 		String [] configString = msg.split(" ");
 		if (configString.length != 3) {
@@ -188,6 +202,7 @@ public class LanbahnClientThread extends Thread {
 	 * @return true, if sending was successful
 	 */
 	public boolean immediateSend(String command) {
+
 		if (command == null || command.length() == 0) {
 			Log.e(TAG, "imm.Send: message == null or has zero lenght.)");
 			return false;
@@ -195,6 +210,10 @@ public class LanbahnClientThread extends Thread {
 
 		if (!checkWifi()) {
 			Log.e(TAG, "imm.Send: no WiFi.)");
+			if ((System.currentTimeMillis() - toastTimer) < 3000) {  // post only once in 3 secs
+				postToastMessage(context.getString(R.string.wifi_disconnected));
+				toastTimer = System.currentTimeMillis();
+			}
 			return false;
 		}
 
