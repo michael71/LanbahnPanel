@@ -183,7 +183,8 @@ public final class R {
         public static final int unknown=0x7f070020;
         public static final int usStyle=0x7f070021;
         public static final int versionUnknown=0x7f070022;
-        public static final int yes=0x7f070023;
+        public static final int wifi_disconnected=0x7f070023;
+        public static final int yes=0x7f070024;
     }
     public static final class style {
         public static final int Animations=0x7f080000;

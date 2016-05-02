@@ -1,0 +1,290 @@
+[
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/andropanel22.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/andropanel22.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/unlock.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/unlock.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/loco.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/loco.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/dc_closed.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/dc_closed.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/led_red.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/led_red.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/button_0_on.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/button_0_on.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/button_0_off.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/button_0_off.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/bump.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/bump.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/dc_thrown.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/dc_thrown.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/incr.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/incr.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/slider_s.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/slider_s.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/led_off_s.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/led_off_s.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/nocomm1.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/nocomm1.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/greendot.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/greendot.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/greydot.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/greydot.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/slider_grey.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/slider_grey.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/curve_occ.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/curve_occ.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/red_led_pnghi.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/red_led_pnghi.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/lamp0.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/lamp0.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/commok.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/commok.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/connector.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/connector.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/connector_occ.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/connector_occ.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/led_red_s.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/led_red_s.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/buffer_route.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/buffer_route.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/commok_l.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/commok_l.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/stop_s_off.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/stop_s_off.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/nocomm_l.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/nocomm_l.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/lock_green.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/lock_green.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/stop_s_on.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/stop_s_on.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/func1.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/func1.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/slider.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/slider.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/lamp0btn.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/lamp0btn.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/buffer.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/buffer.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/connector_route.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/connector_route.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/icon.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/icon.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/func0.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/func0.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/lamp1s.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/lamp1s.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/s_unknown.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/s_unknown.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/unlock_s.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/unlock_s.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/curve_route.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/curve_route.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/s_off.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/s_off.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/button100.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/button100.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/lock_red.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/lock_red.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/s_on.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/s_on.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/commok1.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/commok1.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/dc_unknown.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/dc_unknown.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/led_off.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/led_off.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/btn_square60x60.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/btn_square60x60.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/button120.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/button120.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/lamp0s.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/lamp0s.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/buffer_occ.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/buffer_occ.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/stop_s.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/stop_s.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/lock_s.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/lock_s.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/loco_s.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/loco_s.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/lock.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/lock.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/reddot_s.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/reddot_s.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/reddot.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/reddot.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/andropanel2.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/andropanel2.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/lock_green_s.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/lock_green_s.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/led_off_2.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/led_off_2.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/commok_s.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/commok_s.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/andropanel.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/andropanel.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/nocomm_s.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/nocomm_s.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/lamp1btn.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/lamp1btn.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/greendot_s.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/greendot_s.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/nocomm.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/nocomm.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/greydot_s.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/greydot_s.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/decr.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/decr.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/stop.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/stop.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/lamp1.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/lamp1.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/curve.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/curve.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-nodpi-v4/led_red_2.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-nodpi/led_red_2.png"
+    }
+]

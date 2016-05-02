@@ -26,11 +26,14 @@ public class ViewThread extends Thread {
 	        while (mRun) {
                 Canvas canvas = mHolder.lockCanvas();
 	            if (canvas != null) {
-	                mPanel.doDraw(canvas);
-	                mHolder.unlockCanvasAndPost(canvas);
+	 				synchronized (mPanel.getHolder()) {
+						mPanel.doDraw(canvas);
+					}
+					mHolder.unlockCanvasAndPost(canvas);
+
 				 	try {
-						// do not redraw more than 10 times per second
-						Thread.sleep(100);
+						// max 5 frames per second
+						Thread.sleep(200);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

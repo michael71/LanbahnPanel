@@ -1,0 +1,122 @@
+[
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/timepicker_input_pressed.9.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/timepicker_input_pressed.9.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/timepicker_down_pressed.9.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/timepicker_down_pressed.9.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/lamp0.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/lamp0.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/timepicker_up_disabled_focused.9.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/timepicker_up_disabled_focused.9.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/timepicker_up_disabled.9.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/timepicker_up_disabled.9.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/curve_route.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/curve_route.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/timepicker_down_selected.9.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/timepicker_down_selected.9.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/button_0_off.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/button_0_off.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/timepicker_up_pressed.9.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/timepicker_up_pressed.9.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/timepicker_up_selected.9.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/timepicker_up_selected.9.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/reddot.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/reddot.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/buffer.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/buffer.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/curve.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/curve.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/timepicker_up_normal.9.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/timepicker_up_normal.9.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/timepicker_input_normal.9.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/timepicker_input_normal.9.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/lamp1.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/lamp1.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/buffer_occ.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/buffer_occ.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/timepicker_down_disabled_focused.9.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/timepicker_down_disabled_focused.9.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/curve_occ.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/curve_occ.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/buffer_route.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/buffer_route.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/button_0_on.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/button_0_on.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/connector_route.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/connector_route.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/timepicker_input_disabled.9.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/timepicker_input_disabled.9.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/timepicker_down_disabled.9.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/timepicker_down_disabled.9.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/greendot.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/greendot.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/icon.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/icon.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/timepicker_input_selected.9.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/timepicker_input_selected.9.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/connector_occ.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/connector_occ.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/timepicker_down_normal.9.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/timepicker_down_normal.9.png"
+    },
+    {
+        "merged": "/home/mblank/github/LanbahnPanel/app/build/intermediates/res/merged/debug/drawable-mdpi-v4/connector.png",
+        "source": "/home/mblank/github/LanbahnPanel/app/src/main/res/drawable-mdpi/connector.png"
+    }
+]

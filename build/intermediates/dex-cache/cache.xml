@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/home/mblank/github/LanbahnPanel/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="21.1.2"
+        sha1="fc9bba18bbde8920a1b3855591795a16a5349ce9">
+        <dex dex="/home/mblank/github/LanbahnPanel/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_964a690f3881cfbffecff032b097b610b999fa3e/classes.dex" />
+    </item>
+    <item
+        jar="/home/mblank/github/LanbahnPanel/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        revision="21.1.2"
+        sha1="101525b65619ec11b3fb346578a8590c25d00a94">
+        <dex dex="/home/mblank/github/LanbahnPanel/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_4d061edbfe302d5430245a762d41d20ec6022182/classes.dex" />
+    </item>
+
+</items>
