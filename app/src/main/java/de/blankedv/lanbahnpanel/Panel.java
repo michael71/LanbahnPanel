@@ -83,135 +83,138 @@ public class Panel extends SurfaceView implements SurfaceHolder.Callback {
 		}
 	}
 
-    public boolean onTouchEvent(MotionEvent event) {
-        // Let the ScaleGestureDetector inspect all events.
-        mScaleDetector.onTouchEvent(event);
-        
-		final int action = event.getAction();
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		synchronized (getHolder()) {
+			// Let the ScaleGestureDetector inspect all events.
+			mScaleDetector.onTouchEvent(event);
+
+			final int action = event.getAction();
 
 
-		switch (action & MotionEvent.ACTION_MASK) {
-		case MotionEvent.ACTION_DOWN: {
-			final float x = event.getX();
-			final float y = event.getY();
+			switch (action & MotionEvent.ACTION_MASK) {
+				case MotionEvent.ACTION_DOWN: {
+					final float x = event.getX();
+					final float y = event.getY();
 
-			mLastTouchX = x;
-			mLastTouchY = y;
+					mLastTouchX = x;
+					mLastTouchY = y;
 
-			mX = (int) (x); // /scale);
-			mY = (int) (y); ///scale);
-			
-			mPosX=0;
-			mPosY=0;
-			//if (DEBUG)  Log.d(TAG,"ACTION_DOWN - (scaled) mX="+mX+"  mY"+mY);
-			//if (DEBUG)  Log.d(TAG,"ACTION_DOWN - (abs) x="+x+"  y"+y);
-			mActivePointerId = event.getPointerId(0);
-			break;
-		}      
-		case MotionEvent.ACTION_MOVE: {
-            final int pointerIndex = event.findPointerIndex(mActivePointerId);
-            final float x = event.getX(pointerIndex);
-            final float y = event.getY(pointerIndex);
+					mX = (int) (x); // /scale);
+					mY = (int) (y); ///scale);
 
-            // Only move if the ScaleGestureDetector isn't processing a gesture.
-            if (!mScaleDetector.isInProgress()) {
-                final float dx = x - mLastTouchX;
-                final float dy = y - mLastTouchY;
+					mPosX = 0;
+					mPosY = 0;
+					//if (DEBUG)  Log.d(TAG,"ACTION_DOWN - (scaled) mX="+mX+"  mY"+mY);
+					//if (DEBUG)  Log.d(TAG,"ACTION_DOWN - (abs) x="+x+"  y"+y);
+					mActivePointerId = event.getPointerId(0);
+					break;
+				}
+				case MotionEvent.ACTION_MOVE: {
+					final int pointerIndex = event.findPointerIndex(mActivePointerId);
+					final float x = event.getX(pointerIndex);
+					final float y = event.getY(pointerIndex);
 
-                mPosX += dx;
-                mPosY += dy;
-                if ((zoomEnabled) && (mX>300) && (mY>200)) {
-                   xoff += dx;
-       		       yoff += dy;
-       		       scalingTime = System.currentTimeMillis();  // avoid control of SX elements during pan-move
-                }
-               // invalidate();
-              // if (DEBUG)  Log.d(TAG,"mPosX="+mPosX+" mPosY="+mPosY);
-                // no loco control
-                //controlArea.checkSpeedMove(x, y);
-            }
+					// Only move if the ScaleGestureDetector isn't processing a gesture.
+					if (!mScaleDetector.isInProgress()) {
+						final float dx = x - mLastTouchX;
+						final float dy = y - mLastTouchY;
 
-            mLastTouchX = x;
-            mLastTouchY = y;
+						mPosX += dx;
+						mPosY += dy;
+						if ((zoomEnabled) && (mX > 300) && (mY > 200)) {
+							xoff += dx;
+							yoff += dy;
+							scalingTime = System.currentTimeMillis();  // avoid control of SX elements during pan-move
+						}
+						// invalidate();
+						// if (DEBUG)  Log.d(TAG,"mPosX="+mPosX+" mPosY="+mPosY);
+						// no loco control
+						//controlArea.checkSpeedMove(x, y);
+					}
+
+					mLastTouchX = x;
+					mLastTouchY = y;
             
             /*if (enableEdit) {
             	selSxAddress.dismiss();
             } */
-  
-            break;
-        }
 
-		case MotionEvent.ACTION_UP: {
-			if (DEBUG)  Log.d(TAG,"ACTION_UP");
-			mActivePointerId = INVALID_POINTER_ID;
-
-			// do SX control only when NOT scaling (and wait 1 sec after scaling)
-			long deltaT = System.currentTimeMillis()-scalingTime;
-			if (!mScaleDetector.isInProgress() )  { //&& (deltaT > SCALING_WAIT)) {
-				// assuming control area is always at the top !!
-				if (mLastTouchY < controlAreaRect.bottom)  {
-					Log.d(TAG,"ACTION_UP _Checking Control  at: mlastTouchX="+mLastTouchX+"  mLastTouchY"+mLastTouchY);
-					controlArea.checkTouch(mLastTouchX,mLastTouchY);
-				} else {
-					//Log.d(TAG,"ACTION_UP _Checking panel elements at: mlastTouchX="+mLastTouchX+"  mLastTouchY"+mLastTouchY);   
-					int xs = Math.round(((mLastTouchX-xoff)/scale)/prescale); // reduced by overall dimension scaling factors
-					int ys = Math.round(((mLastTouchY-yoff)/scale)/prescale);
-
-					Log.d(TAG,"ACTION_UP _Checking panel elements at: xs="+xs+"  ys"+ys);   
-					for (PanelElement e:panelElements) {
-						boolean sel=false;
-						if (enableRoutes) {
-							// check only!! route buttons when routing is enabled
-							if (e instanceof RouteButtonElement) {
-								sel = e.isSelected(xs,ys);
-							} 
-						} else {
-						  sel = e.isSelected(xs,ys);
-						}
-						if (sel) { //mLastTouchX, mLastTouchY)) {
-							if (enableEdit) {
-								Dialogs.selectAddressDialog(e); //    					
-							} else {
-								e.toggle();
-							}
-							break; // only 1 can be selected with one touch
-						}
-					}
+					break;
 				}
 
-			} else {
-				if (DEBUG) Log.d(TAG,"scaling wait - delta-t="+deltaT);
-			}
-			break;
-		}
+				case MotionEvent.ACTION_UP: {
+					if (DEBUG) Log.d(TAG, "ACTION_UP");
+					mActivePointerId = INVALID_POINTER_ID;
 
-        case MotionEvent.ACTION_CANCEL: {
-        	if (DEBUG)  Log.d(TAG,"ACTION_CANCEL - mPosX="+mPosX+" mPosY="+mPosY);
-            mActivePointerId = INVALID_POINTER_ID;
-          
-            break;
-        }
+					// do SX control only when NOT scaling (and wait 1 sec after scaling)
+					long deltaT = System.currentTimeMillis() - scalingTime;
+					if (!mScaleDetector.isInProgress()) { //&& (deltaT > SCALING_WAIT)) {
+						// assuming control area is always at the top !!
+						if (mLastTouchY < controlAreaRect.bottom) {
+							Log.d(TAG, "ACTION_UP _Checking Control  at: mlastTouchX=" + mLastTouchX + "  mLastTouchY" + mLastTouchY);
+							controlArea.checkTouch(mLastTouchX, mLastTouchY);
+						} else {
+							//Log.d(TAG,"ACTION_UP _Checking panel elements at: mlastTouchX="+mLastTouchX+"  mLastTouchY"+mLastTouchY);
+							int xs = Math.round(((mLastTouchX - xoff) / scale) / prescale); // reduced by overall dimension scaling factors
+							int ys = Math.round(((mLastTouchY - yoff) / scale) / prescale);
 
-        case MotionEvent.ACTION_POINTER_UP: {
-            final int pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) 
-                    >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
-            final int pointerId = event.getPointerId(pointerIndex);
-            if (pointerId == mActivePointerId) {
-                // This was our active pointer going up. Choose a new
-                // active pointer and adjust accordingly.
-                final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
-                mLastTouchX = event.getX(newPointerIndex);
-                mLastTouchY = event.getY(newPointerIndex);
-                mActivePointerId = event.getPointerId(newPointerIndex);
-       
-            }
-            break;
-        }
-        default:
-        	if (DEBUG) Log.d(TAG,"unknown motion event = "+event.toString());
-        } // end switch
+							Log.d(TAG, "ACTION_UP _Checking panel elements at: xs=" + xs + "  ys" + ys);
+							for (PanelElement e : panelElements) {
+								boolean sel = false;
+								if (enableRoutes) {
+									// check only!! route buttons when routing is enabled
+									if (e instanceof RouteButtonElement) {
+										sel = e.isSelected(xs, ys);
+									}
+								} else {
+									sel = e.isSelected(xs, ys);
+								}
+								if (sel) { //mLastTouchX, mLastTouchY)) {
+									if (enableEdit) {
+										Dialogs.selectAddressDialog(e); //
+									} else {
+										e.toggle();
+									}
+									break; // only 1 can be selected with one touch
+								}
+							}
+						}
 
-		return true; //super.onTouchEvent(event);
+					} else {
+						if (DEBUG) Log.d(TAG, "scaling wait - delta-t=" + deltaT);
+					}
+					break;
+				}
+
+				case MotionEvent.ACTION_CANCEL: {
+					if (DEBUG) Log.d(TAG, "ACTION_CANCEL - mPosX=" + mPosX + " mPosY=" + mPosY);
+					mActivePointerId = INVALID_POINTER_ID;
+
+					break;
+				}
+
+				case MotionEvent.ACTION_POINTER_UP: {
+					final int pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK)
+							>> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+					final int pointerId = event.getPointerId(pointerIndex);
+					if (pointerId == mActivePointerId) {
+						// This was our active pointer going up. Choose a new
+						// active pointer and adjust accordingly.
+						final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
+						mLastTouchX = event.getX(newPointerIndex);
+						mLastTouchY = event.getY(newPointerIndex);
+						mActivePointerId = event.getPointerId(newPointerIndex);
+
+					}
+					break;
+				}
+				default:
+					if (DEBUG) Log.d(TAG, "unknown motion event = " + event.toString());
+			} // end switch
+
+		} // end synchronized
+		return true;
 	}
 
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
