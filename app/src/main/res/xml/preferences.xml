@@ -18,10 +18,10 @@
             android:defaultValue="false"
             android:key="flipPref"
             android:title="@string/flipUpsideDown" />
-        <CheckBoxPreference
+<!--        <CheckBoxPreference
             android:defaultValue="false"
             android:key="enableEditPref"
-            android:title="@string/enableEdit" />
+            android:title="@string/enableEdit" /> -->
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="saveStatesPref"
@@ -29,11 +29,11 @@
          <CheckBoxPreference
             android:defaultValue="false"
             android:key="routesPref"
-            android:title="@string/enableRoutes" /> 
-         <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="enableAllAddressesPref"
-            android:title="@string/enableAllAdresses" /> 
+            android:title="@string/enableRoutes" />
+<!--         <CheckBoxPreference
+                  android:defaultValue="false"
+                   android:key="enableAllAddressesPref"
+                   android:title="@string/enableAllAdresses" /> -->
             <ListPreference
         android:key="selectStylePref"
         android:title="@string/sel_style"

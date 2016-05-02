@@ -58,7 +58,6 @@ public class Panel extends SurfaceView implements SurfaceHolder.Callback {
          
 		LanbahnPanelApplication.updatePanelData();
 		getHolder().addCallback(this);
-
 		mThread = new ViewThread(this);
 
 	}
@@ -66,7 +65,7 @@ public class Panel extends SurfaceView implements SurfaceHolder.Callback {
 
 	//  start and stop the dedicated rendering thread 
 	//  implementing SurfaceHolder Callback for your SurfaceView. 
-	//  This should be enough turnout
+	//  This should be enough to
 	//	limit drawing only when the SurfaceView is visible.
 
 	public void surfaceCreated(SurfaceHolder holder) {

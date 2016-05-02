@@ -28,6 +28,7 @@ public class LanbahnPanelApplication extends Application {
     public static boolean comm1;
 
 	public static boolean demoFlag = false;
+	public static boolean noWifiFlag = false;
 
 	public static final int LANBAHN_PORT = 27027;
 	public static final String LANBAHN_GROUP = "239.200.201.250";
@@ -147,7 +148,7 @@ public class LanbahnPanelApplication extends Application {
 
 		// handler for receiving lanbahn messages LanbahnClientThread
 
-		handler = new Handler() {
+		handler = new Handler() {    // TODO move message func. to ReceiveQueue
 			@Override
 			public void handleMessage(Message msg) {
 				int what = msg.what; 
@@ -251,7 +252,7 @@ public class LanbahnPanelApplication extends Application {
 		editor.putString(KEY_SCALE, "" + scale);
 
 		// Commit the edits!
-		editor.commit();
+		editor.apply();
 	}
 
 	public void loadZoomEtc() {

@@ -13,7 +13,7 @@ import android.graphics.Typeface;
 
 public final class ControlArea {
 
-	private static Paint editPaint, demoPaint;
+	private static Paint editPaint, demoPaint, noWifiPaint;
 
 	private ControlButton stopBtn, commBtn,  clearRoutesBtn; //powerBtn, lampBtn, adrBtn, incrSpeedBtn, decrSpeedBtn, commBtn, powerBtn, functionBtn;
 
@@ -33,6 +33,11 @@ public final class ControlArea {
 		editPaint.setColor(Color.RED);
 		editPaint.setTextSize(30);
 		editPaint.setTypeface(Typeface.DEFAULT_BOLD);
+
+        noWifiPaint = new Paint();
+        noWifiPaint.setColor(Color.RED);
+        noWifiPaint.setTextSize(60);
+        noWifiPaint.setTypeface(Typeface.DEFAULT_BOLD);
 		
 		demoPaint  = new Paint();
 		demoPaint.setColor(Color.CYAN);
@@ -75,7 +80,9 @@ public final class ControlArea {
 		
 		if (enableEdit) canvas.drawText("Edit", (int)(canvas.getWidth()*0.36f), ySpeed*1f, editPaint);
 		if (demoFlag) canvas.drawText("Demo", (int)(canvas.getWidth()*0.28f), ySpeed*1f, demoPaint);
-		if ( (errorMsg.length() > 0) && (System.currentTimeMillis() - errorTime) < 3000) {
+        if (noWifiFlag) canvas.drawText("No Wifi !", (int)(canvas.getWidth()*0.54f), ySpeed*1.3f, noWifiPaint);
+
+        if ( (errorMsg.length() > 0) && (System.currentTimeMillis() - errorTime) < 3000) {
 			canvas.drawText(errorMsg, (int)(canvas.getWidth()*0.38f), ySpeed*1f, editPaint);
 		} else {
 			// clear
