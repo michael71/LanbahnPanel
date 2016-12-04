@@ -37,5 +37,6 @@
     <string name="versionUnknown">version x.x</string>
     <string name="unknown">-?-</string>
     <string name="wifi_disconnected">No Wifi !</string>
+    <string name="draw_routebtn_addresses">Display Route/Sensor Addresses</string>
 
 </resources>
