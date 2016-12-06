@@ -13,7 +13,7 @@
     <string name="cancel">Cancel</string>
     <string name="disp_settings">Display Settings</string>
     <string name="loco_address">Loco Address (1..103) </string>
-    <string name="draw_addresses">Display Addresses</string>
+    <string name="draw_addresses">Display Turnout/Signal Addresses</string>
     <string name="enableZoom">Enable Panel Zoom</string>
     <string name="enableEdit">Enable Edit Mode</string>
      <string name="flipUpsideDown">view panel element from the other side</string>

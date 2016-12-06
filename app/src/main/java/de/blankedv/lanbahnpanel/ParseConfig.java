@@ -120,6 +120,14 @@ public class ParseConfig {
 					configHasChanged = true;
 					error=readXMLConfigFile(demoIs);
 					demoIs.close();
+
+					// create the folder for later use (if it does not exist already)
+					File f2 = new File(Environment.getExternalStorageDirectory()
+							+ "/" + LOCAL_DIRECTORY + "/");
+					if (!f2.exists()) {
+                        f2.mkdirs();
+                        Log.e(TAG,"creating 'lanbahnpanel' folder");
+                    }
 				} else {
 					fis = new FileInputStream(f);
 					error=readXMLConfigFile(fis);
