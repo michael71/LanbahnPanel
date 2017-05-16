@@ -16,15 +16,16 @@
     <string name="draw_addresses">Display Turnout/Signal Addresses</string>
     <string name="enableZoom">Enable Panel Zoom</string>
     <string name="enableEdit">Enable Edit Mode</string>
-     <string name="flipUpsideDown">view panel element from the other side</string>
+    <string name="enableDemo">Enable Demo Mode</string>
+    <string name="flipUpsideDown">view panel element from the other side</string>
     <string name="saveStates">Save States of Device on Appl. Pause/Stop</string>
     <string name="enableAllAdresses">Enable ALL valid lanbahn addresses</string>
     <string name="enableRoutes">Enable Routes (=autom. Signal States)</string>
     <string name="usStyle">US Style</string>
     <string name="quit">Exit Program.</string>
     <string name="edit">Edit On/Off</string>
-     <string name="exit_confirm">Do you really want to stop the program?</string>
-         <string name="yes">Yes</string>
+    <string name="exit_confirm">Do you really want to stop the program?</string>
+    <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="adresse">Adresse</string>
     <string name="sel_loco_prompt">Loco Auswahl</string>
@@ -38,5 +39,8 @@
     <string name="unknown">-?-</string>
     <string name="wifi_disconnected">No Wifi !</string>
     <string name="draw_routebtn_addresses">Display Route/Sensor Addresses</string>
-
+    <string name="general_settings">Settings</string>
+    <string name="files_settings">Config Files</string>
+    <string name="port_sh">Server Port</string>
+    <string name="default_server_ip">192.168.2.50</string>
 </resources>

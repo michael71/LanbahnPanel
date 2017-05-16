@@ -6,6 +6,9 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
@@ -18,6 +21,10 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
 import static de.blankedv.lanbahnpanel.LanbahnPanelApplication.*;
 
 /**
@@ -207,8 +214,18 @@ public class LanbahnPanelActivity extends Activity {
 			}
 		}
 		sendQ.clear();
-		client = new LanbahnClientThread(this);
-		client.start();
+        conn_state_string = startSXNetCommunication();
+
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                   if (restartCommFlag) {
+                    restartCommFlag = false;
+                    conn_state_string = startSXNetCommunication();
+                }
+            }
+        }, 100, 100);
+
 		// request updates for all channels used in Panel
 		LanbahnPanelApplication.updatePanelData();
 	}
@@ -262,4 +279,67 @@ public class LanbahnPanelActivity extends Activity {
 		Log.d(TAG, "states=" + states);
 
 	}
+
+	public String startSXNetCommunication() {
+		Log.d(TAG, "LahnbahnPanelActivity - startSXNetCommunication.");
+		if (client != null) {
+			client.shutdown();
+			try {
+				Thread.sleep(100); // give client some time to shut down.
+			} catch (InterruptedException e) {
+				if (DEBUG)
+					Log.e(TAG, "could not sleep...");
+			}
+		}
+
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		String ip = prefs.getString(KEY_IP, "192.168.2.50");
+	/*	Log.d(TAG, "AndroPanelActivity - autoIPEnabled="+autoIPEnabled);
+
+
+		if ((autoIPEnabled == true) && (autoIP.length()>0) && (!ip.equals(autoIP))) {
+			ip = autoIP;
+			Log.d(TAG, "AndroPanelActivity - auto ip changed="+ip);
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putString(KEY_IP, ip);
+			// Commit the edits!
+			editor.commit();
+		} */
+
+		client = new SXnetClientThread(this, ip, SXNET_PORT);
+		client.start();
+		requestSXdata();
+        Log.d(TAG, "SSID="+getWifiName());
+        return "SSID="+getWifiName()+ "     "+ip;
+	}
+
+	public static void requestSXdata() {
+		//for (int a : adrList)
+		//	sendQ.add("R " + a);  // request dara for these addresses from SX central station
+	}
+
+	public void shutdownSXClient() {
+		Log.d(TAG, "LanbahnPanelActivity - shutting down SXnet Client.");
+		if (client != null)
+			client.shutdown();
+		if (client != null)
+			client.disconnectContext();
+		client = null;
+
+	}
+
+    public String getWifiName() {
+        WifiManager manager = (WifiManager) getApplicationContext().getSystemService(getApplicationContext().WIFI_SERVICE);
+        if (manager.isWifiEnabled()) {
+            WifiInfo wifiInfo = manager.getConnectionInfo();
+            if (wifiInfo != null) {
+                NetworkInfo.DetailedState state = WifiInfo.getDetailedStateOf(wifiInfo.getSupplicantState());
+                if ((state == NetworkInfo.DetailedState.CONNECTED) || (state == NetworkInfo.DetailedState.OBTAINING_IPADDR)) {
+                    return wifiInfo.getSSID();
+                }
+            }
+        }
+        return null;
+    }
 }

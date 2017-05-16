@@ -13,7 +13,7 @@ import android.graphics.Typeface;
 
 public final class ControlArea {
 
-	private static Paint editPaint, demoPaint, noWifiPaint;
+	private static Paint editPaint, demoPaint, noWifiPaint, connPaint;
 
 	private ControlButton stopBtn, commBtn,  clearRoutesBtn; //powerBtn, lampBtn, adrBtn, incrSpeedBtn, decrSpeedBtn, commBtn, powerBtn, functionBtn;
 
@@ -44,7 +44,10 @@ public final class ControlArea {
 		demoPaint.setTextSize(30);	
 		demoPaint.setTypeface(Typeface.DEFAULT_BOLD);
 
-
+		connPaint  = new Paint();
+		connPaint.setColor(Color.LTGRAY);
+		connPaint.setTextSize(14);
+		//connPaint.setTypeface(Typeface.DEFAULT_BOLD);
 
 		green = new Paint();
 		green.setColor(Color.GREEN);
@@ -80,7 +83,11 @@ public final class ControlArea {
 		
 		if (enableEdit) canvas.drawText("Edit", (int)(canvas.getWidth()*0.36f), ySpeed*1f, editPaint);
 		if (demoFlag) canvas.drawText("Demo", (int)(canvas.getWidth()*0.28f), ySpeed*1f, demoPaint);
-        if (noWifiFlag) canvas.drawText("No Wifi !", (int)(canvas.getWidth()*0.54f), ySpeed*1.3f, noWifiPaint);
+        if (noWifiFlag) {
+			canvas.drawText("No Wifi !", (int)(canvas.getWidth()*0.54f), ySpeed*1.3f, noWifiPaint);
+		} else {
+			canvas.drawText(conn_state_string, (int)(canvas.getWidth()*0.16f), ySpeed*1.3f, connPaint);
+		}
 
         if ( (errorMsg.length() > 0) && (System.currentTimeMillis() - errorTime) < 3000) {
 			canvas.drawText(errorMsg, (int)(canvas.getWidth()*0.38f), ySpeed*1f, editPaint);

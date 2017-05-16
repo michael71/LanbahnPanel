@@ -30,18 +30,19 @@ public class LanbahnPanelApplication extends Application {
 	public static boolean demoFlag = false;
 	public static boolean noWifiFlag = false;
 
-	public static final int LANBAHN_PORT = 27027;
-	public static final String LANBAHN_GROUP = "239.200.201.250";
+	public static final int SXNET_PORT = 4104;
+    public static final int SXMAX = 128; // maximum sx channel number
 
 	public static int width, height;
 	public static final String TAG = "LanbahnPanelActivity";
-	public static String selectedStyle = "US"; // German style or USS style
+	public static String selectedStyle = "UK"; // German style or USS style
 
 	public static ArrayList<PanelElement> panelElements = new ArrayList<>();
 	public static ArrayList<Route> routes = new ArrayList<>();
 	public static ArrayList<CompRoute> compRoutes = new ArrayList<>();
     public static ArrayList<LampGroup> lampButtons = new ArrayList<>();
     public static final int MAX_LAMP_BUTTONS = 4;
+    private static int[] sxData = new int[SXMAX];   // contains all selectrix channel data
 
 	public static String panelName = "";
 
@@ -64,12 +65,16 @@ public class LanbahnPanelApplication extends Application {
 	public static final String KEY_XOFF = "xoffPref";
 	public static final String KEY_YOFF = "yoffPref";
 	public static final String KEY_SCALE = "scalePref";
-
+	public static final String KEY_IP = "ipPref";
+    public static final String KEY_CONFIG_FILE="configFilenamePref";
 	public static Handler handler; //
 
 	// connection state
-	public static LanbahnClientThread client;
+	public static SXnetClientThread client;
 	private static long timeOfLastReceivedMessage = 0;
+    public static boolean restartCommFlag = false;
+
+    // put all messages which should be sent into this queue
 	public static final BlockingQueue<String> sendQ = new ArrayBlockingQueue<>(
 			200);
 
@@ -127,6 +132,7 @@ public class LanbahnPanelApplication extends Application {
 
 	public static boolean clearRouteButtonActive = false; // state of clear
 															// routes button
+    public static String conn_state_string = "?";
 
 	public static Context appContext;
 	
@@ -144,9 +150,14 @@ public class LanbahnPanelApplication extends Application {
 		AndroBitmaps.init(getResources());
 		LinePaints.init(prescale);
 
+        // do some initializations
+        for (int i = 0; i < sxData.length; i++) {
+            sxData[i] = 0;
+        }
+
 		// scaling, zoom prefs are loaded from LanbahnPanelActivity
 
-		// handler for receiving lanbahn messages LanbahnClientThread
+		// handler for receiving sxnet messages
 
 		handler = new Handler() {    // TODO move message func. to ReceiveQueue
 			@Override
@@ -169,6 +180,13 @@ public class LanbahnPanelApplication extends Application {
 					}
 				} else if (what == TYPE_FEEDBACK_MSG) {
                     if (DEBUG) Log.d(TAG,"feedback msg "+chan+" "+data);
+                    if (chan < SXMAX) {
+                        // sx data
+                        sxData[chan] = data;
+                    } else {
+                        // lanbahn data >128
+                    }
+
                     for (PanelElement pe : panelElements) {
                         if (pe.getAdr() == chan) {
                             pe.updateData(data);

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;
 import android.preference.ListPreference;
 import android.util.Log;
@@ -16,6 +17,7 @@ public class Preferences extends PreferenceActivity implements OnSharedPreferenc
 	private CheckBoxPreference drawAddressesPref, enableZoomPref, enableEditPref, saveStatesPref, 
 	                                        flipPref,routesPref,enableAllAddressesPref, drawAddressesPref2;
 	private ListPreference selectStylePref;
+    private EditTextPreference ipPref;
 
 	public void onCreate(Bundle savedInstanceState) { 
 		super.onCreate(savedInstanceState); 
@@ -28,6 +30,7 @@ public class Preferences extends PreferenceActivity implements OnSharedPreferenc
 		enableEditPref = (CheckBoxPreference)getPreferenceScreen().findPreference(KEY_ENABLE_EDIT);   
 		saveStatesPref = (CheckBoxPreference)getPreferenceScreen().findPreference(KEY_SAVE_STATES);
 		routesPref = (CheckBoxPreference)getPreferenceScreen().findPreference(KEY_ROUTES);
+        ipPref = (EditTextPreference)getPreferenceScreen().findPreference(KEY_IP);
 		flipPref = (CheckBoxPreference)getPreferenceScreen().findPreference(KEY_FLIP);
 		enableAllAddressesPref = (CheckBoxPreference)getPreferenceScreen().findPreference(KEY_ENABLE_ALL_ADDRESSES); 
 		selectStylePref = (ListPreference)getPreferenceScreen().findPreference(KEY_STYLE_PREF);
@@ -73,7 +76,10 @@ public class Preferences extends PreferenceActivity implements OnSharedPreferenc
             case KEY_ENABLE_ALL_ADDRESSES:
                 enableAllAddresses = sharedPreferences.getBoolean(KEY_ENABLE_ALL_ADDRESSES, false);
                 break;
-            default:
+            case KEY_IP:
+                ipPref.setSummary("= "+sharedPreferences.getString(KEY_IP,""));
+                break;
+              default:
                 Log.e(TAG, "unhandled preferences change, key=" + key);
                 break;
         }
