@@ -164,7 +164,28 @@ public class LanbahnPanelActivity extends Activity {
 		if (saveStates)
 			loadStates();
 
+        refreshAllData();
+		LanbahnPanelApplication.updatePanelData();
+
 	}
+
+    /**
+     * set all active panel elements to "expired" to have them updated soon
+     *
+     */
+	private void refreshAllData() {
+        for (PanelElement e : panelElements) {
+            if (e instanceof ActivePanelElement) {
+                // add its address to list of interesting addresses
+                // only needed for active elements, not for tracks
+                int a = e.getAdr();
+
+                if (a != INVALID_INT) {
+                    ((ActivePanelElement) e).setExpired();
+                }
+            }
+        }
+    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

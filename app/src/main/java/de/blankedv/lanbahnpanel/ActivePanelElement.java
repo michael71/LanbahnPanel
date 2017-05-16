@@ -2,6 +2,8 @@ package de.blankedv.lanbahnpanel;
 
 import static de.blankedv.lanbahnpanel.LanbahnPanelApplication.*;
 import static de.blankedv.lanbahnpanel.LinePaints.*;
+
+import android.content.SyncAdapterType;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.Log;
@@ -202,6 +204,10 @@ public abstract class ActivePanelElement extends PanelElement {
 	 */
 	public boolean isExpired() {
 		return ((System.currentTimeMillis() - lastUpdateTime) > 20 * 1000);
+	}
+
+	public void setExpired() {
+		lastUpdateTime = System.currentTimeMillis() - 21*1000;
 	}
 
 }

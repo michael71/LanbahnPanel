@@ -214,6 +214,7 @@ public class LanbahnPanelApplication extends Application {
 	}
 
 	public static void updatePanelData() {
+		Log.d(TAG, "AndroPanelApp - updatePanelData()");
 		for (PanelElement e : panelElements) {
 			if (e instanceof ActivePanelElement) {
 				// add its address to list of interesting addresses
