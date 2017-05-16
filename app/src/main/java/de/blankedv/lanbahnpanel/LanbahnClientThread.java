@@ -277,6 +277,11 @@ public class LanbahnClientThread extends Thread {
                 while (!sendQ.isEmpty()) {
                     String command = sendQ.poll();
                     immediateSend(command);
+                    try {   // TODO
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
                 }
 

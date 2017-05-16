@@ -9,7 +9,7 @@ android {
         }
     }
     compileSdkVersion 20
-    buildToolsVersion "21.1.2"
+    buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "de.blankedv.lanbahnpanel"
         minSdkVersion 13
