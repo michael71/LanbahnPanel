@@ -19,8 +19,8 @@ public class RouteButtonElement extends ActivePanelElement {
 	boolean toggleBlink = false;
 	private long timeSet;
 	
-	public RouteButtonElement(String type, int x, int y, String name, int adr) {
-		super(type, x, y, name,  adr);	
+	public RouteButtonElement(int x, int y, String name, int adr) {
+		super(x, y, name,  adr);
 	} 
 
  	public RouteButtonElement() {
@@ -221,7 +221,7 @@ public class RouteButtonElement extends ActivePanelElement {
         // the touchpoint should be within rectangle of panel element
 		if ( (xs >= minx) && (xs <= maxx) && (ys >= miny) && (ys <= maxy)) {
 			if (DEBUG)
-				Log.d(TAG, "selected adr=" + adr + " " + type + "  (" + x+","+ y+")");
+				Log.d(TAG, "selected adr=" + adr + " type=" + getType() + "  (" + x+","+ y+")");
 			return true;
 		} else {
 			// if (DEBUG) Log.d(TAG, "No Route key selection");

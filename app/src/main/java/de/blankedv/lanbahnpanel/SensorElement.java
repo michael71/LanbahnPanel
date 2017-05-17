@@ -9,8 +9,8 @@ import static de.blankedv.lanbahnpanel.LinePaints.*;
 
 public class SensorElement extends ActivePanelElement {
 	
-	public SensorElement(String type, int x, int y, String name, int adr) {
-		super(type, x, y, name,  adr);		
+	public SensorElement(int x, int y, String name, int adr) {
+		super(x, y, name,  adr);
         
 	}
 	
@@ -20,7 +20,7 @@ public class SensorElement extends ActivePanelElement {
 
 	@Override
 	public void doDraw(Canvas canvas) {
-		// TODO make sensor appearance dependend on US or EU style
+
 		if (x2 != INVALID_INT) {  // draw dashed line as sensor
 			// read data from SX bus and set red/gray dashed line accordingly
 
@@ -48,13 +48,13 @@ public class SensorElement extends ActivePanelElement {
 							* prescale, linePaintGrayDash);
 			}
 		} else {
-			// draw lamp type of sensor
+			// draw lamp type of sensor   s_on.png etc
 
-			// read data from SX bus and set bitmap accordingly
 			int h, w;
 			Bitmap bm;
-			StringBuilder bmName = new StringBuilder(type);
-			// TODO proper handling of "unknown"
+
+			StringBuilder bmName = new StringBuilder("s");
+
 			if ( (state == STATE_FREE)  || (state == STATE_UNKNOWN)){
 				bmName.append("_off");
 			} else {

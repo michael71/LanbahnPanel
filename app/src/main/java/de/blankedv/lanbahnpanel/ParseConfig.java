@@ -229,7 +229,7 @@ public class ParseConfig {
 				PanelElement panelelement = LinearMath.trackIntersect(p, q);
 
 				if (panelelement != null) {
-					if (panelelement.type.equals("doubleslip")) {
+					if (panelelement.getType().equals("doubleslip")) {
 						// do nothing in the meantime
 						// TODO implement for doubleslip a similar method as
 						// with turnout
@@ -297,7 +297,6 @@ public class ParseConfig {
 	private static TurnoutElement parseTurnout(Node item) {
 
 		TurnoutElement pe = new TurnoutElement();
-		pe.type = "turnout";
 		NamedNodeMap attributes = item.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node theAttribute = attributes.item(i);
@@ -338,7 +337,6 @@ public class ParseConfig {
 	private static SignalElement parseSignal(Node item) {
 
 		SignalElement pe = new SignalElement();
-		pe.type = "signal";
 		NamedNodeMap attributes = item.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node theAttribute = attributes.item(i);
@@ -371,7 +369,6 @@ public class ParseConfig {
 	private static RouteButtonElement parseRouteButton(Node item) {
 
 		RouteButtonElement pe = new RouteButtonElement();
-		pe.type = "routebutton";
 		NamedNodeMap attributes = item.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node theAttribute = attributes.item(i);
@@ -420,10 +417,8 @@ public class ParseConfig {
 	private static SensorElement parseSensor(Node item) {
 		// ticket node can be Incident oder UserRequest
 		SensorElement pe = new SensorElement();
-		pe.type = "sensor";
-		pe.x2 = INVALID_INT; // turnout be able turnout distinguish between
-								// different
-								// types of sensors (LAMP or dashed track)
+		pe.x2 = INVALID_INT; // to be able to distinguish between
+			// different types of sensors (LAMP or dashed track)
 		NamedNodeMap attributes = item.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node theAttribute = attributes.item(i);
@@ -439,8 +434,6 @@ public class ParseConfig {
 				pe.x2 = getPositionNode(theAttribute);
 			} else if (theAttribute.getNodeName().equals("y2")) {
 				pe.y2 = getPositionNode(theAttribute);
-			} else if (theAttribute.getNodeName().equals("icon")) {
-				pe.setType(theAttribute.getNodeValue());
 			} else if (theAttribute.getNodeName().equals("adr")) {
 				pe.setAdr(Integer.parseInt(theAttribute.getNodeValue()));
 			} else {
@@ -461,9 +454,8 @@ public class ParseConfig {
 	}
 
 	private static PanelElement parseTrack(Node item) {
-		// ticket node can be Incident oder UserRequest
+		// track is element of type "PanelElement" (=not active)
 		PanelElement pe = new PanelElement();
-		pe.type = "track";
 		NamedNodeMap attributes = item.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node theAttribute = attributes.item(i);

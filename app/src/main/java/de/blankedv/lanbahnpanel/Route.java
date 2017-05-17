@@ -15,7 +15,7 @@ import android.util.Log;
  * @author mblank
  * 
  */
-@SuppressWarnings("ForLoopReplaceableByForEach")
+
 public class Route {
 
 	public int id; // must be unique
@@ -138,6 +138,9 @@ public class Route {
 	//		Log.d(TAG, rtOffending.size() + " offending routes in config");
 	}
 
+    /** clear a route, set sensors to free and signals to RED
+     *
+     */
 	public void clear() {
 		timeSet = System.currentTimeMillis(); // store for resetting
 												// automatically
@@ -168,7 +171,8 @@ public class Route {
 
 		active = false;
 		// notify that route was cleared
-		String cmd = "RT " + id + " 0";
+		// route id's are unique, the standard number space is used
+		String cmd = "SET " + id + " 0";
 		sendQ.add(cmd);
 	}
 
@@ -197,7 +201,8 @@ public class Route {
 			Log.d(TAG, "setting route id=" + id);
 
 		// notify that route is set
-		String cmd = "RT " + id + " 1";
+		// route id's are unique, the standard number space is used
+		String cmd = "SET " + id + " 1";
 		sendQ.add(cmd);
 		active = true;
 
@@ -212,6 +217,7 @@ public class Route {
 
 		// set signals
 		for (RouteSignal rs : rtSignals) {
+            rs.signal.setState(rs.dynamicValueToSetForRoute());
 			cmd = "SET " + rs.signal.adr + " " + rs.dynamicValueToSetForRoute();
 			if (DEBUG)
 				Log.d(TAG, "setting route signal " + cmd);
@@ -220,6 +226,7 @@ public class Route {
 		}
 		// set and // TODO lock turnouts
 		for (RouteTurnout rtt : rtTurnouts) {
+            rtt.turnout.setState(rtt.valueToSetForRoute);
 			cmd = "SET " + rtt.turnout.adr + " " + rtt.valueToSetForRoute;
 			sendQ.add(cmd);
 		}

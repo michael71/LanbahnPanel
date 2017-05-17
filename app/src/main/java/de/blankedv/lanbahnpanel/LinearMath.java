@@ -203,10 +203,12 @@ public class LinearMath {
 						}
 					}
 				}
-				return new PanelElement("turnout", px, new Point(xc, yc),
+				PanelElement pt = new PanelElement(px, new Point(xc, yc),
 						new Point(xt, yt));
+				return new TurnoutElement(pt);
 			} else {
-				return new PanelElement("doubleslip", px, px, px);
+				//return new DoubleSlipElement(px, px, px);  TODO
+				return null;
 			}
 		} else {
 			return null; // for debugging: new PanelElement("turnok", px);

@@ -57,7 +57,8 @@ public class CompRoute {
 
 	}
 
-/*	public void clear() {
+/*	no clear for compound routes because single routes are cleared automatically after X seconds
+    public void clear() {
 
 		if (DEBUG)
 			Log.d(TAG, "clearing comproute id=" + id);
@@ -80,6 +81,9 @@ public class CompRoute {
 		}
 	}
 
+	/** set all the single routes which depend on this compound route
+	 *
+	 */
 	public void set() {
 
 		if (DEBUG)
@@ -87,7 +91,6 @@ public class CompRoute {
 
 		for (Route rt : myroutes) {
 			rt.set();
-
 		}
 	}
 

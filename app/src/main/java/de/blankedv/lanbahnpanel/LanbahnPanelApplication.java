@@ -13,6 +13,7 @@ import android.graphics.Canvas;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.Log;
 import static de.blankedv.lanbahnpanel.ActivePanelElement.STATE_UNKNOWN;
 
@@ -23,18 +24,15 @@ import static de.blankedv.lanbahnpanel.ActivePanelElement.STATE_UNKNOWN;
     // TODO : implement selection of config file
     // TODO: review and simplify
     // TODO: handle absence ot connection to SX command station
-    // TODO: review demo mode
 
 public class LanbahnPanelApplication extends Application {
 
 	public static final boolean DEBUG = true; // enable or disable debugging
 												// with file
-
-	public static boolean demoFlag = false;
 	public static boolean noWifiFlag = false;
 
 	public static final int SXNET_PORT = 4104;
-    public static final int SXMAX = 128; // maximum sx channel number
+    // not USED !! public static final int SXMAX = 256; // maximum sx channel number
     public static final int LBMAX = 9999; // maximum lanbahn channel number
 
 	public static int width, height;
@@ -46,7 +44,6 @@ public class LanbahnPanelApplication extends Application {
 	public static ArrayList<CompRoute> compRoutes = new ArrayList<>();
     public static ArrayList<LampGroup> lampButtons = new ArrayList<>();
     public static final int MAX_LAMP_BUTTONS = 4;
-    private static int[] sxData = new int[SXMAX];   // contains all selectrix channel data
 
 	public static String panelName = "";
 
@@ -82,8 +79,6 @@ public class LanbahnPanelApplication extends Application {
 	public static final BlockingQueue<String> sendQ = new ArrayBlockingQueue<>(
 			200);
 
-	public static final int TYPE_STATUS_MSG = 0;
-	public static final int TYPE_ROUTE_MSG = 1;
     public static final int TYPE_FEEDBACK_MSG = 2;
     public static final int TYPE_ERROR_MSG = 3;
 
@@ -102,7 +97,6 @@ public class LanbahnPanelApplication extends Application {
 	// if true, then a new config file is written at the end of the Activity
 
 	public static final int INVALID_INT = -9999;
-    public static final int INVALID_LANBAHN_DATA = 999;
 
 	public static final Hashtable<String, Bitmap> bitmaps = new Hashtable<>();
 
@@ -154,11 +148,9 @@ public class LanbahnPanelApplication extends Application {
 		AndroBitmaps.init(getResources());
 		LinePaints.init(prescale);
 
-        // do some initializations
-        for (int i = 0; i < sxData.length; i++) {
-            sxData[i] = 0;
-        }
+        String myAndroidDeviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
+		Log.d(TAG,"LanbahnPanelApplication - androidDeviceID="+myAndroidDeviceId);
 		// scaling, zoom prefs are loaded from LanbahnPanelActivity
 
 		// handler for receiving sxnet messages
@@ -170,35 +162,22 @@ public class LanbahnPanelApplication extends Application {
 				int chan = msg.arg1;
 				int data = msg.arg2;
 				timeOfLastReceivedMessage = System.currentTimeMillis();
-				if (what == TYPE_STATUS_MSG) {
-					for (PanelElement pe : panelElements) {
-						if (pe.getAdr() == chan) {
-							pe.updateData(data);
-						}
-					}
-				} else if (what == TYPE_ROUTE_MSG) {
-					for (Route rt : routes) {
-						if (rt.id == chan) {
-							rt.updateData(data);
-						}
-					}
-				} else if (what == TYPE_FEEDBACK_MSG) {
-                    //if (DEBUG) Log.d(TAG,"feedback msg "+chan+" "+data);
-                    if (chan < SXMAX) {
-                        // sx data
-                        sxData[chan] = data;
-                    } else {
-                        // lanbahn data >128
-                        // lanbahn data are stored in the panel elements directly
-                        // not in a global store
-                    }
-
+                if (what == TYPE_FEEDBACK_MSG) {
                     for (PanelElement pe : panelElements) {
                         if (pe.getAdr() == chan) {
 							//if (DEBUG) Log.d(TAG,"updating "+pe.toString());
                             pe.updateData(data);
+                            // it is possible that two elements have the same channel
+                            // therefor all channels are iterated
                         }
                     }
+
+                    for (Route rt : routes) {
+                        if (rt.id == chan) {
+                            rt.updateData(data);
+                        }
+                    }
+
                 }  else if (what == TYPE_ERROR_MSG) {
                     if (DEBUG) Log.d(TAG,"error msg "+chan+" "+data);
                     for (PanelElement pe : panelElements) {
@@ -227,7 +206,6 @@ public class LanbahnPanelApplication extends Application {
 				// add its address to list of interesting addresses
 				// only needed for active elements, not for tracks
 				int a = e.getAdr();
-
 				if ((a != INVALID_INT) && ((ActivePanelElement) e).isExpired()) {
 					boolean success = sendQ.offer("READ " + a); // request data for
 																// all active
@@ -249,11 +227,17 @@ public class LanbahnPanelApplication extends Application {
 				// add its address to list of interesting addresses
 				// only needed for active elements, not for tracks
 				e.setState(STATE_UNKNOWN);
-
 			}
 		}
 	}
 
+	public static boolean connectionIsAlive() {
+        if (client == null) {
+            return false;
+        } else {
+            return client.isConnected();
+        }
+    }
    	/* public static boolean isPowerOn() {
 		return true; // TODO must evaluate stored lanbahn messages
 
@@ -307,13 +291,5 @@ public class LanbahnPanelApplication extends Application {
 		scale = Float.parseFloat(prefs.getString(KEY_SCALE, "1.0"));
 
 	}
-
-	public static boolean connectionIsAlive() {
-        if (client == null) {
-            return false;
-        } else {
-            return client.isConnected();
-        }
-    }
 
 }

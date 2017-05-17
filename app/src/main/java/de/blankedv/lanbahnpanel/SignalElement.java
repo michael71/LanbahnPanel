@@ -9,35 +9,14 @@ public class SignalElement extends ActivePanelElement {
 
 	// for signals which can be interactivly set from panel
 
-	public SignalElement(String type, int x, int y, String name, int adr) {
-		super(type, x, y, name,  adr);	
+	public SignalElement(int x, int y, String name, int adr) {
+		super(x, y, name,  adr);
 	} 
 
  	public SignalElement() {
  		adr = INVALID_INT;
 		state = STATE_UNKNOWN;
  	}
-
-	public SignalElement(PanelElement signal) {
-		type = signal.type;
-		x = signal.x;
-		y = signal.y;
-		adr = INVALID_INT;
-		state = STATE_UNKNOWN;
-	}
-	
-	public static SignalElement findSignalByAddress(int address) {
-		for (PanelElement pe: panelElements) {
-			if ( pe instanceof SignalElement )  {
-				if (pe.getAdr() == address) {
-					return (SignalElement)pe;
-				}
-			}
-		}
-		
-		return null;
-		
-	}
 
 	@Override
 	public void doDraw(Canvas canvas) {
@@ -100,7 +79,7 @@ public class SignalElement extends ActivePanelElement {
         // the touchpoint should be within rectangle of panel element
 		if ( (xs >= minx) && (xs <= maxx) && (ys >= miny) && (ys <= maxy)) {
 			if (DEBUG)
-				Log.d(TAG, "selected adr=" + adr + " " + type + "  (" + x+","+ y+")");
+				Log.d(TAG, "selected adr=" + adr + " type=" + getType() + "  (" + x+","+ y+")");
 			return true;
 		} else {
 			// if (DEBUG) Log.d(TAG, "No Signal selection");

@@ -3,7 +3,6 @@ package de.blankedv.lanbahnpanel;
 import static de.blankedv.lanbahnpanel.LanbahnPanelApplication.*;
 import static de.blankedv.lanbahnpanel.LinePaints.*;
 
-import android.content.SyncAdapterType;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.Log;
@@ -51,22 +50,20 @@ public abstract class ActivePanelElement extends PanelElement {
 	protected long lastUpdateTime = 0L;
 
 	public ActivePanelElement() {
-		super(null, 0, 0);
+		super(0, 0);
 	}
 
 	/**
 	 * constructor for an ACTIVE panel element with 1 address default state is
 	 * "CLOSED" (="RED")
 	 * 
-	 * @param type
 	 * @param x
 	 * @param y
 	 * @param name
 	 * @param adr
 	 */
-	public ActivePanelElement(String type, int x, int y, String name, int adr) {
-		super(null, x, y);
-		this.type = type;
+	public ActivePanelElement(int x, int y, String name, int adr) {
+		super( x, y);
 		this.state = STATE_UNKNOWN;
 		this.adr = adr;
 		lastUpdateTime = System.currentTimeMillis();
@@ -109,7 +106,7 @@ public abstract class ActivePanelElement extends PanelElement {
 
 	@Override
 	public void updateData(int data) {
-        if (data == INVALID_LANBAHN_DATA) {
+        if (data == INVALID_INT) {
             state = STATE_UNKNOWN;
         } else {
             state = data;
@@ -131,11 +128,11 @@ public abstract class ActivePanelElement extends PanelElement {
 		if ((xs >= rect.left) && (xs <= rect.right) && (ys >= rect.top)
 				&& (ys <= rect.bottom)) {
 			if (DEBUG)
-				Log.d(TAG, "selected adr=" + adr + " " + type + "  (" + x + ","
+				Log.d(TAG, "selected adr=" + adr + " " + this.getType() + "  (" + x + ","
 						+ y + ") in rect=" + rect.toString());
 			return true;
 		} else {
-			// if (DEBUG) Log.d(TAG, "NO sel.  adr=" + adr + " " + type +
+			// if (DEBUG) Log.d(TAG, "NO sel.  adr=" + adr + " " + this.getType() +
 			// " not in rect="+ rect.toString());
 			return false;
 		}
@@ -150,7 +147,7 @@ public abstract class ActivePanelElement extends PanelElement {
 				return new Rect(x - RASTER / 5, y - RASTER / 7, x + RASTER / 5, y
 						+ RASTER / 7);
 			} else {   // line type sensor
-			return new Rect((x+x2)/2 - RASTER / 5, (y+y2)/2 - RASTER / 7, (x+x2)/2 + RASTER / 5, 
+			return new Rect((x+x2)/2 - RASTER / 5, (y+y2)/2 - RASTER / 7, (x+x2)/2 + RASTER / 5,
 					(y+y2)/2 + RASTER / 7);
 
 			}

@@ -18,7 +18,6 @@ import static de.blankedv.lanbahnpanel.LinePaints.linePaint2;
 public class PanelElement {
 
 	protected String name = "";
-	protected String type = "";
 	protected int x; // starting point
 	protected int y;
 	protected int x2 = INVALID_INT; // endpoint - x2 always >x
@@ -27,22 +26,20 @@ public class PanelElement {
 	protected int yt = INVALID_INT;
 	protected String route = "";
 
-	public PanelElement(String type, int x, int y) {
-		this.type = type;
+	public PanelElement(int x, int y) {
 		this.x = x;
 		this.y = y;
 		name = "";
 	}
 
-	public PanelElement(String type, Point poi) {
-		this.type = type;
+	public PanelElement(Point poi) {
+
 		this.x = poi.x;
 		this.y = poi.y;
 		name = "";
 	}
 
-	public PanelElement(String type, Point poi, Point closed, Point thrown) {
-		this.type = type;
+	public PanelElement(Point poi, Point closed, Point thrown) {
 		this.x = poi.x;
 		this.y = poi.y;
 		this.x2 = closed.x;
@@ -55,12 +52,33 @@ public class PanelElement {
 	public PanelElement() {
 	}
 
+    /** get the type-name which is used in the XML panel definition file
+     *
+     * @return
+     */
 	public String getType() {
-		return type;
-	}
+        String className = this.getClass().getSimpleName();
+        switch (className) {
+            case "SignalElement":
+                return "signal";
+            case "PanelElement":
+                return "track";
+            case "TurnoutElement":
+                return "turnout";
+            case "SensorElement":
+                return "sensor";
+            case "ActivePanelElement":
+                return "other";
+            case "RouteButtonElement":
+                return "routebutton";
+            case "DoubleSlipElement":
+                return "doubleslip";
+            default:
+                Log.d(TAG,"could not determine type of panel element");
+                return "error";
 
-	public void setType(String type) {
-		this.type = type;
+        }
+
 	}
 
 	public void doDraw(Canvas canvas) {

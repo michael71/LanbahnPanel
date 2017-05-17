@@ -52,12 +52,9 @@
             android:name="SXnet server address"
             android:defaultValue="@string/default_server_ip"
             android:key="ipPref"
-            android:summary="@string/ip_address_of_server"
+            android:summary="@string/questionmark"
             android:title="SXnet server address" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="enableDemoPref"
-            android:title="@string/enableDemo" />
+
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/files_settings" >
         <ListPreference

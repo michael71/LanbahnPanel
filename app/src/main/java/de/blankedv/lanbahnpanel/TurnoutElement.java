@@ -11,7 +11,7 @@ public class TurnoutElement extends ActivePanelElement {
 	// for turnouts which can be interactivly set from panel
 
 	public TurnoutElement(String type, int x, int y, String name, int adr) {
-		super(type, x, y, name,  adr);	
+		super(x, y, name,  adr);
 	} 
 
  	public TurnoutElement() {
@@ -20,7 +20,6 @@ public class TurnoutElement extends ActivePanelElement {
  	}
 
 	public TurnoutElement(PanelElement turnout) {
-		type = turnout.type;
 		x = turnout.x;
 		y = turnout.y;
 		x2= turnout.x2;

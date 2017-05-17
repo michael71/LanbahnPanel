@@ -14,7 +14,7 @@ import android.util.Log;
 
 public final class ControlArea {
 
-	private static Paint editPaint, demoPaint, noWifiPaint, connPaint;
+	private static Paint editPaint, noWifiPaint, connPaint;
 
 	private ControlButton stopBtn, commBtn,  clearRoutesBtn; //powerBtn, lampBtn, adrBtn, incrSpeedBtn, decrSpeedBtn, commBtn, powerBtn, functionBtn;
 
@@ -39,11 +39,6 @@ public final class ControlArea {
         noWifiPaint.setColor(Color.RED);
         noWifiPaint.setTextSize(60);
         noWifiPaint.setTypeface(Typeface.DEFAULT_BOLD);
-		
-		demoPaint  = new Paint();
-		demoPaint.setColor(Color.CYAN);
-		demoPaint.setTextSize(30);	
-		demoPaint.setTypeface(Typeface.DEFAULT_BOLD);
 
 		connPaint  = new Paint();
 		connPaint.setColor(Color.LTGRAY);
@@ -88,8 +83,7 @@ public final class ControlArea {
 		canvas.drawBitmap(bitmaps.get("lonstokewest"),(int)(canvas.getWidth()*0.72f), ySpeed*0.22f,  null);
 		
 		if (enableEdit) canvas.drawText("Edit", (int)(canvas.getWidth()*0.36f), ySpeed*1f, editPaint);
-		if (demoFlag) canvas.drawText("Demo", (int)(canvas.getWidth()*0.28f), ySpeed*1f, demoPaint);
-        if (noWifiFlag) {
+	    if (noWifiFlag) {
 			canvas.drawText("No Wifi !", (int)(canvas.getWidth()*0.54f), ySpeed*1.3f, noWifiPaint);
 		}
 

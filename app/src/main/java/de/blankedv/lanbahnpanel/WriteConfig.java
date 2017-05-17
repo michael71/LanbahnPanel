@@ -129,7 +129,7 @@ public class WriteConfig {
 					Log.d(TAG, "writing panel element " + pe.toString());
 				serializer.startTag("", pe.getType());
 				if (DEBUG)
-					Log.d(TAG, " type=" + pe.type);
+					Log.d(TAG, " type=" + pe.getType());
 				if (pe.name.length() > 0) {
 					serializer.attribute("", "name", "" + pe.name);
 				}
