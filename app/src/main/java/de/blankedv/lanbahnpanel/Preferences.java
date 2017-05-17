@@ -8,6 +8,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;
 import android.preference.ListPreference;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import static de.blankedv.lanbahnpanel.LanbahnPanelApplication.*;
 
@@ -35,6 +36,11 @@ public class Preferences extends PreferenceActivity implements OnSharedPreferenc
 		enableAllAddressesPref = (CheckBoxPreference)getPreferenceScreen().findPreference(KEY_ENABLE_ALL_ADDRESSES); 
 		selectStylePref = (ListPreference)getPreferenceScreen().findPreference(KEY_STYLE_PREF);
 		selectStylePref.setSummary("current selected style is "+selectedStyle);
+
+        SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        ipPref.setSummary("= "+prefs.getString(KEY_IP,""));
+        selectStylePref.setSummary("current selected style is "+prefs.getString(KEY_STYLE_PREF,"?"));
 		/*PreferenceCategory extCat = (PreferenceCategory) findPreference("extended_cat");
 		*/
 
@@ -108,6 +114,11 @@ public class Preferences extends PreferenceActivity implements OnSharedPreferenc
 
 		// Set up a listener whenever a key changes            
 		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+
+        SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        ipPref.setSummary("= "+prefs.getString(KEY_IP,""));
+        selectStylePref.setSummary("current selected style is "+prefs.getString(KEY_STYLE_PREF,"?"));
 	}
 
 	@Override

@@ -17,21 +17,25 @@ import android.util.Log;
 import static de.blankedv.lanbahnpanel.ActivePanelElement.STATE_UNKNOWN;
 
 /** Lanbahn Panel
- * Rev 2.0 - 03 Jan 2015 - now using LANBAHN protocol Rev. 2.0
+ * Rev 3.0 - 15 May 2017 - now using sxnet protocol
  */
+
+    // TODO : implement selection of config file
+    // TODO: review and simplify
+    // TODO: handle absence ot connection to SX command station
+    // TODO: review demo mode
+
 public class LanbahnPanelApplication extends Application {
 
 	public static final boolean DEBUG = true; // enable or disable debugging
 												// with file
-	public static final boolean DEBUG_COMM = true; // debugging of all lanbahn
-													// msgs
-    public static boolean comm1;
 
 	public static boolean demoFlag = false;
 	public static boolean noWifiFlag = false;
 
 	public static final int SXNET_PORT = 4104;
     public static final int SXMAX = 128; // maximum sx channel number
+    public static final int LBMAX = 9999; // maximum lanbahn channel number
 
 	public static int width, height;
 	public static final String TAG = "LanbahnPanelActivity";
@@ -85,8 +89,8 @@ public class LanbahnPanelApplication extends Application {
 
 	public static String connString = "";
 
-	public static final String LOCAL_DIRECTORY = "lanbahnpanel/"; // with trailing
-															// slash
+	public static final String LOCAL_DIRECTORY = "lanbahnpanel/";
+    // with trailing slash !!
 	
 	public static final String CONFIG_FILENAME = "lb-panel1.xml";
 	
@@ -179,16 +183,19 @@ public class LanbahnPanelApplication extends Application {
 						}
 					}
 				} else if (what == TYPE_FEEDBACK_MSG) {
-                    if (DEBUG) Log.d(TAG,"feedback msg "+chan+" "+data);
+                    //if (DEBUG) Log.d(TAG,"feedback msg "+chan+" "+data);
                     if (chan < SXMAX) {
                         // sx data
                         sxData[chan] = data;
                     } else {
                         // lanbahn data >128
+                        // lanbahn data are stored in the panel elements directly
+                        // not in a global store
                     }
 
                     for (PanelElement pe : panelElements) {
                         if (pe.getAdr() == chan) {
+							//if (DEBUG) Log.d(TAG,"updating "+pe.toString());
                             pe.updateData(data);
                         }
                     }
@@ -302,7 +309,11 @@ public class LanbahnPanelApplication extends Application {
 	}
 
 	public static boolean connectionIsAlive() {
-		return ((System.currentTimeMillis() - timeOfLastReceivedMessage) < 30*1000);
-	}
+        if (client == null) {
+            return false;
+        } else {
+            return client.isConnected();
+        }
+    }
 
 }

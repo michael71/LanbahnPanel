@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.util.Log;
 
 
 /**
@@ -68,7 +69,12 @@ public final class ControlArea {
 	}
 	
 	public void draw(Canvas canvas) {
-		comm1 = LanbahnPanelApplication.connectionIsAlive();
+
+		if (LanbahnPanelApplication.connectionIsAlive()) {
+			canvas.drawText(conn_state_string, (int)(canvas.getWidth()*0.01f), ySpeed*1.6f, connPaint);
+		} else {
+			canvas.drawText("?", (int)(canvas.getWidth()*0.01f), ySpeed*1.6f, connPaint);
+		}
 		commBtn.doDraw(canvas,LanbahnPanelApplication.connectionIsAlive());
 		//powerBtn.doDraw(canvas,LanbahnPanelApplication.isPowerOn());
 		if (enableRoutes) {
@@ -85,8 +91,6 @@ public final class ControlArea {
 		if (demoFlag) canvas.drawText("Demo", (int)(canvas.getWidth()*0.28f), ySpeed*1f, demoPaint);
         if (noWifiFlag) {
 			canvas.drawText("No Wifi !", (int)(canvas.getWidth()*0.54f), ySpeed*1.3f, noWifiPaint);
-		} else {
-			canvas.drawText(conn_state_string, (int)(canvas.getWidth()*0.16f), ySpeed*1.3f, connPaint);
 		}
 
         if ( (errorMsg.length() > 0) && (System.currentTimeMillis() - errorTime) < 3000) {
@@ -107,6 +111,10 @@ public final class ControlArea {
 	}
 
 	public void checkTouch(float x, float y) {
+        if (!LanbahnPanelApplication.connectionIsAlive() && (commBtn.isTouched(x,y))) {
+            restartCommFlag = true;
+            Log.d(TAG,"ControlArea - restartCommFlag is set");
+        }
 		if ( (enableRoutes) && (clearRoutesBtn.isTouched(x, y))) {
 			if (!clearRouteButtonActive) {
 				clearRouteButtonActive = true;
