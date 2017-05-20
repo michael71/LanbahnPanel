@@ -42,7 +42,7 @@ public class LanbahnPanelApplication extends Application {
 	public static ArrayList<PanelElement> panelElements = new ArrayList<>();
 	public static ArrayList<Route> routes = new ArrayList<>();
 	public static ArrayList<CompRoute> compRoutes = new ArrayList<>();
-    public static ArrayList<LampGroup> lampButtons = new ArrayList<>();
+    public static ArrayList<LampGroup> lampGroups = new ArrayList<>();
     public static final int MAX_LAMP_BUTTONS = 4;
 
 	public static String panelName = "";
@@ -158,15 +158,18 @@ public class LanbahnPanelApplication extends Application {
 		handler = new Handler() {    // TODO move message func. to ReceiveQueue
 			@Override
 			public void handleMessage(Message msg) {
-				int what = msg.what; 
+				int what = msg.what;
+
 				int chan = msg.arg1;
+				//if (DEBUG) Log.d(TAG,"rec. msg for chan= "+chan);
 				int data = msg.arg2;
 				timeOfLastReceivedMessage = System.currentTimeMillis();
                 if (what == TYPE_FEEDBACK_MSG) {
                     for (PanelElement pe : panelElements) {
                         if (pe.getAdr() == chan) {
-							//if (DEBUG) Log.d(TAG,"updating "+pe.toString());
+							//               if (DEBUG) Log.d(TAG,"updating "+pe.toString());
                             pe.updateData(data);
+
                             // it is possible that two elements have the same channel
                             // therefor all channels are iterated
                         }
@@ -177,6 +180,16 @@ public class LanbahnPanelApplication extends Application {
                             rt.updateData(data);
                         }
                     }
+
+					for (LampGroup l : lampGroups) {
+						if (l.getAdr() == chan) {
+							if (data == 0) {
+								l.switchOff();
+							} else {
+								l.switchOn();
+							}
+						}
+					}
 
                 }  else if (what == TYPE_ERROR_MSG) {
                     if (DEBUG) Log.d(TAG,"error msg "+chan+" "+data);

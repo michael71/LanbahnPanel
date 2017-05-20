@@ -1,5 +1,6 @@
 package de.blankedv.lanbahnpanel;
 
+import static de.blankedv.lanbahnpanel.LanbahnPanelApplication.INVALID_INT;
 import static de.blankedv.lanbahnpanel.LanbahnPanelApplication.bitmaps;
 import static de.blankedv.lanbahnpanel.LanbahnPanelApplication.sendQ;
 
@@ -8,20 +9,19 @@ import static de.blankedv.lanbahnpanel.LanbahnPanelApplication.sendQ;
  * lamps have a unique address and can be set (1 => switched on) or 
  * cleared (0 =>switched off)
  */
-public class LampGroup {
+public class LampGroup extends ControlButton {
 
-	public ControlButton btn;
-	public boolean isOn = false;
-	public int btnPos;   // position in the row of lamp buttons
+	private boolean isOn = false;
+    private int lbAddr = INVALID_INT;
+	private int lbValue = 0 ; //value for "ON"
 
-	int[] lampAddrs;
-
-	public LampGroup(int btnPos, int[] lamps) {
-		btn = new ControlButton(0.35f + (0.1f * btnPos), 0.5f,
+	public LampGroup(int pos, int a, int v) {
+		super(0.35f + (0.1f * pos), 0.5f,
 				bitmaps.get("lamp_on"), bitmaps.get("lamp_off"));
-		lampAddrs = lamps;
-		this.btnPos = btnPos;
-	}
+		lbAddr = a;
+		lbValue = v;
+		}
+
 
 	public void switchOn() {
 		if (isOn)
@@ -29,10 +29,7 @@ public class LampGroup {
 
 		isOn = true;
 		// set all lamps to on
-		for (int i : lampAddrs) {
-			sendQ.add("SET " + i + " 1");
-		}
-
+		sendQ.add("SET " + lbAddr + " " + lbValue);
 	}
 
 	public void switchOff() {
@@ -41,11 +38,17 @@ public class LampGroup {
 
 		isOn = false;
 		// set all lamps to on
-		for (int i : lampAddrs) {
-			sendQ.add("SET " + i + " 0");
-		}
+		sendQ.add("SET " + lbAddr + " " + 0);
 
 	}
+
+	public boolean isOn() {
+        return isOn;
+    }
+
+	public int getAdr() {
+        return lbAddr;
+    }
 
 	public void toggle() {
 		if (isOn) {

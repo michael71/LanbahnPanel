@@ -168,7 +168,7 @@ public class ParseConfig {
 			Route.calcOffendingRoutes(); // calculate offending routes
 			compRoutes = parseCompRoutes(doc); // can be done only after routes
 												// have been read
-			lampButtons = parseLampGroups(doc);
+			lampGroups = parseLampGroups(doc);
 		} catch (SAXException e) {
 			Log.e(TAG, "SAX Exception - " + e.getMessage());
 			return "SAX Exception - " + e.getMessage();
@@ -660,7 +660,6 @@ public class ParseConfig {
 		NodeList items;
 		Element root = doc.getDocumentElement();
 
-		// look for comp routes - this is the lowest layer
 		items = root.getElementsByTagName("lampgroup");
 		if (DEBUG)
 			Log.d(TAG, "config: " + items.getLength() + " lampgroups");
@@ -680,18 +679,20 @@ public class ParseConfig {
 	private static LampGroup parseLampGroup(Node item) {
 		//
 		int btnPos = INVALID_INT;
-		String addresses = "";
-		int[] addrs;
+		int addr = INVALID_INT;
+		int valOn = 1;
 
 		NamedNodeMap attributes = item.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node theAttribute = attributes.item(i);
 			// if (DEBUG_PARSING) Log.d(TAG,theAttribute.getNodeName() + "=" +
 			// theAttribute.getNodeValue());
-			if (theAttribute.getNodeName().equals("btn")) {
+			if (theAttribute.getNodeName().equals("pos")) {
 				btnPos = getValue(theAttribute.getNodeValue());
-			} else if (theAttribute.getNodeName().equals("lamps")) {
-				addresses = theAttribute.getNodeValue();
+			} else if (theAttribute.getNodeName().equals("adr")) {
+				addr = getValue(theAttribute.getNodeValue());
+			} else if (theAttribute.getNodeName().equals("val")) {
+				valOn = getValue(theAttribute.getNodeValue());
 			} else {
 				if (DEBUG_PARSING)
 					Log.d(TAG,
@@ -705,26 +706,12 @@ public class ParseConfig {
 			// missing info, log error
 			Log.e(TAG, "missing btn number info in lampgroup definition");
 			return null;
-		} else if (addresses.length() == 0) {
+		} else if (addr == INVALID_INT) {
 			Log.e(TAG, "missing lamps info in lampgroup definition");
 			return null;
 		} else {
-			// input is o.k., now parse addresses
-			String a[] = addresses.split(",");
-			final int len = a.length;
-			addrs = new int[len];
-			try {
-				for (int i = 0; i < a.length; i++) {
-					addrs[i] = Integer.parseInt(a[i]);
-				}
-			} catch (NumberFormatException e) {
-				Log.e(TAG,
-						"NumberFormatException when parsing lamproup definition");
-				return null;
-			}
-
-			// LampGroup(int pos, int[] lamps) {
-			return new LampGroup(btnPos, addrs);
+			// input is o.k., now create lamp group
+			return new LampGroup(btnPos, addr, valOn);  // valueOff is always =0
 		}
 
 	}

@@ -16,7 +16,7 @@ public final class ControlArea {
 
 	private static Paint editPaint, noWifiPaint, connPaint;
 
-	private ControlButton stopBtn, commBtn,  clearRoutesBtn; //powerBtn, lampBtn, adrBtn, incrSpeedBtn, decrSpeedBtn, commBtn, powerBtn, functionBtn;
+	private ControlButton commBtn,  clearRoutesBtn; //powerBtn,  adrBtn, incrSpeedBtn, decrSpeedBtn, commBtn, powerBtn, functionBtn;
 
     
     private static float ySpeed = 50f, xSpeed=0;   // needed for position of texts in control area
@@ -76,8 +76,8 @@ public final class ControlArea {
 		   clearRoutesBtn.doDrawBlink(canvas,clearRouteButtonActive); 
 		}
 		
-		for (LampGroup l : lampButtons)
-		   l.btn.doDraw(canvas,l.isOn);
+		for (LampGroup l : lampGroups)
+		   l.doDraw(canvas,l.isOn());
 
 		
 		canvas.drawBitmap(bitmaps.get("lonstokewest"),(int)(canvas.getWidth()*0.72f), ySpeed*0.22f,  null);
@@ -118,8 +118,8 @@ public final class ControlArea {
 			}
 		} 
 		else {
-			for (LampGroup l : lampButtons) {
-				if (l.btn.isTouched(x,y))	l.toggle();
+			for (LampGroup l : lampGroups) {
+				if (l.isTouched(x,y))	l.toggle();
 			}
 		}
 			
@@ -131,7 +131,9 @@ public final class ControlArea {
 		commBtn.recalcXY();
 		clearRoutesBtn.recalcXY();
 		
-		for (LampGroup l : lampButtons) l.btn.recalcXY();
+		for (LampGroup l : lampGroups) {
+			l.recalcXY();
+		}
 
 	}
 

@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -38,7 +39,6 @@ public class LanbahnPanelActivity extends Activity {
 
 	public static PopupWindow popUp;
 	public static LinearLayout layout;
-	// public static View selAddressView;
 
 	TextView tv;
 	LayoutParams params;
@@ -330,14 +330,31 @@ public class LanbahnPanelActivity extends Activity {
 
 		client = new SXnetClientThread(this, ip, SXNET_PORT);
 		client.start();
-		requestSXdata();
+
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (!connectionIsAlive()) {
+            Toast.makeText(getApplicationContext()," NO CONNECTION TO " + ip + " !", Toast.LENGTH_LONG).show();
+        }
+		requestAllSXdata();
+
         Log.d(TAG, "SSID="+getWifiName());
         return "SSID="+getWifiName()+ "     "+ip;
 	}
 
-	public static void requestSXdata() {
-		//for (int a : adrList)
-		//	sendQ.add("R " + a);  // request dara for these addresses from SX central station
+	// request state of all active panel elements
+	private static void requestAllSXdata() {
+		for (PanelElement pe : panelElements) {
+			if (pe instanceof ActivePanelElement) {
+                     client.readChannel(pe.getAdr());
+ 			}
+		}
+		for (LampGroup l : lampGroups) {
+			client.readChannel(l.getAdr());
+		}
 	}
 
 	public void shutdownSXClient() {

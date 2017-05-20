@@ -26,31 +26,6 @@ public class ControlButton {
 		}
 
 	}
-    
-    public ControlButton(float x2, float y2, Bitmap on) {
- 		this.xrel = x2;
- 		this.yrel = y2;
- 		bmON = on;
-  		w=bmON.getWidth()/2;
- 		h=bmON.getHeight()/2;
- 		if (controlAreaRect != null) {
- 		    recalcXY();
- 		}
-
- 	}
-    
-    public ControlButton(float x2, float y2) {
-  		this.xrel = x2;
-  		this.yrel = y2;
-  		bmON = bitmaps.get("button100");
-  		bmOFF = null;
-  		w=bmON.getWidth()/2;
- 		h=bmON.getHeight()/2;
-  		if (controlAreaRect != null) {
-  		    recalcXY();
-  		}
-
-  	}
 
 
 	public boolean isTouched(float xt, float yt) {
