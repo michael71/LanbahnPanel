@@ -65,12 +65,10 @@ public final class ControlArea {
 	
 	public void draw(Canvas canvas) {
 
-		if (LanbahnPanelApplication.connectionIsAlive()) {
-			canvas.drawText(conn_state_string, (int)(canvas.getWidth()*0.01f), ySpeed*1.6f, connPaint);
-		} else {
-			canvas.drawText("?", (int)(canvas.getWidth()*0.01f), ySpeed*1.6f, connPaint);
-		}
 		commBtn.doDraw(canvas,LanbahnPanelApplication.connectionIsAlive());
+		canvas.drawText(conn_state_string, (int)(canvas.getWidth()*0.01f), ySpeed*1.6f, connPaint);
+
+
 		//powerBtn.doDraw(canvas,LanbahnPanelApplication.isPowerOn());
 		if (enableRoutes) {
 		   clearRoutesBtn.doDrawBlink(canvas,clearRouteButtonActive); 

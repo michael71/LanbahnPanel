@@ -53,7 +53,7 @@ public class SensorElement extends ActivePanelElement {
 			int h, w;
 			Bitmap bm;
 
-			StringBuilder bmName = new StringBuilder("s");
+			StringBuilder bmName = new StringBuilder("sensor");
 
 			if ( (state == STATE_FREE)  || (state == STATE_UNKNOWN)){
 				bmName.append("_off");

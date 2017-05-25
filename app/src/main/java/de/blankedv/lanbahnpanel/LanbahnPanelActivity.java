@@ -235,14 +235,22 @@ public class LanbahnPanelActivity extends Activity {
 			}
 		}
 		sendQ.clear();
-        conn_state_string = startSXNetCommunication();
+
+        Log.d(TAG,"first start of  SXNetComm");
+        startSXNetCommunication();
 
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                    if (restartCommFlag) {
-                    restartCommFlag = false;
-                    conn_state_string = startSXNetCommunication();
+                       restartCommFlag = false;
+                       runOnUiThread(new Runnable() {
+                           public void run()
+                           {   Log.d(TAG,"restarting SXNetComm");
+                               startSXNetCommunication();
+                           }
+                       });
+
                 }
             }
         }, 100, 100);
@@ -301,7 +309,11 @@ public class LanbahnPanelActivity extends Activity {
 
 	}
 
-	public String startSXNetCommunication() {
+    /** remark: always running from UI Thread
+     *
+     * @return
+     */
+	public void startSXNetCommunication() {
 		Log.d(TAG, "LahnbahnPanelActivity - startSXNetCommunication.");
 		if (client != null) {
 			client.shutdown();
@@ -328,6 +340,7 @@ public class LanbahnPanelActivity extends Activity {
 			editor.commit();
 		} */
 
+
 		client = new SXnetClientThread(this, ip, SXNET_PORT);
 		client.start();
 
@@ -336,13 +349,18 @@ public class LanbahnPanelActivity extends Activity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if (!connectionIsAlive()) {
-            Toast.makeText(getApplicationContext()," NO CONNECTION TO " + ip + " !", Toast.LENGTH_LONG).show();
-        }
-		requestAllSXdata();
 
-        Log.d(TAG, "SSID="+getWifiName());
-        return "SSID="+getWifiName()+ "     "+ip;
+
+        if (connectionIsAlive()) {
+            requestAllSXdata();
+            Log.d(TAG, "SSID=" + getWifiName());
+            conn_state_string = "SSID=" + getWifiName() + "     " + ip;
+        } else {
+			String msg = " NO CONNECTION TO " + ip + " ! Check WiFi/SSID and IP";
+			Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+            conn_state_string = "NOT CONNECTED";
+
+        }
 	}
 
 	// request state of all active panel elements

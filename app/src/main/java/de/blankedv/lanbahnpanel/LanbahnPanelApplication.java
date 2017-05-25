@@ -82,7 +82,7 @@ public class LanbahnPanelApplication extends Application {
     public static final int TYPE_FEEDBACK_MSG = 2;
     public static final int TYPE_ERROR_MSG = 3;
 
-	public static String connString = "";
+	public static volatile String connString = "";
 
 	public static final String LOCAL_DIRECTORY = "lanbahnpanel/";
     // with trailing slash !!
@@ -246,6 +246,7 @@ public class LanbahnPanelApplication extends Application {
 
 	public static boolean connectionIsAlive() {
         if (client == null) {
+			conn_state_string = "NOT CONNECTED";
             return false;
         } else {
             return client.isConnected();
