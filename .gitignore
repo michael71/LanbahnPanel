@@ -13,6 +13,8 @@ local.properties
 
 # Signing files
 .signing/
+gradlew
+gradlew.bat
 
 # User-specific configurations
 .idea/libraries/
