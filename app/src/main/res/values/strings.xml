@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">hello</string>
+    <string name="app_name">Lanbahn Panel</string>
+    <string name="sxnet_server_settings">Lanbahn Settings</string>
+    <string name="ip_address_of_server">Multicast IP Address</string>
+    <string name="port">Multicast Port</string>
+    <string name="panel">Panel</string>
+    <string name="settings">Settings</string>
+    <string name="about">Info</string>
+    <string name="reconnect">Re-Connect</string>
+    <string name="cancel">Cancel</string>
+    <string name="disp_settings">Display Settings</string>
+    <string name="loco_address">Loco Address (1..103) </string>
+    <string name="draw_addresses">Display Turnout/Signal Addresses</string>
+    <string name="enableZoom">Enable Panel Zoom</string>
+    <string name="enableEdit">Enable Edit Mode</string>
+    <string name="enableDemo" translatable="false">Enable Demo Mode</string>
+    <string name="flipUpsideDown">view panel element from the other side</string>
+    <string name="saveStates">Save States of Device on Appl. Pause/Stop</string>
+    <string name="enableAllAdresses">Enable ALL valid lanbahn addresses</string>
+    <string name="enableRoutes">Enable Routes (=autom. Signal States)</string>
+    <string name="usStyle">US Style</string>
+    <string name="quit">Exit Program.</string>
+    <string name="edit">Edit On/Off</string>
+    <string name="exit_confirm">Do you really want to stop the program?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="adresse">Adresse</string>
+    <string name="sel_loco_prompt">Loco Auswahl</string>
+    <string name="sel_style">Select Display Style</string>
+    <string name="sel_style_default">US</string>
+    <string name="aboutString">"LanbahnPanel is free software - you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3. LanbahnPanel is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  For details about the GNU General Public License see http://www.gnu.org/licenses "</string>
+    <string name="copyrightString">Copyright 2014-2017 - Michael Blank - mblank@bawue.de</string>
+    <string name="usageString">to be used with SX3PC program, see SELECTRIX </string>
+
+    <string name="moreInfoString">more info on http://www.oscale.net/android</string>
+    <string name="lanbahnpanelTitleString">LanbahnPanel</string>
+    <string name="versionUnknown">version x.x</string>
+    <string name="unknown">-?-</string>
+    <string name="wifi_disconnected">No Wifi !</string>
+    <string name="draw_routebtn_addresses">Display RouteBtn/Sensor Addresses</string>
+    <string name="general_settings" translatable="false">Settings</string>
+    <string name="files_settings" translatable="false">Config Files</string>
+    <string name="port_sh" translatable="false">Server Port</string>
+    <string name="default_server_ip" translatable="false">192.168.2.50</string>
+    <string name="questionmark">-?-</string>
+</resources>

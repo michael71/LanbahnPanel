@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="listEmpty">
+        <item>keine passenden Files!</item>
+    </string-array>
+   <string-array name="styles">  
+        <item>US (dark background)</item>  
+        <item>DE (white background)</item>  
+        <item>UK (green background)</item>  
+   </string-array>
+    <string-array name="style_values">  
+        <item>US</item>  
+        <item>DE</item>  
+        <item>UK</item>  
+   </string-array>
+</resources>

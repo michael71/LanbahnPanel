@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress XmlHighlighting -->
+<lint>
+    <issue id="ForCanBeForeach">
+        <ignore path="java" />
+    </issue>
+    <ignore regexp="Constructor*is never used " />
+
+</lint>
