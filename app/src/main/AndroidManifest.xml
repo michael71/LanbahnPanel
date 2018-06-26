@@ -1,36 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	android:versionCode="16" android:versionName="2.1.2 - 25 May 2017" package="de.blankedv.lanbahnpanel" android:exported="true">
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-	<uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    package="de.blankedv.lanbahnpanel"
+    android:exported="true"
+    android:versionCode="16"
+    android:versionName="2.1.2 - 25 May 2017">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	<application android:icon="@drawable/andropanel" android:allowBackup="true"
-		android:label="@string/app_name"  android:noHistory="true"  android:name="de.blankedv.lanbahnpanel.LanbahnPanelApplication">
-		<activity android:name="de.blankedv.lanbahnpanel.LanbahnPanelActivity"
-			android:label="@string/app_name" android:screenOrientation="landscape">
-			<intent-filter>
-			<action android:name="android.intent.action.MAIN" />
-			<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
-			<intent-filter>
-				<data android:scheme="http" />
-				<data android:scheme="https" />
-				<data android:host="www.lanbahn.net" />
-			</intent-filter>
-		</activity>
-        <activity android:name="de.blankedv.lanbahnpanel.Preferences" android:label="@string/app_name">
+
+    <application
+        android:name=".LanbahnPanelApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/andropanel"
+        android:label="@string/app_name"
+        android:noHistory="true">
+        <activity
+            android:name=".LanbahnPanelActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="www.lanbahn.net" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Preferences"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.preferences" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-		<activity android:name="de.blankedv.lanbahnpanel.AboutActivity" android:label="@string/app_name">
-			<intent-filter>
-				<action android:name="android.intent.action.about" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
-		</activity>
-	</application>
-</manifest> 
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.about" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".LoconetService"
+            android:enabled="true"
+            android:exported="true">
+
+        </service>
+    </application>
+
+</manifest>

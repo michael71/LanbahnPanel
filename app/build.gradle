@@ -6,15 +6,15 @@ android {
             storeFile file('/home/mblank/android-export/andropanel-keystore')
         }
     }
-    compileSdkVersion 20
+    compileSdkVersion 25
     buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "de.blankedv.lanbahnpanel"
         minSdkVersion 13
-        targetSdkVersion 20
+        targetSdkVersion 25
         compileOptions {
-            sourceCompatibility JavaVersion.VERSION_1_5
-            targetCompatibility JavaVersion.VERSION_1_5
+            sourceCompatibility JavaVersion.VERSION_1_7
+            targetCompatibility JavaVersion.VERSION_1_7
         }
     }
     buildTypes {
