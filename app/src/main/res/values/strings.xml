@@ -33,7 +33,7 @@
     <string name="sel_style_default">US</string>
     <string name="aboutString">"LanbahnPanel is free software - you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3. LanbahnPanel is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  For details about the GNU General Public License see http://www.gnu.org/licenses "</string>
     <string name="copyrightString">Copyright 2014-2017 - Michael Blank - mblank@bawue.de</string>
-    <string name="usageString">to be used with SX3PC program, see SELECTRIX </string>
+    <string name="usageString">to be used with SX3PC program (SELECTRIX) of LbServer (FREMO, LocoNet)</string>
 
     <string name="moreInfoString">more info on http://www.oscale.net/android</string>
     <string name="lanbahnpanelTitleString">LanbahnPanel</string>
@@ -46,7 +46,13 @@
     <string name="port_sh" translatable="false">Server Port</string>
     <string name="default_server_ip" translatable="false">192.168.2.50</string>
     <string name="questionmark">-?-</string>
-<string name="notification_title">LanbahnPanel</string>
-    <string name="notification_text">LanbahnPanel Network task running</string>
+<string name="notification_title">LanbahnPanel running</string>
+    <string name="notification_text">re-open LanbahnPanel</string>
+    <string name="default_notification_channel_id" translatable="false">lanbahn_default_channel</string>
+    <!--
+        This is the name that users will see when interacting with this channel.
+        It should describe the category of notifications that will be sent through this channel
+     -->
+    <string name="default_notification_channel_name" translatable="true">Lanbahn</string>
     <string name="check_service">Check Service</string>
 </resources>

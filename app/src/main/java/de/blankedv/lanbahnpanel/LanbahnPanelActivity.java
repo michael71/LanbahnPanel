@@ -52,6 +52,7 @@ public class LanbahnPanelActivity extends Activity {
     Button but;
     boolean click = true;
     private final String KEY_STATES = "states";
+    private boolean shuttingDown = false;
 
     /**
      * Called when the activity is first created.
@@ -89,6 +90,7 @@ public class LanbahnPanelActivity extends Activity {
                         getApplicationContext().getString(R.string.yes),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+                                shuttingDown = true;
                                 shutdownLanbahnClient();
                                 try {
                                     Thread.sleep(100);
@@ -123,9 +125,9 @@ public class LanbahnPanelActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        // Bind to LocalService
-        Intent intent = new Intent(this, LoconetService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        // TODO Bind to LoconetService
+        //Intent intent = new Intent(this, LoconetService.class);
+        // bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -133,8 +135,8 @@ public class LanbahnPanelActivity extends Activity {
         super.onStop();
         if (DEBUG)
             Log.d(TAG, "onStop - LanbahnPanelActivity");
-        unbindService(mConnection);
-        mBound = false;
+       // TODO  unbindService(mConnection);
+       // mBound = false;
     }
 
     @Override
@@ -152,16 +154,19 @@ public class LanbahnPanelActivity extends Activity {
         if (saveStates)
             saveStates();
         sendQ.clear();
-
-        ((LanbahnPanelApplication)getApplication()).addNotification(this.getIntent());
+        if (!shuttingDown) {
+            ((LanbahnPanelApplication) getApplication()).addNotification(this.getIntent());
+        }
 
     }
 
     public void shutdownLanbahnClient() {
-        Log.d(TAG, "LanbahnPanelActivity - shutting down Lanbahn Client.");
-        if (client != null)
+        Log.d(TAG, "LanbahnPanelActivity - shutting down Client.");
+        ((LanbahnPanelApplication) getApplication()).removeNotification();
+        if (client != null) {
             client.shutdown();
-        ((LanbahnPanelApplication)getApplication()).removeNotification();
+
+        }
     }
 
     @Override

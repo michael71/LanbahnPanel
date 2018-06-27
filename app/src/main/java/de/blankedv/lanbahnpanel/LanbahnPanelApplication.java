@@ -6,6 +6,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 import android.app.Application;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -101,7 +103,7 @@ public class LanbahnPanelApplication extends Application {
 	// if true, then a new config file is written at the end of the Activity
 
 	public static final int INVALID_INT = -1;
-	public static final int ED_NOTIFICATION_ID = 201;
+	public static final int LBP_NOTIFICATION_ID = 201;
 
 	public static final Hashtable<String, Bitmap> bitmaps = new Hashtable<>();
 
@@ -312,31 +314,43 @@ public class LanbahnPanelApplication extends Application {
 	}
 
     /**
-     * Display OnGoing Notification that indicates EngineDriver is Running.
-     * Should only be called when ED is going into the background.
-     * Currently call this from each activity onPause, passing the current intent
+     * Display OnGoing Notification that indicates Network Thread is still Running.
+     * Currently called from LanbahnPanelActivity onPause, passing the current intent
      * to return to when reopening.
      */
     void addNotification(Intent notificationIntent) {
+        String channelId = getString(R.string.default_notification_channel_id);
         NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.icon)
+                new NotificationCompat.Builder(this,channelId)
+                        .setSmallIcon(R.drawable.lb_icon)
                         .setContentTitle(this.getString(R.string.notification_title))
                         .setContentText(this.getString(R.string.notification_text))
-                        .setOngoing(true);
+                        .setOngoing(true)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-        PendingIntent contentIntent = PendingIntent.getActivity(this, ED_NOTIFICATION_ID, notificationIntent,
+        PendingIntent contentIntent = PendingIntent.getActivity(this, LBP_NOTIFICATION_ID, notificationIntent,
                 PendingIntent.FLAG_CANCEL_CURRENT);
         builder.setContentIntent(contentIntent);
 
         // Add as notification
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(ED_NOTIFICATION_ID, builder.build());
+
+		// Since android Oreo notification channel is needed.
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			NotificationChannel channel = new NotificationChannel(channelId,
+					"Lanbahn Channel",
+					NotificationManager.IMPORTANCE_DEFAULT);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
+        }
+
+        manager.notify(LBP_NOTIFICATION_ID, builder.build());
     }
 
     // Remove notification
     void removeNotification() {
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.cancel(ED_NOTIFICATION_ID);
+        manager.cancel(LBP_NOTIFICATION_ID);
     }
 }
