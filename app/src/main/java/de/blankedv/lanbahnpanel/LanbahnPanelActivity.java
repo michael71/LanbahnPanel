@@ -152,12 +152,16 @@ public class LanbahnPanelActivity extends Activity {
         if (saveStates)
             saveStates();
         sendQ.clear();
+
+        ((LanbahnPanelApplication)getApplication()).addNotification(this.getIntent());
+
     }
 
     public void shutdownLanbahnClient() {
         Log.d(TAG, "LanbahnPanelActivity - shutting down Lanbahn Client.");
         if (client != null)
             client.shutdown();
+        ((LanbahnPanelApplication)getApplication()).removeNotification();
     }
 
     @Override
@@ -184,6 +188,7 @@ public class LanbahnPanelActivity extends Activity {
 
         refreshAllData();
         LanbahnPanelApplication.updatePanelData();
+        ((LanbahnPanelApplication) getApplication()).removeNotification();
 
     }
 
@@ -440,4 +445,7 @@ public class LanbahnPanelActivity extends Activity {
             mBound = false;
         }
     };
+
+
+
 }

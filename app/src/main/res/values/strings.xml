@@ -46,5 +46,7 @@
     <string name="port_sh" translatable="false">Server Port</string>
     <string name="default_server_ip" translatable="false">192.168.2.50</string>
     <string name="questionmark">-?-</string>
+<string name="notification_title">LanbahnPanel</string>
+    <string name="notification_text">LanbahnPanel Network task running</string>
     <string name="check_service">Check Service</string>
 </resources>

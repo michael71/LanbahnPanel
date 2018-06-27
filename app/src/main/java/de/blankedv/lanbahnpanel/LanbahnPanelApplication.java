@@ -6,7 +6,10 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 import android.app.Application;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -14,6 +17,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import static de.blankedv.lanbahnpanel.ActivePanelElement.STATE_UNKNOWN;
 
@@ -96,7 +100,8 @@ public class LanbahnPanelApplication extends Application {
 													// has changed
 	// if true, then a new config file is written at the end of the Activity
 
-	public static final int INVALID_INT = -9999;
+	public static final int INVALID_INT = -1;
+	public static final int ED_NOTIFICATION_ID = 201;
 
 	public static final Hashtable<String, Bitmap> bitmaps = new Hashtable<>();
 
@@ -306,4 +311,32 @@ public class LanbahnPanelApplication extends Application {
 
 	}
 
+    /**
+     * Display OnGoing Notification that indicates EngineDriver is Running.
+     * Should only be called when ED is going into the background.
+     * Currently call this from each activity onPause, passing the current intent
+     * to return to when reopening.
+     */
+    void addNotification(Intent notificationIntent) {
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.icon)
+                        .setContentTitle(this.getString(R.string.notification_title))
+                        .setContentText(this.getString(R.string.notification_text))
+                        .setOngoing(true);
+
+        PendingIntent contentIntent = PendingIntent.getActivity(this, ED_NOTIFICATION_ID, notificationIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT);
+        builder.setContentIntent(contentIntent);
+
+        // Add as notification
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(ED_NOTIFICATION_ID, builder.build());
+    }
+
+    // Remove notification
+    void removeNotification() {
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.cancel(ED_NOTIFICATION_ID);
+    }
 }
