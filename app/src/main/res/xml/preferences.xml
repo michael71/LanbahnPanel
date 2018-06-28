@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/disp_settings" >
+    <PreferenceCategory android:title="@string/disp_settings">
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="drawAddressesPref"
             android:title="@string/draw_addresses" />
-         <CheckBoxPreference
+        <CheckBoxPreference
             android:defaultValue="false"
             android:key="drawAddressesPref2"
             android:title="@string/draw_routebtn_addresses" />
@@ -18,36 +18,36 @@
             android:defaultValue="false"
             android:key="flipPref"
             android:title="@string/flipUpsideDown" />
-<!--        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="enableEditPref"
-            android:title="@string/enableEdit" /> -->
+        <!--        <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="enableEditPref"
+                    android:title="@string/enableEdit" /> -->
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="saveStatesPref"
             android:title="@string/saveStates" />
-         <CheckBoxPreference
+        <CheckBoxPreference
             android:defaultValue="false"
             android:key="routesPref"
             android:title="@string/enableRoutes" />
-<!--         <CheckBoxPreference
-                  android:defaultValue="false"
-                   android:key="enableAllAddressesPref"
-                   android:title="@string/enableAllAdresses" /> -->
-            <ListPreference
-        android:key="selectStylePref"
-        android:title="@string/sel_style"
-        android:entries="@array/styles"
-        android:entryValues="@array/style_values"
-        android:summary="select a Style for dark or white background etc."
-        android:defaultValue="@string/sel_style_default" />
-            	
+        <!--         <CheckBoxPreference
+                          android:defaultValue="false"
+                           android:key="enableAllAddressesPref"
+                           android:title="@string/enableAllAdresses" /> -->
+        <ListPreference
+            android:defaultValue="@string/sel_style_default"
+            android:entries="@array/styles"
+            android:entryValues="@array/style_values"
+            android:key="selectStylePref"
+            android:summary="select a Style for dark or white background etc."
+            android:title="@string/sel_style" />
+
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/sxnet_server_settings" >
-    <!--    <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="autoIPPref"
-            android:title="Automatically configure IP" /> -->
+    <PreferenceCategory android:title="@string/sxnet_server_settings">
+        <!--    <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="autoIPPref"
+                android:title="Automatically configure IP" /> -->
         <EditTextPreference
             android:name="SXnet server address"
             android:defaultValue="@string/default_server_ip"
@@ -56,12 +56,12 @@
             android:title="SXnet server address" />
 
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/files_settings" >
+    <PreferenceCategory android:title="@string/files_settings">
         <ListPreference
             android:entries="@array/listEmpty"
             android:entryValues="@array/listEmpty"
             android:key="configFilenamePref"
             android:summary="Bitte auswählen"
-            android:title="Panel Config File" />
-           </PreferenceCategory>
+            android:title="@string/panel_cfg_files" />
+    </PreferenceCategory>
 </PreferenceScreen>

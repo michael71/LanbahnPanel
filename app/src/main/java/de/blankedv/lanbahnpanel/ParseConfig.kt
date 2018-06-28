@@ -315,7 +315,7 @@ object ParseConfig {
             } else if (theAttribute.nodeName == "yt") {
                 pe.yt = getPositionNode(theAttribute)
             } else if (theAttribute.nodeName == "adr") {
-                pe.setAdr(Integer.parseInt(theAttribute.nodeValue))
+                pe.setAddress(Integer.parseInt(theAttribute.nodeValue))
             } else {
                 if (DEBUG_PARSING)
                     Log.d(TAG,
@@ -351,7 +351,7 @@ object ParseConfig {
             } else if (theAttribute.nodeName == "y2") {
                 pe.y2 = getPositionNode(theAttribute)
             } else if (theAttribute.nodeName == "adr") {
-                pe.setAdr(Integer.parseInt(theAttribute.nodeValue))
+                pe.setAddress(Integer.parseInt(theAttribute.nodeValue))
             } else {
                 if (DEBUG_PARSING)
                     Log.d(TAG,
@@ -381,7 +381,7 @@ object ParseConfig {
             } else if (theAttribute.nodeName == "route") {
                 pe.route = theAttribute.nodeValue
             } else if (theAttribute.nodeName == "adr") {
-                pe.setAdr(Integer.parseInt(theAttribute.nodeValue))
+                pe.adr = Integer.parseInt(theAttribute.nodeValue)
             } else {
                 if (DEBUG_PARSING)
                     Log.d(TAG,
@@ -432,7 +432,7 @@ object ParseConfig {
             } else if (theAttribute.nodeName == "y2") {
                 pe.y2 = getPositionNode(theAttribute)
             } else if (theAttribute.nodeName == "adr") {
-                pe.setAdr(Integer.parseInt(theAttribute.nodeValue))
+                pe.setAddress(Integer.parseInt(theAttribute.nodeValue))
             } else {
                 if (DEBUG_PARSING)
                     Log.d(TAG,

@@ -12,7 +12,7 @@ import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
  *
  * TODO review kotlin code
  */
-object LinePaints {
+object LPaints {
     // define Paints
     lateinit var linePaint: Paint
     lateinit var linePaint2: Paint

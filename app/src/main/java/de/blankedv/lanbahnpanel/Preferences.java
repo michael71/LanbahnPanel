@@ -16,6 +16,7 @@ import android.util.Log;
 import java.io.File;
 import java.util.ArrayList;
 
+import static de.blankedv.lanbahnpanel.Constants.*;
 import static de.blankedv.lanbahnpanel.LanbahnPanelApplication.*;
 
 public class Preferences extends PreferenceActivity implements OnSharedPreferenceChangeListener {

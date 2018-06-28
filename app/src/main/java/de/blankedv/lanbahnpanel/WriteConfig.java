@@ -130,19 +130,19 @@ public class WriteConfig {
 				serializer.startTag("", pe.getType());
 				if (DEBUG)
 					Log.d(TAG, " type=" + pe.getType());
-				if (pe.name.length() > 0) {
-					serializer.attribute("", "name", "" + pe.name);
+				if (pe.getName().length() > 0) {
+					serializer.attribute("", "name", "" + pe.getName());
 				}
 
-				serializer.attribute("", "x", "" + pe.x);
-				serializer.attribute("", "y", "" + pe.y);
-				if (pe.x2 != INVALID_INT) { // save only valid attributes
-					serializer.attribute("", "x2", "" + pe.x2);
-					serializer.attribute("", "y2", "" + pe.y2);
+				serializer.attribute("", "x", "" + pe.getX());
+				serializer.attribute("", "y", "" + pe.getY());
+				if (pe.getX2() != INVALID_INT) { // save only valid attributes
+					serializer.attribute("", "x2", "" + pe.getX2());
+					serializer.attribute("", "y2", "" + pe.getY2());
 				}
-				if (pe.xt != INVALID_INT) {
-					serializer.attribute("", "xt", "" + pe.xt);
-					serializer.attribute("", "yt", "" + pe.yt);
+				if (pe.getXt() != INVALID_INT) {
+					serializer.attribute("", "xt", "" + pe.getXt());
+					serializer.attribute("", "yt", "" + pe.getYt());
 				}
 				if (pe.getAdr() != INVALID_INT) {
 					serializer.attribute("", "adr", "" + pe.getAdr());
@@ -158,12 +158,12 @@ public class WriteConfig {
 					Log.d(TAG, "writing routes " + rt.toString());
 				serializer.startTag("", "route");
 
-				serializer.attribute("", "id", "" + rt.id);
-				serializer.attribute("", "btn1", "" + rt.btn1);
-				serializer.attribute("", "btn2", "" + rt.btn2);
-				serializer.attribute("", "route", "" + rt.routeString);
-				serializer.attribute("", "sensors", "" + rt.sensorsString);
-				serializer.attribute("", "offending", "" + rt.offendingString);
+				serializer.attribute("", "id", "" + rt.getId());
+				serializer.attribute("", "btn1", "" + rt.getBtn1());
+				serializer.attribute("", "btn2", "" + rt.getBtn2());
+				serializer.attribute("", "route", "" + rt.getRouteString());
+				serializer.attribute("", "sensors", "" + rt.getSensorsString());
+				serializer.attribute("", "offending", "" + rt.getOffendingString());
 
 				serializer.endTag("", "route");
 				serializer.text("\n");

@@ -22,15 +22,29 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import static de.blankedv.lanbahnpanel.ActivePanelElement.STATE_UNKNOWN;
+import static de.blankedv.lanbahnpanel.Constants.KEY_DRAW_ADR;
+import static de.blankedv.lanbahnpanel.Constants.KEY_DRAW_ADR2;
+import static de.blankedv.lanbahnpanel.Constants.KEY_ENABLE_ALL_ADDRESSES;
+import static de.blankedv.lanbahnpanel.Constants.KEY_ENABLE_EDIT;
+import static de.blankedv.lanbahnpanel.Constants.KEY_ENABLE_ZOOM;
+import static de.blankedv.lanbahnpanel.Constants.KEY_FLIP;
+import static de.blankedv.lanbahnpanel.Constants.KEY_ROUTES;
+import static de.blankedv.lanbahnpanel.Constants.KEY_SAVE_STATES;
+import static de.blankedv.lanbahnpanel.Constants.KEY_SCALE;
+import static de.blankedv.lanbahnpanel.Constants.KEY_STYLE_PREF;
+import static de.blankedv.lanbahnpanel.Constants.KEY_XOFF;
+import static de.blankedv.lanbahnpanel.Constants.KEY_YOFF;
+import static de.blankedv.lanbahnpanel.Constants.STATE_UNKNOWN;
+
+import de.blankedv.lanbahnpanel.Constants.*;
 
 /** Lanbahn Panel
- * Rev 3.0 - 15 May 2017 - now using sxnet protocol
+ * Rev 3.1 - 28 Jun 2018 - now using sxnet protocol
  */
 
-    // TODO : implement selection of config file
-    // TODO: review and simplify
+    // TODO: kotlin review and simplify
     // TODO: handle absence ot connection to SX command station
+	// TODO move ControlAreaButtons to actionBar and remove all control area code
 
 public class LanbahnPanelApplication extends Application {
 
@@ -39,7 +53,7 @@ public class LanbahnPanelApplication extends Application {
 	public static boolean noWifiFlag = false;
 
 	public static final int SXNET_PORT = 4104;
-    // not USED !! public static final int SXMAX = 256; // maximum sx channel number
+	public static final int SXMAX = 112; // maximum sx channel number - only SX0 !
     public static final int LBMAX = 9999; // maximum lanbahn channel number
 
 	public static int width, height;
@@ -59,22 +73,6 @@ public class LanbahnPanelApplication extends Application {
 	public static boolean flipUpsideDown = false;  //display all panel element from "other side"
 	public static boolean saveStates;
 
-	// preferences
-	// public static final String KEY_LOCO_ADR = "locoAdrPref";
-	public static final String KEY_DRAW_ADR = "drawAddressesPref";
-	public static final String KEY_DRAW_ADR2 = "drawAddressesPref2";
-	public static final String KEY_STYLE_PREF = "selectStylePref";
-	public static final String KEY_ENABLE_ZOOM = "enableZoomPref";
-	public static final String KEY_ENABLE_EDIT = "enableEditPref";
-	public static final String KEY_SAVE_STATES = "saveStatesPref";
-	public static final String KEY_ROUTES = "routesPref";
-	public static final String KEY_FLIP = "flipPref";
-	public static final String KEY_ENABLE_ALL_ADDRESSES = "enableAllAddressesPref";
-	public static final String KEY_XOFF = "xoffPref";
-	public static final String KEY_YOFF = "yoffPref";
-	public static final String KEY_SCALE = "scalePref";
-	public static final String KEY_IP = "ipPref";
-    public static final String KEY_CONFIG_FILE="configFilenamePref";
 	public static Handler handler; //
 
 	// connection state
@@ -104,9 +102,8 @@ public class LanbahnPanelApplication extends Application {
 	// if true, then a new config file is written at the end of the Activity
 
 	public static final int INVALID_INT = -1;
-	public static final int LBP_NOTIFICATION_ID = 201;
+	public static final int LBP_NOTIFICATION_ID = 201; //arbitrary id for notification
 
-	public static final Hashtable<String, Bitmap> bitmaps = new Hashtable<>();
 
 	public static boolean zoomEnabled;
 	public static float scale = 1.0f; // user selectable scaling of panel area
@@ -154,8 +151,8 @@ public class LanbahnPanelApplication extends Application {
 
 		// do some initializations
 		// for (int i=0; i<MAX_LANBAHN_ADDR; i++) lanbahnData[i]=0;
-		AndroBitmaps.init(getResources());
-		LinePaints.INSTANCE.init(prescale);
+		AndroBitmaps.INSTANCE.init(getResources());
+		LPaints.INSTANCE.init(prescale);
 
         String myAndroidDeviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -184,7 +181,7 @@ public class LanbahnPanelApplication extends Application {
                     }
 
                     for (Route rt : routes) {
-                        if (rt.id == chan) {
+                        if (rt.getId() == chan) {
                             rt.updateData(data);
                         }
                     }
@@ -203,7 +200,7 @@ public class LanbahnPanelApplication extends Application {
                     if (DEBUG) Log.d(TAG,"error msg "+chan+" "+data);
                     for (PanelElement pe : panelElements) {
                         if (pe.getAdr() == chan) {
-                            pe.updateData(STATE_UNKNOWN);
+                            pe.updateData(Constants.STATE_UNKNOWN);
                         }
                     }
                 }
@@ -278,7 +275,7 @@ public class LanbahnPanelApplication extends Application {
 		editor.putBoolean(KEY_SAVE_STATES, saveStates);
 		editor.putBoolean(KEY_ROUTES, enableRoutes);
 		editor.putBoolean(KEY_FLIP,flipUpsideDown);
-		editor.putBoolean(KEY_ENABLE_ALL_ADDRESSES, enableAllAddresses);
+		editor.putBoolean(Constants.KEY_ENABLE_ALL_ADDRESSES, enableAllAddresses);
 		editor.putString(KEY_XOFF, "" + xoff);
 		editor.putString(KEY_YOFF, "" + yoff);
 		editor.putString(KEY_SCALE, "" + scale);
@@ -293,7 +290,7 @@ public class LanbahnPanelApplication extends Application {
 		zoomEnabled = prefs.getBoolean(KEY_ENABLE_ZOOM, false);
 		Log.d(TAG, "zoomEnabled=" + zoomEnabled);
 		selectedStyle = prefs.getString(KEY_STYLE_PREF, "US");
-		LinePaints.INSTANCE.init(prescale);
+		LPaints.INSTANCE.init(prescale);
 		enableEdit = prefs.getBoolean(KEY_ENABLE_EDIT, false);
 		saveStates = prefs.getBoolean(KEY_SAVE_STATES, false);
 		if (DEBUG)

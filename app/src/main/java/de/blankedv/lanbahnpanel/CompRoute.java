@@ -45,7 +45,7 @@ public class CompRoute {
 			int routeID = Integer.parseInt(iID[i]);
 			for (Route rt : routes) {
 				try {
-					if (rt.id == routeID) {
+					if (rt.getId() == routeID) {
 						myroutes.add(rt);
 					}
 				} catch (NumberFormatException e) {
