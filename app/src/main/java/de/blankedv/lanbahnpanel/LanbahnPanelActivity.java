@@ -78,7 +78,7 @@ public class LanbahnPanelActivity extends Activity {
         layout.addView(tv, params);
         popUp.setContentView(layout);
 
-        ParseConfig.readConfig(this);
+        ParseConfig.INSTANCE.readConfig(this);
 
         setContentView(new Panel(this));
 
@@ -185,7 +185,7 @@ public class LanbahnPanelActivity extends Activity {
             if (DEBUG) {
                 Log.d(TAG, "onResume - reloading panel config.");
             }
-            ParseConfig.readConfigFromFile(this); // reload config File with scaling
+            ParseConfig.INSTANCE.readConfigFromFile(this); // reload config File with scaling
             ((LanbahnPanelApplication) getApplication()).loadZoomEtc();
             // TODO recalcScale();
         } else {

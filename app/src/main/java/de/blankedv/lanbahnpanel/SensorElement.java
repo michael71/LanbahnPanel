@@ -27,25 +27,25 @@ public class SensorElement extends ActivePanelElement {
 			if (state == STATE_FREE) {
 				
 					canvas.drawLine(x * prescale, y * prescale, x2 * prescale, y2
-							* prescale, linePaintGrayDash);
+							* prescale, INSTANCE.getLinePaintGrayDash());
 
 			} else if (state == STATE_OCCUPIED) {
 				
 					canvas.drawLine(x * prescale, y * prescale, x2 * prescale, y2
-							* prescale,  linePaintRedDash);
+							* prescale, INSTANCE.getLinePaintRedDash());
 	
 
 			}  else if (state == STATE_INROUTE) {
 				
 				    canvas.drawLine(x * prescale, y * prescale, x2 * prescale, y2
-						* prescale, linePaintDarkYellowDash);
+						* prescale, INSTANCE.getLinePaintDarkYellowDash());
 				
 
 			}
 			else if (state == STATE_UNKNOWN) {
 				
 					canvas.drawLine(x * prescale, y * prescale, x2 * prescale, y2
-							* prescale, linePaintGrayDash);
+							* prescale, INSTANCE.getLinePaintGrayDash());
 			}
 		} else {
 			// draw lamp type of sensor   s_on.png etc

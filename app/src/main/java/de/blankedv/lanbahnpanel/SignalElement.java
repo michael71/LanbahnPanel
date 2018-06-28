@@ -23,21 +23,21 @@ public class SignalElement extends ActivePanelElement {
 
 		// read data from SX bus and paint position of turnout accordingly
 		// draw a line and not a bitmap
-		canvas.drawLine(x*prescale,y*prescale, x2*prescale,y2*prescale, signalLine);
-       	canvas.drawLine(x2*prescale,(y2-2.5f)*prescale, x2*prescale,(y2+2.5f)*prescale, signalLine);
-       	canvas.drawCircle(x*prescale,y*prescale, 3f*prescale, whitePaint);
+		canvas.drawLine(x*prescale,y*prescale, x2*prescale,y2*prescale, INSTANCE.getSignalLine());
+       	canvas.drawLine(x2*prescale,(y2-2.5f)*prescale, x2*prescale,(y2+2.5f)*prescale, INSTANCE.getSignalLine());
+       	canvas.drawCircle(x*prescale,y*prescale, 3f*prescale, INSTANCE.getWhitePaint());
 		if ((enableEdit) || (adr == INVALID_INT)) {
-			canvas.drawCircle(x*prescale,y*prescale, 3f*prescale, whitePaint);
+			canvas.drawCircle(x*prescale,y*prescale, 3f*prescale, INSTANCE.getWhitePaint());
 		} else {   
 			if (state == STATE_RED) {
-					canvas.drawCircle(x*prescale,y*prescale, 3.5f*prescale, redSignal);
+					canvas.drawCircle(x*prescale,y*prescale, 3.5f*prescale, INSTANCE.getRedSignal());
 			} else if (state == STATE_GREEN){
-					canvas.drawCircle(x*prescale,y*prescale, 3.5f*prescale, greenSignal);
+					canvas.drawCircle(x*prescale,y*prescale, 3.5f*prescale, INSTANCE.getGreenSignal());
 			} else if ((state == STATE_YELLOW) || (state == STATE_YELLOW_FEATHER)){
-				canvas.drawCircle(x*prescale,y*prescale, 3.5f*prescale, yellowSignal);
+				canvas.drawCircle(x*prescale,y*prescale, 3.5f*prescale, INSTANCE.getYellowSignal());
 		    }
 			else if (state == STATE_UNKNOWN){
-					canvas.drawCircle(x*prescale,y*prescale, 3.5f*prescale, whitePaint);
+					canvas.drawCircle(x*prescale,y*prescale, 3.5f*prescale, INSTANCE.getWhitePaint());
 			}
 	
 		}

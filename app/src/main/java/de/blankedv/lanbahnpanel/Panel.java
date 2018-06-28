@@ -172,7 +172,7 @@ public class Panel extends SurfaceView implements SurfaceHolder.Callback {
 								}
 								if (sel) { //mLastTouchX, mLastTouchY)) {
 									if (enableEdit) {
-										Dialogs.selectAddressDialog(e); //
+										Dialogs.INSTANCE.selectAddressDialog(e); //
 									} else {
 										e.toggle();
 									}
@@ -229,7 +229,7 @@ public class Panel extends SurfaceView implements SurfaceHolder.Callback {
 
 	public void doDraw(Canvas canvas) {
 
-		canvas.drawColor(BG_COLOR);
+		canvas.drawColor(INSTANCE.getBG_COLOR());
 		
 	    // draw Panel and scale with zoom
 		//if (USS == true)
@@ -242,7 +242,7 @@ public class Panel extends SurfaceView implements SurfaceHolder.Callback {
 	    } else {
 	    	canvas.drawBitmap(bitmaps.get("lock"),5, topLeft,null);
 	    }
-        canvas.drawText(panelName, 50, topLeft+24, panelNamePaint);
+        canvas.drawText(panelName, 50, topLeft+24, INSTANCE.getPanelNamePaint());
         
 	    Matrix matrix = new Matrix();
 		matrix.postScale(scale,scale);	   
@@ -283,7 +283,7 @@ public class Panel extends SurfaceView implements SurfaceHolder.Callback {
 	private void drawRaster(Canvas canvas, int step) {
 		for (int x = 0; x<canvas.getWidth(); x+=step) {
 			for (int y = 0; y<canvas.getHeight(); y+=step) {
-				canvas.drawPoint(x, y, rasterPaint);
+				canvas.drawPoint(x, y, INSTANCE.getRasterPaint());
 			}
 		}
 	}

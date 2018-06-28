@@ -36,22 +36,22 @@ public class TurnoutElement extends ActivePanelElement {
 		// read data from SX bus and paint position of turnout accordingly
 		// draw a line and not a bitmap
 		if (enableEdit) {
-			canvas.drawLine(x*prescale,y*prescale,x2*prescale,y2*prescale,greenPaint);	
-			canvas.drawLine(x*prescale,y*prescale,xt*prescale,yt*prescale,redPaint);	
+			canvas.drawLine(x*prescale,y*prescale,x2*prescale,y2*prescale, INSTANCE.getGreenPaint());
+			canvas.drawLine(x*prescale,y*prescale,xt*prescale,yt*prescale, INSTANCE.getRedPaint());
 		} else if (adr == INVALID_INT)  {
-				canvas.drawLine(x*prescale,y*prescale,x2*prescale,y2*prescale,linePaint2);	
-				canvas.drawLine(x*prescale,y*prescale,xt*prescale,yt*prescale,linePaint2);
+				canvas.drawLine(x*prescale,y*prescale,x2*prescale,y2*prescale, INSTANCE.getLinePaint2());
+				canvas.drawLine(x*prescale,y*prescale,xt*prescale,yt*prescale, INSTANCE.getLinePaint2());
 		} else {
 
 				if (state == STATE_CLOSED) {
-					canvas.drawLine(x*prescale,y*prescale,xt*prescale,yt*prescale,bgPaint);
-					canvas.drawLine(x*prescale,y*prescale,x2*prescale,y2*prescale,linePaint2);
+					canvas.drawLine(x*prescale,y*prescale,xt*prescale,yt*prescale, INSTANCE.getBgPaint());
+					canvas.drawLine(x*prescale,y*prescale,x2*prescale,y2*prescale, INSTANCE.getLinePaint2());
 				} else if (state == STATE_THROWN){
-					canvas.drawLine(x*prescale,y*prescale,x2*prescale,y2*prescale,bgPaint);
-					canvas.drawLine(x*prescale,y*prescale,xt*prescale,yt*prescale,linePaint2);
+					canvas.drawLine(x*prescale,y*prescale,x2*prescale,y2*prescale, INSTANCE.getBgPaint());
+					canvas.drawLine(x*prescale,y*prescale,xt*prescale,yt*prescale, INSTANCE.getLinePaint2());
 				} else if (state == STATE_UNKNOWN){
-					canvas.drawLine(x*prescale,y*prescale,xt*prescale,yt*prescale,bgPaint);
-					canvas.drawLine(x*prescale,y*prescale,x2*prescale,y2*prescale,bgPaint);
+					canvas.drawLine(x*prescale,y*prescale,xt*prescale,yt*prescale, INSTANCE.getBgPaint());
+					canvas.drawLine(x*prescale,y*prescale,x2*prescale,y2*prescale, INSTANCE.getBgPaint());
 				}
 		}
 

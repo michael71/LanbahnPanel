@@ -155,7 +155,7 @@ public class LanbahnPanelApplication extends Application {
 		// do some initializations
 		// for (int i=0; i<MAX_LANBAHN_ADDR; i++) lanbahnData[i]=0;
 		AndroBitmaps.init(getResources());
-		LinePaints.init(prescale);
+		LinePaints.INSTANCE.init(prescale);
 
         String myAndroidDeviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -293,7 +293,7 @@ public class LanbahnPanelApplication extends Application {
 		zoomEnabled = prefs.getBoolean(KEY_ENABLE_ZOOM, false);
 		Log.d(TAG, "zoomEnabled=" + zoomEnabled);
 		selectedStyle = prefs.getString(KEY_STYLE_PREF, "US");
-		LinePaints.init(prescale);
+		LinePaints.INSTANCE.init(prescale);
 		enableEdit = prefs.getBoolean(KEY_ENABLE_EDIT, false);
 		saveStates = prefs.getBoolean(KEY_SAVE_STATES, false);
 		if (DEBUG)

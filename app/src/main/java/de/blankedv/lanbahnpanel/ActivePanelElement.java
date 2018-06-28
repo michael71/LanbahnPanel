@@ -182,14 +182,14 @@ public abstract class ActivePanelElement extends PanelElement {
 		} else {
 			txt = "" + adr;
 		}
-		addressPaint.getTextBounds(txt, 0, txt.length(), bounds);
+		INSTANCE.getAddressPaint().getTextBounds(txt, 0, txt.length(), bounds);
 		int text_height = bounds.height();
 		int text_width = bounds.width();
 
 		Rect pre = prescaleRect(getRect());
-		canvas.drawRect(pre, addressBGPaint); // dark rectangle
+		canvas.drawRect(pre, INSTANCE.getAddressBGPaint()); // dark rectangle
 		canvas.drawText(txt, pre.left + text_width / 8, pre.top + 3
-				* text_height / 2, addressPaint); // the
+				* text_height / 2, INSTANCE.getAddressPaint()); // the
 		// numbers
 
 	}

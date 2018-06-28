@@ -154,10 +154,10 @@ class RouteButtonElement extends ActivePanelElement {
        	//canvas.drawLine(x2*prescale,(y2-2.5f)*prescale, x2*prescale,(y2+2.5f)*prescale, signalLine);
 		if (!enableRoutes) return;
 		
-       	canvas.drawCircle(x*prescale,y*prescale, 4f*prescale, whitePaint);
+       	canvas.drawCircle(x*prescale,y*prescale, 4f*prescale, INSTANCE.getWhitePaint());
        	
 		if ((enableEdit) || (adr == INVALID_INT)) {
-			canvas.drawCircle(x*prescale,y*prescale, 3f*prescale, btn0Paint);
+			canvas.drawCircle(x*prescale,y*prescale, 3f*prescale, INSTANCE.getBtn0Paint());
 		} else {   
 			if (state == STATE_PRESSED) {
 				if ((System.currentTimeMillis() - blink) > 500 ) {
@@ -165,14 +165,14 @@ class RouteButtonElement extends ActivePanelElement {
 					blink =System.currentTimeMillis();
 				} 
 				if (toggleBlink) {
-					canvas.drawCircle(x*prescale,y*prescale, 3f*prescale, btn1Paint);
+					canvas.drawCircle(x*prescale,y*prescale, 3f*prescale, INSTANCE.getBtn1Paint());
 				} else {
-					canvas.drawCircle(x*prescale,y*prescale, 3f*prescale, btn0Paint);
+					canvas.drawCircle(x*prescale,y*prescale, 3f*prescale, INSTANCE.getBtn0Paint());
 				}
 			} else if (state == STATE_NOT_PRESSED){
-					canvas.drawCircle(x*prescale,y*prescale, 3f*prescale, btn0Paint);
+					canvas.drawCircle(x*prescale,y*prescale, 3f*prescale, INSTANCE.getBtn0Paint());
 			} else if (state == STATE_UNKNOWN){
-					canvas.drawCircle(x*prescale,y*prescale, 3f*prescale, btn0Paint);
+					canvas.drawCircle(x*prescale,y*prescale, 3f*prescale, INSTANCE.getBtn0Paint());
 			}
 	
 		}
