@@ -58,7 +58,7 @@ public class ParseConfig {
 			
 		} else {  */
 			//if (DEBUG) Log.d(TAG,"configServer string is empty, reading from local file.");
-			if (DEBUG) Log.d(TAG,"reading data from configFilename="+CONFIG_FILENAME);
+		if (DEBUG) Log.d(TAG, "reading data from configFilename=" + configFilename);
 			// read config from file
 			String error = readConfigFromFile(context);
 			if (!error.isEmpty() ){
@@ -84,7 +84,7 @@ public class ParseConfig {
 	 * @return true, if succeeds - false, if not.
 	 * 
 	 */
-	private static String readConfigFromFile(Context context) {
+	public static String readConfigFromFile(Context context) {
 
 		// TODO determine whether we can read a config file from a web server
 
@@ -111,11 +111,11 @@ public class ParseConfig {
 		if (mExternalStorageAvailable) {
 			try {
 				File f = new File(Environment.getExternalStorageDirectory()
-						+ "/" + LOCAL_DIRECTORY + "/"+ CONFIG_FILENAME);
+						+ "/" + DIRECTORY + "/" + configFilename);
 				// auf dem Nexus 7 unter /mnt/shell/emulated/0/lanbahnpanel
 				FileInputStream fis;
 				if (!f.exists()) {
-					Log.e(TAG,"config file="+CONFIG_FILENAME+" not found, using demo data.");
+					Log.e(TAG, "config file=" + configFilename + " not found, using demo data.");
                     InputStream demoIs = context.getAssets().open(DEMO_FILE);
 					configHasChanged = true;
 					error=readXMLConfigFile(demoIs);
@@ -123,7 +123,7 @@ public class ParseConfig {
 
 					// create the folder for later use (if it does not exist already)
 					File f2 = new File(Environment.getExternalStorageDirectory()
-							+ "/" + LOCAL_DIRECTORY + "/");
+							+ "/" + DIRECTORY + "/");
 					if (!f2.exists()) {
                         f2.mkdirs();
                         Log.e(TAG,"creating 'lanbahnpanel' folder");

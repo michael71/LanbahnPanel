@@ -5,6 +5,7 @@ import java.util.Hashtable;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -90,10 +91,10 @@ public class LanbahnPanelApplication extends Application {
 
 	public static volatile String connString = "";
 
-	public static final String LOCAL_DIRECTORY = "lanbahnpanel/";
+	public static final String DIRECTORY = "lanbahnpanel/";
     // with trailing slash !!
-	
-	public static final String CONFIG_FILENAME = "lb-panel1.xml";
+
+	public static String configFilename = "lb-panel1.xml";
 	
 	public static final String DEMO_FILE = "demo-panel.xml"; // demo data in raw
 																// assets dir.
@@ -144,6 +145,7 @@ public class LanbahnPanelApplication extends Application {
 	public static boolean lampState[];   // TODO
 
 	//@SuppressLint("HandlerLeak")
+	@SuppressLint("HandlerLeak")
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -166,7 +168,6 @@ public class LanbahnPanelApplication extends Application {
 			@Override
 			public void handleMessage(Message msg) {
 				int what = msg.what;
-
 				int chan = msg.arg1;
 				//if (DEBUG) Log.d(TAG,"rec. msg for chan= "+chan);
 				int data = msg.arg2;

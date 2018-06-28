@@ -73,13 +73,13 @@ public class WriteConfig {
 				String suffix = Utils.getDateTime();
 				fWriter = new FileWriter(
 						Environment.getExternalStorageDirectory() + "/"
-								+ LOCAL_DIRECTORY + CONFIG_FILENAME + "." + suffix);
+								+ DIRECTORY + configFilename + "." + suffix);
 				fWriter.write(writeXml());
 				fWriter.flush();
 				fWriter.close();
 
 				if (DEBUG)
-					Log.d(TAG, "Config File "+ CONFIG_FILENAME + "." + suffix+" saved! ");
+					Log.d(TAG, "Config File " + configFilename + "." + suffix + " saved! ");
 				configHasChanged = false; // reset flag
 
 			} catch (Exception e) {

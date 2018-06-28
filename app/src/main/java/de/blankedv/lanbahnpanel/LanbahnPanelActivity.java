@@ -175,6 +175,24 @@ public class LanbahnPanelActivity extends Activity {
         if (DEBUG)
             Log.d(TAG, "onResume - LanbahnPanelActivity");
         sendQ.clear();
+
+        SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        String cfFilename = prefs.getString(KEY_CONFIG_FILE, "-");
+        if (!cfFilename.equals(configFilename)) {
+            // reload, if a new panel config file selected
+            configFilename = cfFilename;
+            if (DEBUG) {
+                Log.d(TAG, "onResume - reloading panel config.");
+            }
+            ParseConfig.readConfigFromFile(this); // reload config File with scaling
+            ((LanbahnPanelApplication) getApplication()).loadZoomEtc();
+            // TODO recalcScale();
+        } else {
+            ((LanbahnPanelApplication) getApplication()).loadZoomEtc(); // reload
+            // settings without scaling
+        }
+
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         width = metrics.widthPixels;
@@ -240,8 +258,9 @@ public class LanbahnPanelActivity extends Activity {
                 startActivity(new Intent(this, AboutActivity.class));
                 return (true);
             case R.id.menu_check_service:
-                int num = mService.getRandomNumber();
-                Toast.makeText(this, "number: " + num, Toast.LENGTH_SHORT).show();
+                //TODO int num = mService.getRandomNumber();
+                Toast.makeText(this, "not implemented", Toast.LENGTH_SHORT).show();
+                // "number: " + num, Toast.LENGTH_SHORT).show();
                 return (true);
             case R.id.menu_quit:
                 AlertDialog alert = builder.create();
