@@ -1,4 +1,4 @@
-package de.blankedv.lanbahnpanel
+package de.blankedv.lanbahnpanel.elements
 
 import java.util.ArrayList
 
@@ -303,8 +303,8 @@ class Route (var id: Int, var btn1: Int, var btn2: Int, route: String, allSensor
             rtOffending.add(rt2)
     }
 
-/* TODO
-fun getOffendingString(): String {
+
+fun getOffendString(): String {
 
 
     val sb = StringBuilder("")
@@ -323,7 +323,7 @@ fun getOffendingString(): String {
                 + sb.toString()); */
     return sb.toString()
 
-} */
+}
 
     companion object {
 
@@ -340,7 +340,6 @@ fun getOffendingString(): String {
 
         }
 
-        /* TODO
      fun calcOffendingRoutes() {
 
         for (rt in routes) {
@@ -359,10 +358,10 @@ fun getOffendingString(): String {
                     }
                 }
             }
-            rt.offendingString = rt.getOffendingString()
+            rt.offendingString = rt.getOffendString()
         }
 
-    } */
+    }
     }
 }
 

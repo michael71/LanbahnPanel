@@ -1,4 +1,4 @@
-package de.blankedv.lanbahnpanel
+package de.blankedv.lanbahnpanel.config
 
 import java.io.File
 import java.io.FileInputStream
@@ -26,7 +26,9 @@ import android.os.AsyncTask
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
+import de.blankedv.lanbahnpanel.elements.*
 import de.blankedv.lanbahnpanel.model.*
+import de.blankedv.lanbahnpanel.util.LinearMath
 
 
 /**
@@ -35,7 +37,7 @@ import de.blankedv.lanbahnpanel.model.*
  *
  * @author mblank
  */
-object ParseConfig {
+object ReadConfig {
 
 
     internal val DEBUG_PARSING = false
@@ -161,10 +163,9 @@ object ParseConfig {
             PanelElement.scaleAll()
             routes = parseRoutes(doc) // can be done only after all panel
             // elements have been read
-            // TODO Route.calcOffendingRoutes() // calculate offending routes
+            Route.calcOffendingRoutes() // calculate offending routes
             compRoutes = parseCompRoutes(doc) // can be done only after routes
             // have been read
-            lampGroups = parseLampGroups(doc)
         } catch (e: SAXException) {
             Log.e(TAG, "SAX Exception - " + e.message)
             return "SAX Exception - " + e.message
@@ -650,67 +651,6 @@ object ParseConfig {
 
     }
 
-    private fun parseLampGroups(doc: Document): ArrayList<LampGroup> {
-        // assemble new ArrayList of tickets.
-        val lampGroups = ArrayList<LampGroup>()
-        val items: NodeList
-        val root = doc.documentElement
-
-        items = root.getElementsByTagName("lampgroup")
-        if (DEBUG)
-            Log.d(TAG, "config: " + items.length + " lampgroups")
-        if (items.length > MAX_LAMP_BUTTONS)
-            Log.e(TAG, "ERROR: too many (>" + MAX_LAMP_BUTTONS
-                    + ") lampgroups defined, n=" + items.length)
-
-        for (i in 0 until Math.min(items.length, MAX_LAMP_BUTTONS)) {
-            val lg = parseLampGroup(items.item(i))
-            if (lg != null)
-                lampGroups.add(lg)
-        }
-
-        return lampGroups
-    }
-
-    private fun parseLampGroup(item: Node): LampGroup? {
-        //
-        var btnPos = INVALID_INT
-        var addr = INVALID_INT
-        var valOn = 1
-
-        val attributes = item.attributes
-        for (i in 0 until attributes.length) {
-            val theAttribute = attributes.item(i)
-            // if (DEBUG_PARSING) Log.d(TAG,theAttribute.getNodeName() + "=" +
-            // theAttribute.getNodeValue());
-            if (theAttribute.nodeName == "pos") {
-                btnPos = getValue(theAttribute.nodeValue)
-            } else if (theAttribute.nodeName == "adr") {
-                addr = getValue(theAttribute.nodeValue)
-            } else if (theAttribute.nodeName == "val") {
-                valOn = getValue(theAttribute.nodeValue)
-            } else {
-                if (DEBUG_PARSING)
-                    Log.d(TAG,
-                            "unknown attribute " + theAttribute.nodeName
-                                    + " in config file")
-            }
-        }
-
-        // check for mandatory and valid input data
-        if (btnPos == INVALID_INT) {
-            // missing info, log error
-            Log.e(TAG, "missing btn number info in lampgroup definition")
-            return null
-        } else if (addr == INVALID_INT) {
-            Log.e(TAG, "missing lamps info in lampgroup definition")
-            return null
-        } else {
-            // input is o.k., now create lamp group
-            return LampGroup(btnPos, addr, valOn)  // valueOff is always =0
-        }
-
-    }
 
     internal class MakeHttpRequestTask : AsyncTask<String, Void, String>() {
 

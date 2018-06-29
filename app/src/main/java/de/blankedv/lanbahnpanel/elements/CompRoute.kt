@@ -1,4 +1,4 @@
-package de.blankedv.lanbahnpanel
+package de.blankedv.lanbahnpanel.elements
 
 import java.util.ArrayList
 import android.util.Log

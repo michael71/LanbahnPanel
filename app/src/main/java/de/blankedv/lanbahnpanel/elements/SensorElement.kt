@@ -1,12 +1,12 @@
-package de.blankedv.lanbahnpanel
+package de.blankedv.lanbahnpanel.elements
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.util.Log
-import de.blankedv.lanbahnpanel.AndroBitmaps.bitmaps
-import de.blankedv.lanbahnpanel.LPaints.linePaintDarkYellowDash
-import de.blankedv.lanbahnpanel.LPaints.linePaintGrayDash
-import de.blankedv.lanbahnpanel.LPaints.linePaintRedDash
+import de.blankedv.lanbahnpanel.graphics.AndroBitmaps.bitmaps
+import de.blankedv.lanbahnpanel.graphics.LPaints.linePaintDarkYellowDash
+import de.blankedv.lanbahnpanel.graphics.LPaints.linePaintGrayDash
+import de.blankedv.lanbahnpanel.graphics.LPaints.linePaintRedDash
 import de.blankedv.lanbahnpanel.model.*
 
 class SensorElement : ActivePanelElement {

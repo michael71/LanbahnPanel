@@ -1,4 +1,4 @@
-package de.blankedv.lanbahnpanel
+package de.blankedv.lanbahnpanel.graphics
 
 import de.blankedv.lanbahnpanel.R
 import android.content.res.Resources

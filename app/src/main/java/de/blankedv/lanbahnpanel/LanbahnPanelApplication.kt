@@ -14,6 +14,9 @@ import android.preference.PreferenceManager
 import android.provider.Settings
 import android.support.v4.app.NotificationCompat
 import android.util.Log
+import de.blankedv.lanbahnpanel.elements.ActivePanelElement
+import de.blankedv.lanbahnpanel.graphics.AndroBitmaps
+import de.blankedv.lanbahnpanel.graphics.LPaints
 
 import de.blankedv.lanbahnpanel.model.*
 
@@ -48,7 +51,7 @@ class LanbahnPanelApplication : Application() {
 
         // handler for receiving sxnet messages
 
-        handler = object : Handler() {
+        appHandler = object : Handler() {
             override fun handleMessage(msg: Message) {
                 val what = msg.what
                 val chan = msg.arg1
@@ -79,15 +82,6 @@ class LanbahnPanelApplication : Application() {
                         }
                     }
 
-                    for (l in lampGroups) {
-                        if (l.adr == chan) {
-                            if (data == 0) {
-                                l.switchOff()
-                            } else {
-                                l.switchOn()
-                            }
-                        }
-                    }
 
                 } else if (what == TYPE_ERROR_MSG) {
                     if (DEBUG) Log.d(TAG, "error msg $chan $data")
@@ -199,6 +193,8 @@ class LanbahnPanelApplication : Application() {
     }
 
     companion object {
+
+        lateinit var appHandler: Handler // used for communication from RRConnection Thread to UI (application)
 
         fun updatePanelData() {
             Log.d(TAG, "AndroPanelApp - updatePanelData()")

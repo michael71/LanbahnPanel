@@ -1,11 +1,11 @@
-package de.blankedv.lanbahnpanel
+package de.blankedv.lanbahnpanel.elements
 
 import android.graphics.Canvas
 import android.util.Log
-import de.blankedv.lanbahnpanel.LPaints.bgPaint
-import de.blankedv.lanbahnpanel.LPaints.greenPaint
-import de.blankedv.lanbahnpanel.LPaints.linePaint2
-import de.blankedv.lanbahnpanel.LPaints.redPaint
+import de.blankedv.lanbahnpanel.graphics.LPaints.bgPaint
+import de.blankedv.lanbahnpanel.graphics.LPaints.greenPaint
+import de.blankedv.lanbahnpanel.graphics.LPaints.linePaint2
+import de.blankedv.lanbahnpanel.graphics.LPaints.redPaint
 import de.blankedv.lanbahnpanel.model.*
 
 

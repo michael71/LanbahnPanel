@@ -29,7 +29,14 @@ import java.util.TimerTask
 
 import de.blankedv.lanbahnpanel.LanbahnPanelApplication.Companion.clearPanelData
 import de.blankedv.lanbahnpanel.LanbahnPanelApplication.Companion.connectionIsAlive
+import de.blankedv.lanbahnpanel.LanbahnPanelApplication.Companion.appHandler
+import de.blankedv.lanbahnpanel.config.ReadConfig
+import de.blankedv.lanbahnpanel.config.WriteConfig
+import de.blankedv.lanbahnpanel.elements.ActivePanelElement
+import de.blankedv.lanbahnpanel.elements.Route
+import de.blankedv.lanbahnpanel.elements.RouteButtonElement
 import de.blankedv.lanbahnpanel.model.*
+import de.blankedv.lanbahnpanel.railroad.SXnetClientThread
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.wifiManager
 
@@ -48,7 +55,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
     lateinit internal var mainLayout: LinearLayout
     lateinit internal var but: Button
     private var mOptionsMenu: Menu? = null
-    private var handler = Handler()  // used for UI Update timer
+    private var mHandler = Handler()  // used for UI Update timer
     private var counter = 0
     internal var click = true
     private val KEY_STATES = "states"
@@ -110,7 +117,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         layout.addView(tv, params)
         popUp.contentView = layout
 
-        ParseConfig.readConfig(this)
+        ReadConfig.readConfig(this)
 
         setContentView(Panel(this))
 
@@ -206,7 +213,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
             if (DEBUG) {
                 Log.d(TAG, "onResume - reloading panel config.")
             }
-            ParseConfig.readConfigFromFile(this) // reload config File with scaling
+            ReadConfig.readConfigFromFile(this) // reload config File with scaling
             (application as LanbahnPanelApplication).loadZoomEtc()
             // TODO recalcScale();
         } else {
@@ -227,13 +234,14 @@ class LanbahnPanelActivity : AppCompatActivity() {
             RouteButtonElement.autoReset()  // this will also reset the sensors to STATE_FREE
         }
 
-        if (saveStates)
+        if (saveStates) {
             loadStates()
+        }
 
         refreshAllData()
         LanbahnPanelApplication.updatePanelData()
         (application as LanbahnPanelApplication).removeNotification()
-
+        title = "Lanbahn Panel \"$panelName\""
     }
 
     /**
@@ -245,14 +253,13 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 // add its address to list of interesting addresses
                 // only needed for active elements, not for tracks
                 val a = e.adr
-
                 if (a != INVALID_INT) {
                     e.setExpired()
                 }
             }
         }
 
-        handler.postDelayed({ updateUI() }, 500)
+        mHandler.postDelayed({ updateUI() }, 500)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -351,7 +358,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         setConnectionIcon()
         setPowerStateIcon()
         Route.auto()
-        handler.postDelayed({ updateUI() }, 500)
+        mHandler.postDelayed({ updateUI() }, 500)
     }
 
     fun saveStates() {
@@ -429,18 +436,12 @@ class LanbahnPanelActivity : AppCompatActivity() {
         Log.d(TAG, "LahnbahnPanelActivity - startSXNetCommunication.")
         if (client != null) {
             client?.shutdown()
-            try {
-                Thread.sleep(100) // give client some time to shut down.
-            } catch (e: InterruptedException) {
-                if (DEBUG)
-                    Log.e(TAG, "could not sleep...")
-            }
-
-        }
+            Thread.sleep(100) // give client some time to shut down.
+                    }
 
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
-        val ip = prefs.getString(KEY_IP, "192.168.2.50")
+        val ip = prefs.getString(KEY_IP, "192.168.1.39")
         /*	Log.d(TAG, "AndroPanelActivity - autoIPEnabled="+autoIPEnabled);
 
 
@@ -454,14 +455,10 @@ class LanbahnPanelActivity : AppCompatActivity() {
 		} */
 
 
-        client = SXnetClientThread(this, ip!!, SXNET_PORT)
+        client = SXnetClientThread(this, ip!!, SXNET_PORT, appHandler)
         client?.start()
 
-        try {
-            Thread.sleep(300)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
+        Thread.sleep(300)
 
 
         if (connectionIsAlive()) {
@@ -497,9 +494,6 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 if (pe is ActivePanelElement) {
                     client?.readChannel(pe.adr)
                 }
-            }
-            for (l in lampGroups) {
-                client?.readChannel(l.adr)
             }
         }
     }

@@ -1,4 +1,4 @@
-package de.blankedv.lanbahnpanel
+package de.blankedv.lanbahnpanel.util
 
 import java.text.SimpleDateFormat
 import java.util.Date

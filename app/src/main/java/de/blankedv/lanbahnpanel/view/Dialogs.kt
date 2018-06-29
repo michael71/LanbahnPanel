@@ -1,9 +1,12 @@
-package de.blankedv.lanbahnpanel
+package de.blankedv.lanbahnpanel.view
 
 import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.NumberPicker
+import de.blankedv.lanbahnpanel.R
+import de.blankedv.lanbahnpanel.elements.ActivePanelElement
+import de.blankedv.lanbahnpanel.elements.PanelElement
 import de.blankedv.lanbahnpanel.model.appContext
 import de.blankedv.lanbahnpanel.model.configHasChanged
 

@@ -1,7 +1,6 @@
 package de.blankedv.lanbahnpanel.view
 
 import android.view.SurfaceHolder
-import de.blankedv.lanbahnpanel.Panel
 
 class ViewThread(private val mPanel: Panel) : Thread() {
     private val mHolder: SurfaceHolder = mPanel.holder

@@ -1,4 +1,4 @@
-package de.blankedv.lanbahnpanel
+package de.blankedv.lanbahnpanel.railroad
 
 import java.io.BufferedReader
 import java.io.IOException
@@ -7,6 +7,7 @@ import java.io.PrintWriter
 import java.net.InetSocketAddress
 import java.net.Socket
 import android.content.Context
+import android.os.Handler
 import android.os.Message
 import android.util.Log
 import de.blankedv.lanbahnpanel.model.*
@@ -19,7 +20,7 @@ import de.blankedv.lanbahnpanel.model.*
  *
  * @author mblank
  */
-class SXnetClientThread(private var context: Context?, private val ip: String, private val port: Int) : Thread() {
+class SXnetClientThread(private var context: Context?, private val ip: String, private val port: Int, private val rxHandler: Handler) : Thread() {
     // threading und BlockingQueue siehe http://www.javamex.com/tutorials/blockingqueue_example.shtml
 
     @Volatile
@@ -45,7 +46,6 @@ class SXnetClientThread(private var context: Context?, private val ip: String, p
 
     init {
         if (DEBUG) Log.d(TAG, "SXnetClientThread constructor.")
-
     }
 
     fun shutdown() {
@@ -97,19 +97,12 @@ class SXnetClientThread(private var context: Context?, private val ip: String, p
                     count_no_response = 0
                 }
             }
+            Thread.sleep(20)
         }
 
+        socket?.close()
+        Log.e(TAG, "SXnetClientThread - socket closed")
 
-        if (socket != null) {
-            try {
-                socket!!.close()
-                Log.e(TAG, "SXnetClientThread - socket closed")
-            } catch (e: IOException) {
-                Log.e(TAG, "SXnetClientThread - " + e.message)
-            }
-
-        }
-        if (DEBUG) Log.d(TAG, "SXnetClientThread stopped.")
     }
 
 
@@ -138,7 +131,7 @@ class SXnetClientThread(private var context: Context?, private val ip: String, p
             val m = Message.obtain()
             m.what = TYPE_ERROR_MSG
             m.obj = e.message
-            handler.sendMessage(m)  // send SX data to UI Thread via Message
+            rxHandler?.sendMessage(m)  // send SX data to UI Thread via Message
         }
 
     }
@@ -225,7 +218,7 @@ class SXnetClientThread(private var context: Context?, private val ip: String, p
                         m.what = TYPE_FEEDBACK_MSG
                         m.arg1 = adr
                         m.arg2 = data
-                        handler.sendMessage(m)  // send SX data to UI Thread via Message
+                        rxHandler.sendMessage(m)  // send SX data to UI Thread via Message
                     } else {
                         Log.e(TAG, "range error in rec. msg, cmd=$cmd adr=$adr data=$data")
                     }

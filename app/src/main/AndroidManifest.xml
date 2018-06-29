@@ -53,7 +53,7 @@
         </activity>
 
         <service
-            android:name="de.blankedv.lanbahnpanel.LoconetService"
+            android:name="de.blankedv.lanbahnpanel.railroad.LoconetService"
             android:enabled="true"
             android:exported="true">
 

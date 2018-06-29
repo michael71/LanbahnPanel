@@ -1,4 +1,4 @@
-package de.blankedv.lanbahnpanel
+package de.blankedv.lanbahnpanel.view
 
 import android.content.Context
 import android.graphics.*
@@ -7,23 +7,20 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import de.blankedv.lanbahnpanel.AndroBitmaps.bitmaps
+import de.blankedv.lanbahnpanel.graphics.AndroBitmaps.bitmaps
+import de.blankedv.lanbahnpanel.graphics.LPaints
+import de.blankedv.lanbahnpanel.LanbahnPanelApplication
+import de.blankedv.lanbahnpanel.elements.RouteButtonElement
 import de.blankedv.lanbahnpanel.model.*
-import de.blankedv.lanbahnpanel.view.ViewThread
 
 
 /**
  * the main panel of the application is comprised of two parts: a (small height) CONTROL area
  * at the top and the larger part with the main SWITCH PANEL at the bottom, handles all touch events
  */
-class Panel (context: Context) : SurfaceView(context), SurfaceHolder.Callback {
-
-    private val INVALID_POINTER_ID = -1
-    private var paintControlAreaBG: Paint
-    private val SCALING_WAIT = 1000L
+class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
     private var mThread: ViewThread? = null
-
 
     private var mX: Int = 0
     private var mY: Int = 0
@@ -33,7 +30,7 @@ class Panel (context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
     private var mLastTouchX: Float = 0.toFloat()
     private var mLastTouchY: Float = 0.toFloat()
-    private var mActivePointerId = INVALID_POINTER_ID
+    private var mActivePointerId = INVALID_INT
 
     private val mScaleDetector: ScaleGestureDetector
     private var mScaleFactor = 1f
@@ -49,18 +46,11 @@ class Panel (context: Context) : SurfaceView(context), SurfaceHolder.Callback {
     private var mCanvas = Canvas(mBitmap)
 
     init {
-
         mScaleDetector = ScaleGestureDetector(context, ScaleListener())
-
-        paintControlAreaBG = Paint()
-        paintControlAreaBG.color = -0xddbbde
-
-        controlArea = ControlArea()
 
         LanbahnPanelApplication.updatePanelData()
         holder.addCallback(this)
         mThread = ViewThread(this)
-
     }
 
 
@@ -140,41 +130,38 @@ class Panel (context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
                 MotionEvent.ACTION_UP -> {
                     if (DEBUG) Log.d(TAG, "ACTION_UP")
-                    mActivePointerId = INVALID_POINTER_ID
+                    mActivePointerId = INVALID_INT
 
                     // do SX control only when NOT scaling (and wait 1 sec after scaling
                     val deltaT = System.currentTimeMillis() - scalingTime
                     if (!mScaleDetector.isInProgress) { //&& (deltaT > SCALING_WAIT)) {
                         // assuming control area is always at the top !!
-                        if (mLastTouchY < controlAreaRect.bottom) {
-                            Log.d(TAG, "ACTION_UP _Checking Control  at: mlastTouchX=$mLastTouchX  mLastTouchY$mLastTouchY")
-                            controlArea.checkTouch(mLastTouchX, mLastTouchY)
-                        } else {
-                            //Log.d(TAG,"ACTION_UP _Checking panel elements at: mlastTouchX="+mLastTouchX+"  mLastTouchY"+mLastTouchY);
-                            val xs = Math.round((mLastTouchX - xoff) / scale / prescale) // reduced by overall dimension scaling factors
-                            val ys = Math.round((mLastTouchY - yoff) / scale / prescale)
 
-                            Log.d(TAG, "ACTION_UP _Checking panel elements at: xs=$xs  ys$ys")
-                            for (e in panelElements) {
-                                var sel = false
-                                if (enableRoutes) {
-                                    // check only!! route buttons when routing is enabled
-                                    if (e is RouteButtonElement) {
-                                        sel = e.isSelected(xs, ys)
-                                    }
-                                } else {
+                        //Log.d(TAG,"ACTION_UP _Checking panel elements at: mlastTouchX="+mLastTouchX+"  mLastTouchY"+mLastTouchY);
+                        val xs = Math.round((mLastTouchX - xoff) / scale / prescale) // reduced by overall dimension scaling factors
+                        val ys = Math.round((mLastTouchY - yoff) / scale / prescale)
+
+                        Log.d(TAG, "ACTION_UP _Checking panel elements at: xs=$xs  ys$ys")
+                        for (e in panelElements) {
+                            var sel = false
+                            if (enableRoutes) {
+                                // check only!! route buttons when routing is enabled
+                                if (e is RouteButtonElement) {
                                     sel = e.isSelected(xs, ys)
                                 }
-                                if (sel) { //mLastTouchX, mLastTouchY)) {
-                                    if (enableEdit) {
-                                        Dialogs.selectAddressDialog(e) //
-                                    } else {
-                                        e.toggle()
-                                    }
-                                    break // only 1 can be selected with one touch
+                            } else {
+                                sel = e.isSelected(xs, ys)
+                            }
+                            if (sel) { //mLastTouchX, mLastTouchY)) {
+                                if (enableEdit) {
+                                    Dialogs.selectAddressDialog(e) //
+                                } else {
+                                    e.toggle()
                                 }
+                                break // only 1 can be selected with one touch
                             }
                         }
+
 
                     } else {
                         if (DEBUG) Log.d(TAG, "scaling wait - delta-t=$deltaT")
@@ -183,7 +170,7 @@ class Panel (context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
                 MotionEvent.ACTION_CANCEL -> {
                     if (DEBUG) Log.d(TAG, "ACTION_CANCEL - mPosX=$mPosX mPosY=$mPosY")
-                    mActivePointerId = INVALID_POINTER_ID
+                    mActivePointerId = INVALID_INT
                 }
 
                 MotionEvent.ACTION_POINTER_UP -> {
@@ -196,7 +183,6 @@ class Panel (context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                         mLastTouchX = event.getX(newPointerIndex)
                         mLastTouchY = event.getY(newPointerIndex)
                         mActivePointerId = event.getPointerId(newPointerIndex)
-
                     }
                 }
                 else -> if (DEBUG) Log.d(TAG, "unknown motion event = " + event.toString())
@@ -211,8 +197,7 @@ class Panel (context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         Log.i(TAG, "surface changed - format=$format w=$width h=$height")
         mWidth = width
         mHeight = height
-        controlAreaRect = Rect(0, 0, mWidth, mHeight / 8)
-        controlArea.recalcGeometry()
+
     }
 
 
@@ -225,13 +210,13 @@ class Panel (context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         mBitmap.eraseColor(Color.TRANSPARENT) // Color.DKGRAY);
 
         // label with panel name and display green "unlock", if zoom enabled
-        val topLeft = mHeight / 8
+        val topLeft = ( mHeight * 0.05).toFloat()
         if (zoomEnabled) {
-            canvas.drawBitmap(bitmaps["unlock"], 5f, topLeft.toFloat(), null)
+            canvas.drawBitmap(bitmaps["unlock"], 5f, topLeft, null)
         } else {
-            canvas.drawBitmap(bitmaps["lock"], 5f, topLeft.toFloat(), null)
+            canvas.drawBitmap(bitmaps["lock"], 5f, topLeft, null)
         }
-        canvas.drawText(panelName, 50f, (topLeft + 24).toFloat(),LPaints.panelNamePaint)
+        canvas.drawText(panelName, 50f, (topLeft + 24f), LPaints.panelNamePaint)
 
         val matrix = Matrix()
         matrix.postScale(scale, scale)
@@ -242,9 +227,6 @@ class Panel (context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         drawRaster(mCanvas, RASTER)
 
         canvas.drawBitmap(mBitmap, matrix, null)
-        canvas.drawRect(controlAreaRect, paintControlAreaBG)
-
-        controlArea.draw(canvas) // NOT scaled with zoom
 
     }
 

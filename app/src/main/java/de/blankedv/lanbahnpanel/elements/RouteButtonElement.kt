@@ -1,7 +1,8 @@
-package de.blankedv.lanbahnpanel
+package de.blankedv.lanbahnpanel.elements
 
 import android.graphics.Canvas
 import android.util.Log
+import de.blankedv.lanbahnpanel.graphics.LPaints
 import de.blankedv.lanbahnpanel.model.*
 
 /**  button for selecting routes
@@ -216,7 +217,7 @@ class RouteButtonElement : ActivePanelElement {
                     }
                 }
                 if (!routeFound) {
-                    controlArea.dispErrorMsg("keine passende Fahrstrasse.")
+                    // TODO toast("keine passende Fahrstrasse.")
                     findRouteButtonByAddress(adrFirstBtn)!!.reset()  // clear the button also
                     findRouteButtonByAddress(adrSecondBtn)!!.reset()  // clear the button also
                 }
@@ -229,7 +230,7 @@ class RouteButtonElement : ActivePanelElement {
                         pe.reset()
                     }
                 }
-                controlArea.dispErrorMsg("zu viele Buttons.")
+                // TODO toast("zu viele Buttons.")
             }
 
 

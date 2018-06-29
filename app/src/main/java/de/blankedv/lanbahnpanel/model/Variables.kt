@@ -5,11 +5,11 @@
 package de.blankedv.lanbahnpanel.model
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Rect
 import android.os.Handler
-import de.blankedv.lanbahnpanel.*
+import de.blankedv.lanbahnpanel.elements.CompRoute
+import de.blankedv.lanbahnpanel.elements.PanelElement
+import de.blankedv.lanbahnpanel.elements.Route
+import de.blankedv.lanbahnpanel.railroad.SXnetClientThread
 import java.util.ArrayList
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingQueue
@@ -26,7 +26,6 @@ var selectedStyle: String? = "UK" // German style or USS style
 var panelElements = ArrayList<PanelElement>()
 var routes = ArrayList<Route>()
 var compRoutes = ArrayList<CompRoute>()
-var lampGroups = ArrayList<LampGroup>()
 
 
 var panelName = ""
@@ -35,8 +34,6 @@ var drawAddresses = false
 var drawAddresses2 = false
 var flipUpsideDown = false  //display all panel element from "other side"
 var saveStates: Boolean = false
-
-lateinit var handler: Handler //
 
 // connection state
 var client: SXnetClientThread? = null
@@ -80,11 +77,5 @@ var clearRouteButtonActive = false // state of clear
 var conn_state_string = "?"
 
 var appContext: Context? = null
-
-// var lampState: BooleanArray? = null   // TODO
-
-var controlArea: ControlArea = ControlArea()
-
-var controlAreaRect = Rect(0,100,0,100)
 
 var globalPower = POWER_UNKNOWN
