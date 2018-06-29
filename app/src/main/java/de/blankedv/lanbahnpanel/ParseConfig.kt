@@ -163,7 +163,7 @@ object ParseConfig {
             PanelElement.scaleAll()
             routes = parseRoutes(doc) // can be done only after all panel
             // elements have been read
-            Route.calcOffendingRoutes() // calculate offending routes
+            // TODO Route.calcOffendingRoutes() // calculate offending routes
             compRoutes = parseCompRoutes(doc) // can be done only after routes
             // have been read
             lampGroups = parseLampGroups(doc)

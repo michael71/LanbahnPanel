@@ -13,8 +13,10 @@ import android.net.NetworkInfo
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.os.Handler
 import android.os.IBinder
 import android.preference.PreferenceManager
+import android.support.v7.app.AppCompatActivity
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Menu
@@ -31,29 +33,35 @@ import java.util.Timer
 import java.util.TimerTask
 
 import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
+import de.blankedv.lanbahnpanel.LanbahnPanelApplication.Companion.clearPanelData
+import de.blankedv.lanbahnpanel.LanbahnPanelApplication.Companion.connectionIsAlive
+import org.jetbrains.anko.toast
+import org.jetbrains.anko.wifiManager
 
 /**
  * LanbahnPanelActivity is the MAIN activity of the lanbahn panel
  *
  * @author mblank
  */
-class LanbahnPanelActivity : Activity() {
-    internal var builder: Builder
+class LanbahnPanelActivity : AppCompatActivity() {
+    lateinit internal var builder: Builder
 
-    internal var mService: LoconetService
     internal var mBound = false
 
-    internal var tv: TextView
-    internal var params: LayoutParams
-    internal var mainLayout: LinearLayout? = null
-    internal var but: Button
+    lateinit internal var tv: TextView
+    lateinit internal var params: LayoutParams
+    lateinit internal var mainLayout: LinearLayout
+    lateinit internal var but: Button
+private var mOptionsMenu: Menu? = null
+ private var handler = Handler()  // used for UI Update timer
+    private var counter = 0
     internal var click = true
     private val KEY_STATES = "states"
     private var shuttingDown = false
 
     val wifiName: String?
         get() {
-            val manager = applicationContext.getSystemService(applicationContext.WIFI_SERVICE) as WifiManager
+            val manager = applicationContext.wifiManager
             if (manager.isWifiEnabled) {
                 val wifiInfo = manager.connectionInfo
                 if (wifiInfo != null) {
@@ -74,9 +82,9 @@ class LanbahnPanelActivity : Activity() {
         override fun onServiceConnected(className: ComponentName,
                                         service: IBinder) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-            val binder = service as LoconetService.LocalBinder
+           /*binder = service as LoconetService.LocalBinder
             mService = binder.service
-            mBound = true
+            mBound = true */
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
@@ -183,10 +191,9 @@ class LanbahnPanelActivity : Activity() {
     fun shutdownLanbahnClient() {
         Log.d(TAG, "LanbahnPanelActivity - shutting down Client.")
         (application as LanbahnPanelApplication).removeNotification()
-        if (client != null) {
-            client.shutdown()
 
-        }
+            client?.shutdown()
+
     }
 
     override fun onResume() {
@@ -249,13 +256,14 @@ class LanbahnPanelActivity : Activity() {
                 }
             }
         }
+
+        handler.postDelayed({ updateUI() }, 500)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-
-        val inflater = menuInflater
-        inflater.inflate(R.menu.menu, menu)
-
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        mOptionsMenu = menu
+        setConnectionIcon()
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -272,6 +280,13 @@ class LanbahnPanelActivity : Activity() {
                 return true
             }
 
+            R.id.action_connect -> {
+               // if (!lnStatusData.connState) {
+                    toast("TODO trying reconnect")
+                    //instance.connect()
+               // }
+            }
+            R.id.action_power -> toast("switching power ON/OFF not allowed")
             R.id.menu_about // call preferences activity
             -> {
                 startActivity(Intent(this, AboutActivity::class.java))
@@ -288,8 +303,9 @@ class LanbahnPanelActivity : Activity() {
                 alert.show()
                 return true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else -> return true //super.onOptionsItemSelected(item)
         }
+        return true
     }
 
     fun openCommunication() {
@@ -297,7 +313,7 @@ class LanbahnPanelActivity : Activity() {
         Log.d(TAG, "LanbahnPanelActivity - openCommunication.")
         if (client != null) {
             sendQ.clear()
-            client.shutdown()
+            client?.shutdown()
             try {
                 Thread.sleep(100) // give client some time to shut down.
             } catch (e: InterruptedException) {
@@ -326,6 +342,20 @@ class LanbahnPanelActivity : Activity() {
 
         // request updates for all channels used in Panel
         LanbahnPanelApplication.updatePanelData()
+    }
+
+private fun updateUI() {
+        counter++
+
+        // logString is updated via Binding mechanism
+
+        // the actionBar icons are NOT updated via binding, because
+        // "At the moment, data binding is only for layout resources, not menu resources" (google)
+        // and the implementation to "work around" this limitation looks very complicated, see
+        // https://stackoverflow.com/questions/38660735/how-bind-android-databinding-to-menu
+        setConnectionIcon()
+        setPowerStateIcon()
+        handler.postDelayed({ updateUI() }, 500)
     }
 
     fun saveStates() {
@@ -378,6 +408,22 @@ class LanbahnPanelActivity : Activity() {
 
     }
 
+ private fun setConnectionIcon() {
+        if (client!!.isConnected())
+            mOptionsMenu?.findItem(R.id.action_connect)?.setIcon(R.drawable.commok)
+        else
+            mOptionsMenu?.findItem(R.id.action_connect)?.setIcon(R.drawable.nocomm)
+    }
+
+private fun setPowerStateIcon() {
+    var globalPower = 1
+        when (globalPower) {
+            0 -> mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_stop) //power_red)
+            1 -> mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_green)
+            2 -> mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_unknown)
+        }
+    }
+
     /**
      * remark: always running from UI Thread
      *
@@ -386,7 +432,7 @@ class LanbahnPanelActivity : Activity() {
     fun startSXNetCommunication() {
         Log.d(TAG, "LahnbahnPanelActivity - startSXNetCommunication.")
         if (client != null) {
-            client.shutdown()
+            client?.shutdown()
             try {
                 Thread.sleep(100) // give client some time to shut down.
             } catch (e: InterruptedException) {
@@ -413,7 +459,7 @@ class LanbahnPanelActivity : Activity() {
 
 
         client = SXnetClientThread(this, ip!!, SXNET_PORT)
-        client.start()
+        client?.start()
 
         try {
             Thread.sleep(300)
@@ -436,28 +482,28 @@ class LanbahnPanelActivity : Activity() {
 
     fun shutdownSXClient() {
         Log.d(TAG, "LanbahnPanelActivity - shutting down SXnet Client.")
-        if (client != null)
-            client.shutdown()
-        if (client != null)
-            client.disconnectContext()
+
+            client?.shutdown()
+
+            client?.disconnectContext()
         client = null
 
     }
 
     companion object {
 
-        var popUp: PopupWindow
-        var layout: LinearLayout
+        lateinit var popUp: PopupWindow
+        lateinit var layout: LinearLayout
 
         // request state of all active panel elements
         private fun requestAllSXdata() {
             for (pe in panelElements) {
                 if (pe is ActivePanelElement) {
-                    client.readChannel(pe.adr)
+                    client?.readChannel(pe.adr)
                 }
             }
             for (l in lampGroups) {
-                client.readChannel(l.adr)
+                client?.readChannel(l.adr)
             }
         }
     }

@@ -15,7 +15,6 @@ import android.util.Log
  * @author mblank
  */
 
-class Route
 /**
  * constructs a route
  *
@@ -32,21 +31,19 @@ class Route
  * @param offending
  * string with offending routes, separated by comma
  */
-(var id: Int // must be unique
- , internal var btn1: Int, internal var btn2: Int, route: String, allSensors: String,
+class Route (var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors: String,
  offending: String) {
 
     private val blink = System.currentTimeMillis()
     private val toggleBlink = false
 
     var isActive = false
-        internal set
     private var timeSet: Long = 0
 
-    internal var routeString = ""
-    internal var sensorsString = ""
-    internal var offendingString = "" // comma separated list of id's of offending
-    // routes
+    var routeString = ""
+    var sensorsString = ""
+    var offendingString = "" // comma separated list of id's of offending
+// routes
 
 
     // sensors turnout activate for the display of this route
@@ -159,11 +156,11 @@ class Route
 
         // TODO unlock turnouts
         /*
-		 * for (RouteTurnout to : rtTurnouts) {
-		 *     String cmd = "U " + to.turnout.adr;
-		 *     sendQ.add(cmd);
-		 * }
-		 */
+     * for (RouteTurnout to : rtTurnouts) {
+     *     String cmd = "U " + to.turnout.adr;
+     *     sendQ.add(cmd);
+     * }
+     */
 
         isActive = false
         // notify that route was cleared
@@ -173,21 +170,22 @@ class Route
     }
 
     fun clearOffendingRoutes() {
-        if (DEBUG)
-            Log.d(TAG, "clearing (active) offending Routes")
-        val offRoutes = offendingString.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        for (i in offRoutes.indices) {
-            for (rt in routes) {
-                try {
-                    val offID = Integer.parseInt(offRoutes[i])
-                    if (rt.id == offID && rt.isActive) {
-                        rt.clear()
-                    }
-                } catch (e: NumberFormatException) {
+        /* TODO
+    if (DEBUG)
+        Log.d(TAG, "clearing (active) offending Routes")
+    val offRoutes = offendingString.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+    for (i in offRoutes.indices) {
+        for (rt in routes) {
+            try {
+                val offID = Integer.parseInt(offRoutes[i])
+                if (rt.id == offID && rt.isActive) {
+                    rt.clear()
                 }
-
+            } catch (e: NumberFormatException) {
             }
+
         }
+    } */
     }
 
     fun set() {
@@ -230,9 +228,9 @@ class Route
 
     }
 
-    protected inner class RouteSignal {
+    class RouteSignal {
         internal var signal: SignalElement
-        var valueToSetForRoute: Int = 0
+        private var valueToSetForRoute: Int = 0
         var depFrom: Int = 0
 
         internal constructor(se: SignalElement, value: Int) {
@@ -266,7 +264,7 @@ class Route
         }
     }
 
-    protected fun updateDependencies() {
+    fun updateDependencies() {
         // update signals which have a dependency from another signal
         // set signals
         for (rs in rtSignals) {
@@ -283,7 +281,7 @@ class Route
 
     }
 
-    protected inner class RouteTurnout internal constructor(internal var turnout: TurnoutElement, internal var valueToSetForRoute: Int)
+    class RouteTurnout internal constructor(internal var turnout: TurnoutElement, internal var valueToSetForRoute: Int)
 
     /**
      * this route was activated or deactivated by a different device we need the
@@ -307,60 +305,66 @@ class Route
             rtOffending.add(rt2)
     }
 
-    fun getOffendingString(): String {
+/* TODO
+fun getOffendingString(): String {
 
-        val sb = StringBuilder("")
-        for (r in rtOffending) {
-            if (sb.length == 0) {
-                sb.append(r.id)
-            } else {
-                sb.append(",")
-                sb.append(r.id)
-            }
+
+    val sb = StringBuilder("")
+    for (r in rtOffending) {
+        if (sb.length == 0) {
+            sb.append(r.id)
+        } else {
+            sb.append(",")
+            sb.append(r.id)
         }
-        /*		if (sb.length() == 0)
-			Log.d(TAG, "route id=" + id + " has no offending routes.");
-		else
-			Log.d(TAG, "route id=" + id + " has offending routes with ids="
-					+ sb.toString()); */
-        return sb.toString()
-
     }
+    /*		if (sb.length() == 0)
+        Log.d(TAG, "route id=" + id + " has no offending routes.");
+    else
+        Log.d(TAG, "route id=" + id + " has offending routes with ids="
+                + sb.toString()); */
+    return sb.toString()
+
+} */
 
     companion object {
 
         fun auto() {
             // check for auto reset of routes
-            for (rt in routes) {
-                if (System.currentTimeMillis() - rt.timeSet > 30 * 1000L && rt.isActive) {
-                    rt.clear()
-                }
-                // update dependencies
-                if (rt.isActive) rt.updateDependencies()
+            /* TODO
+        for (rt in routes) {
+            if (System.currentTimeMillis() - rt.timeSet > 30 * 1000L && rt.isActive) {
+                rt.clear()
             }
+            // update dependencies
+            if (rt.isActive) rt.updateDependencies()
+        } */
 
         }
 
-        fun calcOffendingRoutes() {
-            for (rt in routes) {
-                for (t in rt.rtTurnouts) {
-                    // iterate over all turnouts of rt and check, if another route
-                    // activates the same turnout to a different position
-                    for (rt2 in routes) {
-                        if (rt.id != rt2.id) {
-                            for (t2 in rt2.rtTurnouts) {
-                                if (t.turnout.adr == t2.turnout.adr && t.valueToSetForRoute != t2.valueToSetForRoute) {
-                                    rt.addOffending(rt2)
-                                    break
-                                }
+        /* TODO
+     fun calcOffendingRoutes() {
 
+        for (rt in routes) {
+            for (t in rt.rtTurnouts) {
+                // iterate over all turnouts of rt and check, if another route
+                // activates the same turnout to a different position
+                for (rt2 in routes) {
+                    if (rt.id != rt2.id) {
+                        for (t2 in rt2.rtTurnouts) {
+                            if (t.turnout.adr == t2.turnout.adr && t.valueToSetForRoute != t2.valueToSetForRoute) {
+                                rt.addOffending(rt2)
+                                break
                             }
+
                         }
                     }
                 }
-                rt.offendingString = rt.getOffendingString()
             }
-
+            rt.offendingString = rt.getOffendingString()
         }
+
+    } */
     }
 }
+

@@ -1,9 +1,12 @@
 package de.blankedv.lanbahnpanel
 
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
-import de.blankedv.lanbahnpanel.LinePaints.*
 import android.graphics.Canvas
 import android.util.Log
+import de.blankedv.lanbahnpanel.LPaints.greenSignal
+import de.blankedv.lanbahnpanel.LPaints.redSignal
+import de.blankedv.lanbahnpanel.LPaints.signalLine
+import de.blankedv.lanbahnpanel.LPaints.whitePaint
+import de.blankedv.lanbahnpanel.LPaints.yellowSignal
 
 class SignalElement : ActivePanelElement {
 
@@ -13,27 +16,27 @@ class SignalElement : ActivePanelElement {
 
     constructor() {
         adr = INVALID_INT
-        state = ActivePanelElement.STATE_UNKNOWN
+        state = STATE_UNKNOWN
     }
 
     override fun doDraw(canvas: Canvas) {
 
         // read data from SX bus and paint position of turnout accordingly
         // draw a line and not a bitmap
-        canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), INSTANCE.getSignalLine())
-        canvas.drawLine((x2 * prescale).toFloat(), (y2 - 2.5f) * prescale, (x2 * prescale).toFloat(), (y2 + 2.5f) * prescale, INSTANCE.getSignalLine())
-        canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3f * prescale, INSTANCE.getWhitePaint())
+        canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), signalLine)
+        canvas.drawLine((x2 * prescale).toFloat(), (y2 - 2.5f) * prescale, (x2 * prescale).toFloat(), (y2 + 2.5f) * prescale, signalLine)
+        canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3f * prescale, whitePaint)
         if (enableEdit || adr == INVALID_INT) {
-            canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3f * prescale, INSTANCE.getWhitePaint())
+            canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3f * prescale, whitePaint)
         } else {
-            if (state == ActivePanelElement.STATE_RED) {
-                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3.5f * prescale, INSTANCE.getRedSignal())
-            } else if (state == ActivePanelElement.STATE_GREEN) {
-                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3.5f * prescale, INSTANCE.getGreenSignal())
-            } else if (state == ActivePanelElement.STATE_YELLOW || state == ActivePanelElement.STATE_YELLOW_FEATHER) {
-                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3.5f * prescale, INSTANCE.getYellowSignal())
-            } else if (state == ActivePanelElement.STATE_UNKNOWN) {
-                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3.5f * prescale, INSTANCE.getWhitePaint())
+            if (state == STATE_RED) {
+                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3.5f * prescale, redSignal)
+            } else if (state == STATE_GREEN) {
+                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3.5f * prescale, greenSignal)
+            } else if (state == STATE_YELLOW || state == STATE_YELLOW_FEATHER) {
+                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3.5f * prescale, yellowSignal)
+            } else if (state == STATE_UNKNOWN) {
+                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3.5f * prescale, whitePaint)
             }
 
         }

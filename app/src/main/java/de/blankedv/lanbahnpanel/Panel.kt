@@ -11,6 +11,7 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import de.blankedv.lanbahnpanel.AndroBitmaps.bitmaps
 import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
 
 
@@ -18,8 +19,7 @@ import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
  * the main panel of the application is comprised of two parts: a (small height) CONTROL area
  * at the top and the larger part with the main SWITCH PANEL at the bottom, handles all touch events
  */
-class Panel//@TargetApi(8)
-(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
+class Panel (context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
     private val INVALID_POINTER_ID = -1
     private var paintControlAreaBG: Paint
@@ -45,7 +45,7 @@ class Panel//@TargetApi(8)
     private var mWidth: Int = 0
     private var mHeight: Int = 0
 
-    var controlArea: ControlArea
+
 
     init {
 
@@ -145,7 +145,7 @@ class Panel//@TargetApi(8)
                     val deltaT = System.currentTimeMillis() - scalingTime
                     if (!mScaleDetector.isInProgress) { //&& (deltaT > SCALING_WAIT)) {
                         // assuming control area is always at the top !!
-                        if (mLastTouchY < controlArea.ect.bottom) {
+                        if (mLastTouchY < controlAreaRect.bottom) {
                             Log.d(TAG, "ACTION_UP _Checking Control  at: mlastTouchX=$mLastTouchX  mLastTouchY$mLastTouchY")
                             controlArea.checkTouch(mLastTouchX, mLastTouchY)
                         } else {

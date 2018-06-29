@@ -33,7 +33,7 @@ object Dialogs {
         address.setOnLongPressUpdateInterval(100) // faster change for long press
         val e = el as ActivePanelElement
         val msg: String
-        address.value = e.getAdr()
+        address.value = e.adr
         msg = "Adresse?"
         val addrDialog = AlertDialog.Builder(appContext)
                 .setMessage(msg)
@@ -45,7 +45,7 @@ object Dialogs {
                     // +"/"+sxBit.getCurrent()+" wurde selektiert",
                     // Toast.LENGTH_SHORT)
                     // .show();
-                    e.setAdr(address.value)
+                    e.adr = address.value
                     configHasChanged = true // flag for saving the
                     // configuration
                     // later when

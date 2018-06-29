@@ -112,8 +112,6 @@ class ControlArea {
                 if (l.isTouched(x, y)) l.toggle()
             }
         }
-
-
     }
 
     fun recalcGeometry() {
@@ -127,14 +125,9 @@ class ControlArea {
 
     }
 
-
-
     fun dispErrorMsg(e: String) {
         errorMsg = e
         errorTime = System.currentTimeMillis()
     }
 
-    fun getRectangle() : Rect {
-       // TODO
-    }
 }

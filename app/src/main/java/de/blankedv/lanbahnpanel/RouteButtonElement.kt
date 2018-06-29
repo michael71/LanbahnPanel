@@ -216,7 +216,7 @@ class RouteButtonElement : ActivePanelElement {
                     }
                 }
                 if (!routeFound) {
-                    ControlArea.dispErrorMsg("keine passende Fahrstrasse.")
+                    controlArea.dispErrorMsg("keine passende Fahrstrasse.")
                     findRouteButtonByAddress(adrFirstBtn)!!.reset()  // clear the button also
                     findRouteButtonByAddress(adrSecondBtn)!!.reset()  // clear the button also
                 }
@@ -229,7 +229,7 @@ class RouteButtonElement : ActivePanelElement {
                         pe.reset()
                     }
                 }
-                ControlArea.dispErrorMsg("zu viele Buttons.")
+                controlArea.dispErrorMsg("zu viele Buttons.")
             }
 
 

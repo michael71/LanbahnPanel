@@ -1,8 +1,7 @@
 package de.blankedv.lanbahnpanel
 
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.INVALID_INT
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.bitmaps
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.sendQ
+import de.blankedv.lanbahnpanel.AndroBitmaps.bitmaps
+
 
 /**
  * a LampGroups consists of a number of individual lamps on an IO16 Bricklet

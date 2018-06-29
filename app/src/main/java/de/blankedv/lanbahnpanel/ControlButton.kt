@@ -1,7 +1,6 @@
 package de.blankedv.lanbahnpanel
 
 import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
-import de.blankedv.lanbahnpanel.Panel.Companion.controlAreaRect
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -20,7 +19,7 @@ open class ControlButton(private val xrel: Float, private val yrel: Float  // re
     init {
         w = bmON!!.width / 2
         h = bmON.height / 2
-        if (Companion.getControlAreaRect() != null) {
+        if (controlAreaRect != null) {
             recalcXY()
         }
 
@@ -39,11 +38,11 @@ open class ControlButton(private val xrel: Float, private val yrel: Float  // re
 
     fun recalcXY() {
         if (bmON == null) {
-            w = (Companion.getControlAreaRect().right - Companion.getControlAreaRect().left) / 30
-            h = (Companion.getControlAreaRect().bottom - Companion.getControlAreaRect().top) / 3
+            w = (controlAreaRect.right - controlAreaRect.left) / 30
+            h = (controlAreaRect.bottom - controlAreaRect.top) / 3
         }
-        x = Companion.getControlAreaRect().left + xrel * (Companion.getControlAreaRect().right - Companion.getControlAreaRect().left) - w  // position where bitmap is drawn
-        y = Companion.getControlAreaRect().top + yrel * (Companion.getControlAreaRect().bottom - Companion.getControlAreaRect().top) - h
+        x = controlAreaRect.left + xrel * (controlAreaRect.right - controlAreaRect.left) - w  // position where bitmap is drawn
+        y = controlAreaRect.top + yrel * (controlAreaRect.bottom - controlAreaRect.top) - h
         if (DEBUG) Log.d(TAG, this.toString() + "btn recalc, x=" + x + " y=" + y + " w=" + w + " h=" + h)
     }
 

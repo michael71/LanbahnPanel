@@ -1,9 +1,6 @@
 package de.blankedv.lanbahnpanel
 
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.TURNOUT_LENGTH
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.TURNOUT_LENGTH_LONG
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.DEBUG
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.TAG
+
 import android.graphics.Point
 import android.util.Log
 

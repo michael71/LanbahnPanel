@@ -1,9 +1,11 @@
 package de.blankedv.lanbahnpanel
 
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
-import de.blankedv.lanbahnpanel.LinePaints.*
 import android.graphics.Canvas
 import android.util.Log
+import de.blankedv.lanbahnpanel.LPaints.bgPaint
+import de.blankedv.lanbahnpanel.LPaints.greenPaint
+import de.blankedv.lanbahnpanel.LPaints.linePaint2
+import de.blankedv.lanbahnpanel.LPaints.redPaint
 
 
 class TurnoutElement : ActivePanelElement {
@@ -14,7 +16,7 @@ class TurnoutElement : ActivePanelElement {
 
     constructor() {
         adr = INVALID_INT
-        state = ActivePanelElement.STATE_UNKNOWN
+        state = STATE_UNKNOWN
     }
 
     constructor(turnout: PanelElement) {
@@ -25,7 +27,7 @@ class TurnoutElement : ActivePanelElement {
         xt = turnout.xt
         yt = turnout.yt
         adr = INVALID_INT
-        state = ActivePanelElement.STATE_UNKNOWN
+        state = STATE_UNKNOWN
     }
 
     override fun doDraw(canvas: Canvas) {
@@ -33,22 +35,22 @@ class TurnoutElement : ActivePanelElement {
         // read data from SX bus and paint position of turnout accordingly
         // draw a line and not a bitmap
         if (enableEdit) {
-            canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), INSTANCE.getGreenPaint())
-            canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), INSTANCE.getRedPaint())
+            canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), greenPaint)
+            canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), redPaint)
         } else if (adr == INVALID_INT) {
-            canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), INSTANCE.getLinePaint2())
-            canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), INSTANCE.getLinePaint2())
+            canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaint2)
+            canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), linePaint2)
         } else {
 
-            if (state == ActivePanelElement.STATE_CLOSED) {
-                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), INSTANCE.getBgPaint())
-                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), INSTANCE.getLinePaint2())
-            } else if (state == ActivePanelElement.STATE_THROWN) {
-                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), INSTANCE.getBgPaint())
-                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), INSTANCE.getLinePaint2())
-            } else if (state == ActivePanelElement.STATE_UNKNOWN) {
-                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), INSTANCE.getBgPaint())
-                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), INSTANCE.getBgPaint())
+            if (state == STATE_CLOSED) {
+                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), bgPaint)
+                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaint2)
+            } else if (state == STATE_THROWN) {
+                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), bgPaint)
+                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), linePaint2)
+            } else if (state == STATE_UNKNOWN) {
+                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), bgPaint)
+                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), bgPaint)
             }
         }
 

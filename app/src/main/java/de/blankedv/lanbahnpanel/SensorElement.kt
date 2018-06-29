@@ -3,9 +3,10 @@ package de.blankedv.lanbahnpanel
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.util.Log
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
-import de.blankedv.lanbahnpanel.LinePaints.*
-
+import de.blankedv.lanbahnpanel.AndroBitmaps.bitmaps
+import de.blankedv.lanbahnpanel.LPaints.linePaintDarkYellowDash
+import de.blankedv.lanbahnpanel.LPaints.linePaintGrayDash
+import de.blankedv.lanbahnpanel.LPaints.linePaintRedDash
 
 class SensorElement : ActivePanelElement {
 
@@ -20,23 +21,23 @@ class SensorElement : ActivePanelElement {
         if (x2 != INVALID_INT) {  // draw dashed line as sensor
             // read data from SX bus and set red/gray dashed line accordingly
 
-            if (state == ActivePanelElement.STATE_FREE) {
+            if (state == STATE_FREE) {
 
-                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), INSTANCE.getLinePaintGrayDash())
+                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintGrayDash)
 
-            } else if (state == ActivePanelElement.STATE_OCCUPIED) {
+            } else if (state == STATE_OCCUPIED) {
 
-                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), INSTANCE.getLinePaintRedDash())
-
-
-            } else if (state == ActivePanelElement.STATE_INROUTE) {
-
-                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), INSTANCE.getLinePaintDarkYellowDash())
+                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintRedDash)
 
 
-            } else if (state == ActivePanelElement.STATE_UNKNOWN) {
+            } else if (state == STATE_INROUTE) {
 
-                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), INSTANCE.getLinePaintGrayDash())
+                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintDarkYellowDash)
+
+
+            } else if (state == STATE_UNKNOWN) {
+
+                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintGrayDash)
             }
         } else {
             // draw lamp type of sensor   s_on.png etc
@@ -47,7 +48,7 @@ class SensorElement : ActivePanelElement {
 
             val bmName = StringBuilder("sensor")
 
-            if (state == ActivePanelElement.STATE_FREE || state == ActivePanelElement.STATE_UNKNOWN) {
+            if (state == STATE_FREE || state == STATE_UNKNOWN) {
                 bmName.append("_off")
             } else {
                 bmName.append("_on")
