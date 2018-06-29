@@ -1,10 +1,5 @@
 package de.blankedv.lanbahnpanel
 
-import java.util.ArrayList
-import java.util.Hashtable
-import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.BlockingQueue
-
 import android.annotation.SuppressLint
 import android.app.Application
 import android.app.NotificationChannel
@@ -12,9 +7,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.os.Build
 import android.os.Handler
 import android.os.Message
@@ -22,21 +14,8 @@ import android.preference.PreferenceManager
 import android.provider.Settings
 import android.support.v4.app.NotificationCompat
 import android.util.Log
-import de.blankedv.lanbahnpanel.KEY_DRAW_ADR
-import de.blankedv.lanbahnpanel.KEY_DRAW_ADR2
-import de.blankedv.lanbahnpanel.KEY_ENABLE_ALL_ADDRESSES
-import de.blankedv.lanbahnpanel.KEY_ENABLE_EDIT
-import de.blankedv.lanbahnpanel.KEY_ENABLE_ZOOM
-import de.blankedv.lanbahnpanel.KEY_FLIP
-import de.blankedv.lanbahnpanel.KEY_ROUTES
-import de.blankedv.lanbahnpanel.KEY_SAVE_STATES
-import de.blankedv.lanbahnpanel.KEY_SCALE
-import de.blankedv.lanbahnpanel.KEY_STYLE_PREF
-import de.blankedv.lanbahnpanel.KEY_XOFF
-import de.blankedv.lanbahnpanel.KEY_YOFF
-import de.blankedv.lanbahnpanel.STATE_UNKNOWN
 
-import de.blankedv.lanbahnpanel.*
+import de.blankedv.lanbahnpanel.model.*
 
 /** Lanbahn Panel
  * Rev 3.1 - 28 Jun 2018 - now using sxnet protocol
@@ -69,7 +48,7 @@ class LanbahnPanelApplication : Application() {
 
         // handler for receiving sxnet messages
 
-        handler = object : Handler() {    // TODO move message func. to ReceiveQueue
+        handler = object : Handler() {
             override fun handleMessage(msg: Message) {
                 val what = msg.what
                 val chan = msg.arg1
@@ -77,6 +56,13 @@ class LanbahnPanelApplication : Application() {
                 val data = msg.arg2
                 timeOfLastReceivedMessage = System.currentTimeMillis()
                 if (what == TYPE_FEEDBACK_MSG) {
+                    if (chan == SXPOWER_ADR) {
+                        if (data == 0) {
+                            globalPower = POWER_OFF
+                        } else {
+                            globalPower = POWER_ON
+                        }
+                    }
                     for (pe in panelElements) {
                         if (pe.adr == chan) {
                             //               if (DEBUG) Log.d(TAG,"updating "+pe.toString());

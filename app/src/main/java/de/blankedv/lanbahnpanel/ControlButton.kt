@@ -1,10 +1,12 @@
 package de.blankedv.lanbahnpanel
 
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.Log
+import de.blankedv.lanbahnpanel.model.DEBUG
+import de.blankedv.lanbahnpanel.model.TAG
+import de.blankedv.lanbahnpanel.model.controlAreaRect
 
 open class ControlButton(private val xrel: Float, private val yrel: Float  // relative position in control area.
                          , private val bmON: Bitmap?, private val bmOFF: Bitmap?) {

@@ -1,17 +1,12 @@
-package de.blankedv.lanbahnpanel
+package de.blankedv.lanbahnpanel.view
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.AlertDialog.Builder
 import android.content.ComponentName
-import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.ServiceConnection
-import android.content.SharedPreferences
 import android.net.NetworkInfo
 import android.net.wifi.WifiInfo
-import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
@@ -20,7 +15,6 @@ import android.support.v7.app.AppCompatActivity
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.LinearLayout
@@ -28,13 +22,14 @@ import android.widget.LinearLayout.LayoutParams
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
+import de.blankedv.lanbahnpanel.*
 
 import java.util.Timer
 import java.util.TimerTask
 
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
 import de.blankedv.lanbahnpanel.LanbahnPanelApplication.Companion.clearPanelData
 import de.blankedv.lanbahnpanel.LanbahnPanelApplication.Companion.connectionIsAlive
+import de.blankedv.lanbahnpanel.model.*
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.wifiManager
 
@@ -52,8 +47,8 @@ class LanbahnPanelActivity : AppCompatActivity() {
     lateinit internal var params: LayoutParams
     lateinit internal var mainLayout: LinearLayout
     lateinit internal var but: Button
-private var mOptionsMenu: Menu? = null
- private var handler = Handler()  // used for UI Update timer
+    private var mOptionsMenu: Menu? = null
+    private var handler = Handler()  // used for UI Update timer
     private var counter = 0
     internal var click = true
     private val KEY_STATES = "states"
@@ -82,9 +77,9 @@ private var mOptionsMenu: Menu? = null
         override fun onServiceConnected(className: ComponentName,
                                         service: IBinder) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
-           /*binder = service as LoconetService.LocalBinder
-            mService = binder.service
-            mBound = true */
+            /*binder = service as LoconetService.LocalBinder
+             mService = binder.service
+             mBound = true */
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
@@ -192,7 +187,7 @@ private var mOptionsMenu: Menu? = null
         Log.d(TAG, "LanbahnPanelActivity - shutting down Client.")
         (application as LanbahnPanelApplication).removeNotification()
 
-            client?.shutdown()
+        client?.shutdown()
 
     }
 
@@ -281,10 +276,10 @@ private var mOptionsMenu: Menu? = null
             }
 
             R.id.action_connect -> {
-               // if (!lnStatusData.connState) {
-                    toast("TODO trying reconnect")
-                    //instance.connect()
-               // }
+                // if (!lnStatusData.connState) {
+                toast("TODO trying reconnect")
+                //instance.connect()
+                // }
             }
             R.id.action_power -> toast("switching power ON/OFF not allowed")
             R.id.menu_about // call preferences activity
@@ -344,7 +339,7 @@ private var mOptionsMenu: Menu? = null
         LanbahnPanelApplication.updatePanelData()
     }
 
-private fun updateUI() {
+    private fun updateUI() {
         counter++
 
         // logString is updated via Binding mechanism
@@ -355,6 +350,7 @@ private fun updateUI() {
         // https://stackoverflow.com/questions/38660735/how-bind-android-databinding-to-menu
         setConnectionIcon()
         setPowerStateIcon()
+        Route.auto()
         handler.postDelayed({ updateUI() }, 500)
     }
 
@@ -408,19 +404,19 @@ private fun updateUI() {
 
     }
 
- private fun setConnectionIcon() {
-        if (client!!.isConnected())
+    private fun setConnectionIcon() {
+        if (LanbahnPanelApplication.connectionIsAlive()) {
             mOptionsMenu?.findItem(R.id.action_connect)?.setIcon(R.drawable.commok)
-        else
+        } else
             mOptionsMenu?.findItem(R.id.action_connect)?.setIcon(R.drawable.nocomm)
     }
 
-private fun setPowerStateIcon() {
-    var globalPower = 1
+    private fun setPowerStateIcon() {
+
         when (globalPower) {
-            0 -> mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_stop) //power_red)
-            1 -> mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_green)
-            2 -> mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_unknown)
+            POWER_OFF -> mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_stop) //power_red)
+            POWER_ON -> mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_green)
+            POWER_UNKNOWN -> mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_unknown)
         }
     }
 
@@ -483,9 +479,9 @@ private fun setPowerStateIcon() {
     fun shutdownSXClient() {
         Log.d(TAG, "LanbahnPanelActivity - shutting down SXnet Client.")
 
-            client?.shutdown()
+        client?.shutdown()
 
-            client?.disconnectContext()
+        client?.disconnectContext()
         client = null
 
     }

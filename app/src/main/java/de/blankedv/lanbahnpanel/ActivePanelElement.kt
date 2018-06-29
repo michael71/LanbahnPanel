@@ -1,10 +1,9 @@
 package de.blankedv.lanbahnpanel
 
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
-
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.util.Log
+import de.blankedv.lanbahnpanel.model.*
 
 /**
  * all active panel elements, like turnouts, signals, trackindicators (=sensors)

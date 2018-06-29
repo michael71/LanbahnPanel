@@ -6,6 +6,8 @@ import java.util.Date
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.util.Log
+import de.blankedv.lanbahnpanel.model.INVALID_INT
+import de.blankedv.lanbahnpanel.model.TAG
 
 /** Utils - utility functions
  *

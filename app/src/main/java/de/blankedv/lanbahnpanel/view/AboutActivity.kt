@@ -1,4 +1,4 @@
-package de.blankedv.lanbahnpanel
+package de.blankedv.lanbahnpanel.view
 
 /*  (c) 2011, Michael Blank
  *
@@ -27,6 +27,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import de.blankedv.lanbahnpanel.R
 
 
 class AboutActivity : Activity() {

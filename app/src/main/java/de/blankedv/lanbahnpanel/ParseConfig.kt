@@ -16,8 +16,6 @@ import javax.xml.parsers.ParserConfigurationException
 import org.apache.http.HttpResponse
 import org.apache.http.client.methods.HttpGet
 import org.w3c.dom.Document
-import org.w3c.dom.Element
-import org.w3c.dom.NamedNodeMap
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import org.xml.sax.SAXException
@@ -28,7 +26,7 @@ import android.os.AsyncTask
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
+import de.blankedv.lanbahnpanel.model.*
 
 
 /**

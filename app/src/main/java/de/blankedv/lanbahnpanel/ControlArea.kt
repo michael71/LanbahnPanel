@@ -1,9 +1,9 @@
 package de.blankedv.lanbahnpanel
 
 import android.graphics.*
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
 import android.util.Log
 import de.blankedv.lanbahnpanel.AndroBitmaps.bitmaps
+import de.blankedv.lanbahnpanel.model.*
 
 /**
  * control area - fixed geometry, above the panel

@@ -6,6 +6,7 @@ import de.blankedv.lanbahnpanel.LPaints.bgPaint
 import de.blankedv.lanbahnpanel.LPaints.greenPaint
 import de.blankedv.lanbahnpanel.LPaints.linePaint2
 import de.blankedv.lanbahnpanel.LPaints.redPaint
+import de.blankedv.lanbahnpanel.model.*
 
 
 class TurnoutElement : ActivePanelElement {

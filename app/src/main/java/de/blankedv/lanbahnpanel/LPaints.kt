@@ -5,7 +5,7 @@ import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.Paint.Style
 import android.text.TextPaint
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
+import de.blankedv.lanbahnpanel.model.selectedStyle
 
 /**
  * initialize all paints for later use in onDraw() methods (depending on diplay style/theme)

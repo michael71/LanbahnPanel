@@ -3,6 +3,10 @@ package de.blankedv.lanbahnpanel
 
 import android.graphics.Point
 import android.util.Log
+import de.blankedv.lanbahnpanel.model.DEBUG
+import de.blankedv.lanbahnpanel.model.TAG
+import de.blankedv.lanbahnpanel.model.TURNOUT_LENGTH
+import de.blankedv.lanbahnpanel.model.TURNOUT_LENGTH_LONG
 
 object LinearMath {
 

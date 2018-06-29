@@ -1,6 +1,8 @@
 package de.blankedv.lanbahnpanel
 
 import de.blankedv.lanbahnpanel.AndroBitmaps.bitmaps
+import de.blankedv.lanbahnpanel.model.INVALID_INT
+import de.blankedv.lanbahnpanel.model.sendQ
 
 
 /**

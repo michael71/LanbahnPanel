@@ -1,12 +1,11 @@
 package de.blankedv.lanbahnpanel
 
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
-
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.NumberPicker
+import de.blankedv.lanbahnpanel.model.appContext
+import de.blankedv.lanbahnpanel.model.configHasChanged
 
 /**
  * predefined dialogs

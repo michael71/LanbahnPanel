@@ -7,6 +7,7 @@ import de.blankedv.lanbahnpanel.LPaints.redSignal
 import de.blankedv.lanbahnpanel.LPaints.signalLine
 import de.blankedv.lanbahnpanel.LPaints.whitePaint
 import de.blankedv.lanbahnpanel.LPaints.yellowSignal
+import de.blankedv.lanbahnpanel.model.*
 
 class SignalElement : ActivePanelElement {
 

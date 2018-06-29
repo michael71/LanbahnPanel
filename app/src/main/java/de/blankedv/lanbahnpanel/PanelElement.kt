@@ -3,9 +3,8 @@ package de.blankedv.lanbahnpanel
 import android.graphics.Canvas
 import android.graphics.Point
 import android.util.Log
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
+import de.blankedv.lanbahnpanel.model.*
 
-import de.blankedv.lanbahnpanel.INVALID_INT
 /**
  * generic panel element - this can be a passive (never changing)
  * panel element or an active (lanbahn status dependent)

@@ -1,6 +1,5 @@
-package de.blankedv.lanbahnpanel
+package de.blankedv.lanbahnpanel.view
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
@@ -9,14 +8,14 @@ import android.preference.CheckBoxPreference
 import android.preference.EditTextPreference
 import android.preference.PreferenceActivity
 import android.preference.ListPreference
-import android.preference.PreferenceCategory
 import android.preference.PreferenceManager
 import android.util.Log
+import de.blankedv.lanbahnpanel.R
 
 import java.io.File
 import java.util.ArrayList
 
-import de.blankedv.lanbahnpanel.*
+import de.blankedv.lanbahnpanel.model.*
 
 class Preferences : PreferenceActivity(), OnSharedPreferenceChangeListener {
 

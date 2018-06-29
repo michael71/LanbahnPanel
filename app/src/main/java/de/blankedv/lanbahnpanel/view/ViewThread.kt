@@ -1,17 +1,15 @@
-package de.blankedv.lanbahnpanel
+package de.blankedv.lanbahnpanel.view
 
-import android.graphics.Canvas
 import android.view.SurfaceHolder
-
-import java.util.TimerTask
+import de.blankedv.lanbahnpanel.Panel
 
 class ViewThread(private val mPanel: Panel) : Thread() {
-    private val mHolder: SurfaceHolder
+    private val mHolder: SurfaceHolder = mPanel.holder
     private var mRun = false
 
 
     init {
-        mHolder = mPanel.holder
+        // nothing to do
     }
 
     fun setRunning(run: Boolean) {

@@ -1,11 +1,9 @@
 package de.blankedv.lanbahnpanel
 
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
-import de.blankedv.lanbahnpanel.ActivePanelElement.*
-
 import java.util.ArrayList
 
 import android.util.Log
+import de.blankedv.lanbahnpanel.model.*
 
 /** Class Route stores a complete route, which contains sensors, signals and turnouts
  * it is tried to calculate offending routes automatically (defined as all routes which

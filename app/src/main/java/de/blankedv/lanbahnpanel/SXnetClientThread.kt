@@ -1,19 +1,15 @@
 package de.blankedv.lanbahnpanel
 
-import android.R.attr.data
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
-
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 import java.io.PrintWriter
 import java.net.InetSocketAddress
 import java.net.Socket
-import java.net.SocketAddress
 import android.content.Context
 import android.os.Message
 import android.util.Log
-import android.widget.Toast
+import de.blankedv.lanbahnpanel.model.*
 
 /**
  * communicates with the SX3-PC server program (usually on port 4104)
@@ -231,16 +227,19 @@ class SXnetClientThread(private var context: Context?, private val ip: String, p
                         m.arg2 = data
                         handler.sendMessage(m)  // send SX data to UI Thread via Message
                     } else {
-                        Log.e(TAG, "INV error in rec. msg=$cmd adr=$adr data=$data")
+                        Log.e(TAG, "range error in rec. msg, cmd=$cmd adr=$adr data=$data")
                     }
                 } else {
-                    Log.e(TAG, "length error in rec. msg=" + cmd + "info[0]=" + info[0])
+                    Log.e(TAG, "length error in rec. msg, cmd=" + cmd + "info[0]=" + info[0])
                 }
             }
         }
 
     }
 
+    /** convert data string to integer and
+     *  check if data is in valid range for selectrix (8 bit, 0..255)
+     */
     private fun getDataFromString(s: String): Int {
         // converts String to integer between 0 and 255 (maximum data range)
         var data: Int? = INVALID_INT
@@ -256,20 +255,24 @@ class SXnetClientThread(private var context: Context?, private val ip: String, p
         return data!!
     }
 
+    /** convert address string to integer and
+     * check if address (=channel) is in valid range for selectrix
+     */
     private fun getChannelFromString(s: String): Int {
-        var channel: Int? = INVALID_INT
+
         try {
+            var channel = INVALID_INT
             channel = Integer.parseInt(s)
-            if (channel >= 0 && channel <= SXMAX) {
+            if ((channel in SXMIN..SXMAX) or (channel == SXPOWER_ADR)){
                 return channel
             } else {
-                channel = INVALID_INT
+                return INVALID_INT
             }
         } catch (e: Exception) {
 
         }
 
-        return channel!!
+        return INVALID_INT
     }
 
 

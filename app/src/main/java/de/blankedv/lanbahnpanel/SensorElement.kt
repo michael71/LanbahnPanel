@@ -7,6 +7,7 @@ import de.blankedv.lanbahnpanel.AndroBitmaps.bitmaps
 import de.blankedv.lanbahnpanel.LPaints.linePaintDarkYellowDash
 import de.blankedv.lanbahnpanel.LPaints.linePaintGrayDash
 import de.blankedv.lanbahnpanel.LPaints.linePaintRedDash
+import de.blankedv.lanbahnpanel.model.*
 
 class SensorElement : ActivePanelElement {
 

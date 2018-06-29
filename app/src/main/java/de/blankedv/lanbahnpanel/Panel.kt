@@ -1,18 +1,15 @@
 package de.blankedv.lanbahnpanel
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Matrix
-import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.*
 import android.util.Log
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import de.blankedv.lanbahnpanel.AndroBitmaps.bitmaps
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
+import de.blankedv.lanbahnpanel.model.*
+import de.blankedv.lanbahnpanel.view.ViewThread
 
 
 /**
@@ -45,7 +42,11 @@ class Panel (context: Context) : SurfaceView(context), SurfaceHolder.Callback {
     private var mWidth: Int = 0
     private var mHeight: Int = 0
 
-
+    // public static Bitmap myBitmap = Bitmap.createBitmap(4000,1600,
+// Bitmap.Config.ARGB_4444);
+    private var mBitmap = Bitmap.createBitmap(2000, 800,
+            Bitmap.Config.ARGB_4444)
+    private var mCanvas = Canvas(mBitmap)
 
     init {
 
@@ -221,7 +222,7 @@ class Panel (context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
         // draw Panel and scale with zoom
         //if (USS == true)
-        myBitmap.eraseColor(Color.TRANSPARENT) // Color.DKGRAY);
+        mBitmap.eraseColor(Color.TRANSPARENT) // Color.DKGRAY);
 
         // label with panel name and display green "unlock", if zoom enabled
         val topLeft = mHeight / 8
@@ -236,11 +237,11 @@ class Panel (context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         matrix.postScale(scale, scale)
         matrix.postTranslate(xoff, yoff)
         for (e in panelElements) {
-            e.doDraw(myCanvas)
+            e.doDraw(mCanvas)
         }
-        drawRaster(myCanvas, RASTER)
+        drawRaster(mCanvas, RASTER)
 
-        canvas.drawBitmap(myBitmap, matrix, null)
+        canvas.drawBitmap(mBitmap, matrix, null)
         canvas.drawRect(controlAreaRect, paintControlAreaBG)
 
         controlArea.draw(canvas) // NOT scaled with zoom

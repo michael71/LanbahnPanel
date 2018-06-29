@@ -1,8 +1,10 @@
 package de.blankedv.lanbahnpanel
 
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
 import java.util.ArrayList
 import android.util.Log
+import de.blankedv.lanbahnpanel.model.DEBUG
+import de.blankedv.lanbahnpanel.model.TAG
+import de.blankedv.lanbahnpanel.model.routes
 
 /**
  * composite route, i.e. a list of routes which build a new route, is only a

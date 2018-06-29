@@ -1,13 +1,12 @@
 package de.blankedv.lanbahnpanel
 
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.*
 import java.io.FileWriter
 import java.io.IOException
 import java.io.StringWriter
-import org.xmlpull.v1.XmlSerializer
 import android.os.Environment
 import android.util.Log
 import android.util.Xml
+import de.blankedv.lanbahnpanel.model.*
 
 /**
  * WriteConfig - Utility turnout save Panel Config
