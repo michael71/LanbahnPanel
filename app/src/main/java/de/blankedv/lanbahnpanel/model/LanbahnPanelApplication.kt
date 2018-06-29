@@ -1,4 +1,4 @@
-package de.blankedv.lanbahnpanel
+package de.blankedv.lanbahnpanel.model
 
 import android.annotation.SuppressLint
 import android.app.Application
@@ -14,11 +14,10 @@ import android.preference.PreferenceManager
 import android.provider.Settings
 import android.support.v4.app.NotificationCompat
 import android.util.Log
+import de.blankedv.lanbahnpanel.R
 import de.blankedv.lanbahnpanel.elements.ActivePanelElement
-import de.blankedv.lanbahnpanel.graphics.AndroBitmaps
-import de.blankedv.lanbahnpanel.graphics.LPaints
-
-import de.blankedv.lanbahnpanel.model.*
+import de.blankedv.lanbahnpanel.util.AndroBitmaps
+import de.blankedv.lanbahnpanel.util.LPaints
 
 /** Lanbahn Panel
  * Rev 3.1 - 28 Jun 2018 - now using sxnet protocol

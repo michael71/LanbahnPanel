@@ -2,11 +2,11 @@ package de.blankedv.lanbahnpanel.elements
 
 import android.graphics.Canvas
 import android.util.Log
-import de.blankedv.lanbahnpanel.graphics.LPaints.greenSignal
-import de.blankedv.lanbahnpanel.graphics.LPaints.redSignal
-import de.blankedv.lanbahnpanel.graphics.LPaints.signalLine
-import de.blankedv.lanbahnpanel.graphics.LPaints.whitePaint
-import de.blankedv.lanbahnpanel.graphics.LPaints.yellowSignal
+import de.blankedv.lanbahnpanel.util.LPaints.greenSignal
+import de.blankedv.lanbahnpanel.util.LPaints.redSignal
+import de.blankedv.lanbahnpanel.util.LPaints.signalLine
+import de.blankedv.lanbahnpanel.util.LPaints.whitePaint
+import de.blankedv.lanbahnpanel.util.LPaints.yellowSignal
 import de.blankedv.lanbahnpanel.model.*
 
 class SignalElement : ActivePanelElement {

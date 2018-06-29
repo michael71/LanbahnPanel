@@ -20,11 +20,12 @@ import de.blankedv.lanbahnpanel.model.*
  *
  * @author mblank
  */
-class SXnetClientThread(private var context: Context?, private val ip: String, private val port: Int, private val rxHandler: Handler) : Thread() {
+class SXnetClientThread(
+        private var context: Context?, private val ip: String, private val port: Int,
+        private val rxHandler: Handler) : RRConnectionThread(context, ip, port, rxHandler) {
     // threading und BlockingQueue siehe http://www.javamex.com/tutorials/blockingqueue_example.shtml
 
-    @Volatile
-    private var shutdownFlag: Boolean = false
+
 
     private var count_no_response = 0
     private var timeElapsed: Long = 0
@@ -33,23 +34,34 @@ class SXnetClientThread(private var context: Context?, private val ip: String, p
     private var out: PrintWriter? = null
     private var `in`: BufferedReader? = null
 
-    // see
-    // http://stackoverflow.com/questions/969866/java-detect-lost-connection
-    fun isConnected(): Boolean {
-        if (socket == null) {
-            return false
-        } else {
-           return socket!!.isConnected && !socket!!.isClosed
-        }
-    }
-
-
     init {
         if (DEBUG) Log.d(TAG, "SXnetClientThread constructor.")
     }
 
-    fun shutdown() {
-        shutdownFlag = true
+    // see
+    // http://stackoverflow.com/questions/969866/java-detect-lost-connection
+    override fun isConnected(): Boolean {
+        if (socket == null) {
+            return false
+        } else {
+            // TODO add "false" when no response from server (but socket still available)
+           return socket!!.isConnected && !socket!!.isClosed
+        }
+    }
+
+    override fun reconnect() : Boolean {
+        // TODO implement
+        return true;
+    }
+
+    override fun read(addr : Int) {
+        // TODO implement
+    }
+
+    override fun send(addr : Int, data : Int) : Boolean {
+       // TODO implement
+        val success = true
+        return success
     }
 
     override fun run() {
@@ -134,12 +146,6 @@ class SXnetClientThread(private var context: Context?, private val ip: String, p
             rxHandler?.sendMessage(m)  // send SX data to UI Thread via Message
         }
 
-    }
-
-    fun disconnectContext() {
-        this.context = null
-        Log.d(TAG, "lost context, stopping thread")
-        shutdown()
     }
 
 

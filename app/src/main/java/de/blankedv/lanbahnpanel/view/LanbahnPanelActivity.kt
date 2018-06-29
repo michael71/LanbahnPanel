@@ -27,9 +27,9 @@ import de.blankedv.lanbahnpanel.*
 import java.util.Timer
 import java.util.TimerTask
 
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.Companion.clearPanelData
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.Companion.connectionIsAlive
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication.Companion.appHandler
+import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.clearPanelData
+import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.connectionIsAlive
+import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.appHandler
 import de.blankedv.lanbahnpanel.config.ReadConfig
 import de.blankedv.lanbahnpanel.config.WriteConfig
 import de.blankedv.lanbahnpanel.elements.ActivePanelElement

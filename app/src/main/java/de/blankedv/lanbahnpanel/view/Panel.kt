@@ -7,9 +7,9 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import de.blankedv.lanbahnpanel.graphics.AndroBitmaps.bitmaps
-import de.blankedv.lanbahnpanel.graphics.LPaints
-import de.blankedv.lanbahnpanel.LanbahnPanelApplication
+import de.blankedv.lanbahnpanel.util.AndroBitmaps.bitmaps
+import de.blankedv.lanbahnpanel.util.LPaints
+import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication
 import de.blankedv.lanbahnpanel.elements.RouteButtonElement
 import de.blankedv.lanbahnpanel.model.*
 
@@ -216,7 +216,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         } else {
             canvas.drawBitmap(bitmaps["lock"], 5f, topLeft, null)
         }
-        canvas.drawText(panelName, 50f, (topLeft + 24f), LPaints.panelNamePaint)
+
 
         val matrix = Matrix()
         matrix.postScale(scale, scale)

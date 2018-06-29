@@ -3,7 +3,7 @@ package de.blankedv.lanbahnpanel.elements
 import android.graphics.Canvas
 import android.graphics.Point
 import android.util.Log
-import de.blankedv.lanbahnpanel.graphics.LPaints
+import de.blankedv.lanbahnpanel.util.LPaints
 import de.blankedv.lanbahnpanel.model.*
 
 /**

@@ -1,4 +1,4 @@
-package de.blankedv.lanbahnpanel.graphics
+package de.blankedv.lanbahnpanel.util
 
 import android.graphics.Color
 import android.graphics.DashPathEffect

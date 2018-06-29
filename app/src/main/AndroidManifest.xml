@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.blankedv.lanbahnpanel"
     android:exported="true"
-    android:versionCode="17"
-    android:versionName="2.2.0 - 25 Jun 2018">
+    android:versionCode="18"
+    android:versionName="2.3.0 (KT) - 29 Jun 2018">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
-        android:name=".LanbahnPanelApplication"
+        android:name=".model.LanbahnPanelApplication"
         android:allowBackup="true"
         android:icon="@drawable/andropanel"
         android:label="@string/app_name"
