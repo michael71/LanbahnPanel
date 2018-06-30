@@ -34,11 +34,11 @@ import de.blankedv.lanbahnpanel.util.LinearMath
 /**
  * Parse Configuration from XML file
  * TODO review kotlin code
+ * TODO Berechtigung erfragen für Android >= 7
  *
  * @author mblank
  */
 object ReadConfig {
-
 
     internal val DEBUG_PARSING = false
 
@@ -186,7 +186,8 @@ object ReadConfig {
         items = root.getElementsByTagName("panel")
         if (DEBUG)
             Log.d(TAG, "config: " + items.length + " panel")
-        panelName = parsePanelName(items.item(0))
+        panelName = parsePanelDescription(items.item(0),"name")
+        panelProtocol = parsePanelDescription(items.item(0),"protocol")
 
         // NamedNodeMap attributes = item.getAttributes();
         // Node theAttribute = attributes.items.item(i);
@@ -393,18 +394,15 @@ object ReadConfig {
 
     }
 
-    private fun parsePanelName(item: Node): String {
+    private fun parsePanelDescription(item: Node, type: String): String {
         val attributes = item.attributes
         for (i in 0 until attributes.length) {
             val theAttribute = attributes.item(i)
-            if (DEBUG_PARSING)
-                Log.d(TAG,
-                        theAttribute.nodeName + "="
-                                + theAttribute.nodeValue)
-
-            if (theAttribute.nodeName == "name") {
+            if (theAttribute.nodeName == type) {
+                if (DEBUG_PARSING)
+                    Log.d(TAG, theAttribute.nodeName + " : " + type  +" value="
+                                    + theAttribute.nodeValue)
                 return theAttribute.nodeValue
-
             }
         }
         return ""

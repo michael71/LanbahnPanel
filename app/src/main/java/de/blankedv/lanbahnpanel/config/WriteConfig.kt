@@ -47,24 +47,6 @@ object WriteConfig {
 
         if (mExternalStorageWriteable) {
 
-            /* no longer used. we don't change the original config file!!!
-	  		try {
-
-				File dir = new File(Environment.getExternalStorageDirectory(),
-						LOCAL_DIRECTORY);
-				dir.mkdir(); // make DIRECTORY - if needed
-				File from = new File(Environment.getExternalStorageDirectory(),
-						LOCAL_DIRECTORY + configFilename);
-				String suffix = Utils.getDateTime();
-				File to = new File(Environment.getExternalStorageDirectory(),
-						LOCAL_DIRECTORY + configFilename + "." + suffix);
-				from.renameTo(to);
-			} catch (Exception e) {
-				Log.e(TAG,
-						"Error in renaming old config file: " + e.getMessage());
-			}  */
-
-
             var fWriter: FileWriter? = null
             try {
                 val suffix = Utils.dateTime

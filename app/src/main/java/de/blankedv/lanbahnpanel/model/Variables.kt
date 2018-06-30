@@ -29,6 +29,7 @@ var compRoutes = ArrayList<CompRoute>()
 
 
 var panelName = ""
+var panelProtocol = ""
 
 var drawAddresses = false
 var drawAddresses2 = false

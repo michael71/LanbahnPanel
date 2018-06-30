@@ -1,16 +1,20 @@
 package de.blankedv.lanbahnpanel.view
 
+import android.Manifest
 import android.app.AlertDialog
 import android.app.AlertDialog.Builder
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.net.NetworkInfo
 import android.net.wifi.WifiInfo
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.preference.PreferenceManager
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.DisplayMetrics
 import android.util.Log
@@ -60,6 +64,9 @@ class LanbahnPanelActivity : AppCompatActivity() {
     internal var click = true
     private val KEY_STATES = "states"
     private var shuttingDown = false
+
+
+    private val MY_PERMISSIONS_REQUEST_WRITE_STORAGE = 12
 
     val wifiName: String?
         get() {
@@ -180,7 +187,13 @@ class LanbahnPanelActivity : AppCompatActivity() {
         // sendQ.add(DISCONNECT);
         (application as LanbahnPanelApplication).saveZoomEtc()
         if (configHasChanged)
-            WriteConfig.writeToXML()
+            if (checkStorageWritePermission()) {
+                WriteConfig.writeToXML()
+            } else {
+                toast("ERROR: App has NO PERMISSION to write files !")
+            }
+
+
         if (saveStates)
             saveStates()
         sendQ.clear()
@@ -482,6 +495,60 @@ class LanbahnPanelActivity : AppCompatActivity() {
         client = null
 
     }
+
+    private fun checkStorageWritePermission(): Boolean {
+        if (ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+
+            // Should we show an explanation?
+            /*if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                // TODO
+                return false
+            } else { */
+            // No explanation needed, we can request the permission.
+            ActivityCompat.requestPermissions(this,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    MY_PERMISSIONS_REQUEST_WRITE_STORAGE)
+
+            // MY_PERMISSIONS_REQUEST_WRITE_STORAGE is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
+            return false
+            /* } */
+        } else {
+            return true
+        }
+    }
+
+    /** returned by Android after user has given permissions */
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            MY_PERMISSIONS_REQUEST_WRITE_STORAGE -> {
+                // If request is cancelled, the result arrays are empty.
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // finally, we got the permission, write updated config file NOW
+                    WriteConfig.writeToXML()
+                } else {
+                    // permission denied, boo! Disable the functionality that depends on this permission.
+                    toast("cannot write log to File without permissions")
+                }
+                return
+            }
+
+        // Add other 'when' lines to check for other
+        // permissions this app might request.
+            else -> {
+                // Ignore all other requests.
+            }
+        }
+    }
+
 
     companion object {
 
