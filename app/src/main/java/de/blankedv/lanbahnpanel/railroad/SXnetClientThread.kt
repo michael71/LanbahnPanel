@@ -25,8 +25,6 @@ class SXnetClientThread(
         private val rxHandler: Handler) : RRConnectionThread(context, ip, port, rxHandler) {
     // threading und BlockingQueue siehe http://www.javamex.com/tutorials/blockingqueue_example.shtml
 
-
-
     private var count_no_response = 0
     private var timeElapsed: Long = 0
 
@@ -54,11 +52,12 @@ class SXnetClientThread(
         return true;
     }
 
-    override fun read(addr : Int) {
+    override fun read(addr : Int, type : Int) {
+        // type can be ignored for selectrix
         // TODO implement
     }
 
-    override fun send(addr : Int, data : Int) : Boolean {
+    override fun send(addr : Int, data : Int, type: Int) : Boolean {
        // TODO implement
         val success = true
         return success
@@ -148,7 +147,6 @@ class SXnetClientThread(
 
     }
 
-
     fun readChannel(adr: Int) {
         //if (DEBUG) Log.d(TAG,"readChannel a="+adr+" clientTerm="+clientTerminated);
         if (shutdownFlag  || adr == INVALID_INT || !isConnected()) return
@@ -157,7 +155,6 @@ class SXnetClientThread(
             Log.d(TAG, "readChannel failed, queue full")
         }
     }
-
 
     private fun immediateSend(command: String) {
         if (shutdownFlag ) return
@@ -217,8 +214,8 @@ class SXnetClientThread(
                 // adr range 1 ... 9999, data range 0 ..255
                 // adr=127 is the Selectix "Power" channel
                 if (info.size >= 3 && info[0] == "X") {
-                    adr = getChannelFromString(info[1])
-                    data = getDataFromString(info[2])
+                    adr = extractChannelFromString(info[1])
+                    data = extractDataFromString(info[2])
                     if (adr != INVALID_INT && data != INVALID_INT) {
                         val m = Message.obtain()
                         m.what = TYPE_FEEDBACK_MSG
@@ -239,7 +236,7 @@ class SXnetClientThread(
     /** convert data string to integer and
      *  check if data is in valid range for selectrix (8 bit, 0..255)
      */
-    private fun getDataFromString(s: String): Int {
+    private fun extractDataFromString(s: String): Int {
         // converts String to integer between 0 and 255 (maximum data range)
         var data: Int? = INVALID_INT
         try {
@@ -257,12 +254,12 @@ class SXnetClientThread(
     /** convert address string to integer and
      * check if address (=channel) is in valid range for selectrix
      */
-    private fun getChannelFromString(s: String): Int {
+    private fun extractChannelFromString(s: String): Int {
 
         try {
             var channel = INVALID_INT
             channel = Integer.parseInt(s)
-            if ((channel in SXMIN..SXMAX) or (channel == SXPOWER_ADR)){
+            if ((channel in LBMIN..LBMAX) or (channel == LBPOWER_ADR)){
                 return channel
             } else {
                 return INVALID_INT
@@ -273,6 +270,5 @@ class SXnetClientThread(
 
         return INVALID_INT
     }
-
 
 }

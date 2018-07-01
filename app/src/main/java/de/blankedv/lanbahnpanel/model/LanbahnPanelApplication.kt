@@ -25,7 +25,6 @@ import de.blankedv.lanbahnpanel.util.LPaints
 
 // TODO: kotlin review and simplify
 // TODO: handle absence ot connection to SX command station
-// TODO move ControlAreaButtons to actionBar and remove all control area code
 
 class LanbahnPanelApplication : Application() {
 
@@ -58,7 +57,7 @@ class LanbahnPanelApplication : Application() {
                 val data = msg.arg2
                 timeOfLastReceivedMessage = System.currentTimeMillis()
                 if (what == TYPE_FEEDBACK_MSG) {
-                    if (chan == SXPOWER_ADR) {
+                    if (chan == LBPOWER_ADR) {
                         if (data == 0) {
                             globalPower = POWER_OFF
                         } else {

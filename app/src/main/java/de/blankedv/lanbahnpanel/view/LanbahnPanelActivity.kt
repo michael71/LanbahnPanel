@@ -7,8 +7,6 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageManager
-import android.net.NetworkInfo
-import android.net.wifi.WifiInfo
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
@@ -42,7 +40,6 @@ import de.blankedv.lanbahnpanel.elements.RouteButtonElement
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.railroad.SXnetClientThread
 import org.jetbrains.anko.toast
-import org.jetbrains.anko.wifiManager
 
 /**
  * LanbahnPanelActivity is the MAIN activity of the lanbahn panel
@@ -56,32 +53,17 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
     lateinit internal var tv: TextView
     lateinit internal var params: LayoutParams
-    lateinit internal var mainLayout: LinearLayout
+
     lateinit internal var but: Button
     private var mOptionsMenu: Menu? = null
     private var mHandler = Handler()  // used for UI Update timer
     private var counter = 0
-    internal var click = true
+
     private val KEY_STATES = "states"
     private var shuttingDown = false
 
 
     private val MY_PERMISSIONS_REQUEST_WRITE_STORAGE = 12
-
-    val wifiName: String?
-        get() {
-            val manager = applicationContext.wifiManager
-            if (manager.isWifiEnabled) {
-                val wifiInfo = manager.connectionInfo
-                if (wifiInfo != null) {
-                    val state = WifiInfo.getDetailedStateOf(wifiInfo.supplicantState)
-                    if (state == NetworkInfo.DetailedState.CONNECTED || state == NetworkInfo.DetailedState.OBTAINING_IPADDR) {
-                        return wifiInfo.ssid
-                    }
-                }
-            }
-            return null
-        }
 
     /**
      * Defines callbacks for service binding, passed to bindService()
@@ -339,16 +321,16 @@ class LanbahnPanelActivity : AppCompatActivity() {
         }
         sendQ.clear()
 
-        Log.d(TAG, "first start of  SXNetComm")
-        startSXNetCommunication()
+        Log.d(TAG, "first start of Communication to Comm.Station")
+        startCommunication()
 
         Timer().scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
                 if (restartCommFlag) {
                     restartCommFlag = false
                     runOnUiThread {
-                        Log.d(TAG, "restarting SXNetComm")
-                        startSXNetCommunication()
+                        Log.d(TAG, "restarting Communication")
+                        startCommunication()
                     }
 
                 }
@@ -445,55 +427,34 @@ class LanbahnPanelActivity : AppCompatActivity() {
      *
      * @return
      */
-    fun startSXNetCommunication() {
-        Log.d(TAG, "LahnbahnPanelActivity - startSXNetCommunication.")
-        if (client != null) {
-            client?.shutdown()
-            Thread.sleep(100) // give client some time to shut down.
-                    }
+    fun startCommunication() {
+        Log.d(TAG, "LahnbahnPanelActivity - startCommunication.")
+        client?.shutdown()
+        Thread.sleep(100) // give client some time to shut down.
 
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
         val ip = prefs.getString(KEY_IP, "192.168.1.39")
-        /*	Log.d(TAG, "AndroPanelActivity - autoIPEnabled="+autoIPEnabled);
-
-
-		if ((autoIPEnabled == true) && (autoIP.length()>0) && (!ip.equals(autoIP))) {
-			ip = autoIP;
-			Log.d(TAG, "AndroPanelActivity - auto ip changed="+ip);
-			SharedPreferences.Editor editor = prefs.edit();
-			editor.putString(KEY_IP, ip);
-			// Commit the edits!
-			editor.commit();
-		} */
-
 
         client = SXnetClientThread(this, ip!!, SXNET_PORT, appHandler)
         client?.start()
 
         Thread.sleep(300)
 
-
         if (connectionIsAlive()) {
-            requestAllSXdata()
-            Log.d(TAG, "SSID=" + wifiName!!)
-            conn_state_string = "SSID=$wifiName     $ip"
+            requestAllRailroadData()
         } else {
             val msg = " NO CONNECTION TO $ip ! Check WiFi/SSID and IP"
-            Toast.makeText(applicationContext, msg, Toast.LENGTH_LONG).show()
+            toast(msg)
             conn_state_string = "NOT CONNECTED"
-
         }
     }
 
-    fun shutdownSXClient() {
+    fun shutdownClient() {
         Log.d(TAG, "LanbahnPanelActivity - shutting down SXnet Client.")
-
         client?.shutdown()
-
         client?.disconnectContext()
         client = null
-
     }
 
     private fun checkStorageWritePermission(): Boolean {
@@ -556,7 +517,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         lateinit var layout: LinearLayout
 
         // request state of all active panel elements
-        private fun requestAllSXdata() {
+        private fun requestAllRailroadData() {
             for (pe in panelElements) {
                 if (pe is ActivePanelElement) {
                     client?.readChannel(pe.adr)

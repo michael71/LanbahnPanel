@@ -66,13 +66,17 @@ const val POWER_OFF = 0
 
 
 const val SXNET_PORT = 4104
-const val SXMIN = 0 // minimum sx channel number
-const val SXMAX = 111 // maximum sx channel number - only SX0 !
-const val SXPOWER_ADR = 127
+const val LBMIN = 1 // minimum sx channel number
+const val LBPOWER_ADR = 1000  // lanbahn channel for sx-power address 127
 const val LBMAX = 9999 // maximum lanbahn channel number
 
+// type of communication (Accessory, Sensor, Loco etc)
 
-
+const val TYPE_NONE = 0
+const val TYPE_SENSOR = 1
+const val TYPE_ACCESSORY = 2
+const val TYPE_LISSY = 3
+const val TYPE_LOCO = 4
 
 
 
