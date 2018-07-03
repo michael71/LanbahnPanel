@@ -53,11 +53,13 @@ class LanbahnPanelApplication : Application() {
             override fun handleMessage(msg: Message) {
                 val what = msg.what
                 val chan = msg.arg1
+                // map channel to lanbahn address, if there is a mapping
+
                 //if (DEBUG) Log.d(TAG,"rec. msg for chan= "+chan);
                 val data = msg.arg2
                 timeOfLastReceivedMessage = System.currentTimeMillis()
                 if (what == TYPE_FEEDBACK_MSG) {
-                    if (chan == LBPOWER_ADR) {
+                    if (chan == POWER_CHANNEL) {
                         if (data == 0) {
                             globalPower = POWER_OFF
                         } else {

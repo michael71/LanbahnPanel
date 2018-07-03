@@ -106,7 +106,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         layout.addView(tv, params)
         popUp.contentView = layout
 
-        ReadConfig.readConfig(this)
+        //ReadConfig.readConfig(this)  READ IN ONRESUME
 
         setContentView(Panel(this))
 

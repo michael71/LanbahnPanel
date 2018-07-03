@@ -63,11 +63,11 @@ const val STATE_UNKNOWN = -1
 const val POWER_UNKNOWN = INVALID_INT
 const val POWER_ON = 1
 const val POWER_OFF = 0
+const val POWER_CHANNEL = 1000   // global power state is requested using  this address
 
 
 const val SXNET_PORT = 4104
 const val LBMIN = 1 // minimum sx channel number
-const val LBPOWER_ADR = 1000  // lanbahn channel for sx-power address 127
 const val LBMAX = 9999 // maximum lanbahn channel number
 
 // type of communication (Accessory, Sensor, Loco etc)

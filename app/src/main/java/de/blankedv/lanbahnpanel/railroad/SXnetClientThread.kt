@@ -99,7 +99,7 @@ class SXnetClientThread(
             // send a command at least every 10 secs
             if (System.currentTimeMillis() - timeElapsed > 10 * 1000) {
                 if (socket!!.isConnected) {
-                    readChannel(127) //read power channel
+                    readChannel(POWER_CHANNEL) //read power channel
                     count_no_response++
                 }
                 timeElapsed = System.currentTimeMillis()  // reset
@@ -259,7 +259,7 @@ class SXnetClientThread(
         try {
             var channel = INVALID_INT
             channel = Integer.parseInt(s)
-            if ((channel in LBMIN..LBMAX) or (channel == LBPOWER_ADR)){
+            if ((channel in LBMIN..LBMAX) or (channel == POWER_CHANNEL)){
                 return channel
             } else {
                 return INVALID_INT

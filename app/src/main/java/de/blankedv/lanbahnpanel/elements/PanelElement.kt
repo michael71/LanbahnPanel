@@ -22,6 +22,8 @@ open class PanelElement {
     var y2 = INVALID_INT
     var xt = INVALID_INT // "thrown" position for turnout
     var yt = INVALID_INT
+    var adr = INVALID_INT
+    var state = STATE_UNKNOWN
     var route = ""
 
     /** get the type-name which is used in the XML panel definition file
@@ -47,20 +49,7 @@ open class PanelElement {
 
         }
 
-    open var adr: Int
-        get() = INVALID_INT
-        set(a) {
-
-        }
-
-    val adr2: Int
-        get() = INVALID_INT
-
-    open var state: Int
-        get() = 0
-        set(a) {
-
-        }
+    constructor()
 
     constructor(x: Int, y: Int) {
         this.x = x
@@ -68,12 +57,6 @@ open class PanelElement {
         name = ""
     }
 
-    constructor(poi: Point) {
-
-        this.x = poi.x
-        this.y = poi.y
-        name = ""
-    }
 
     constructor(poi: Point, closed: Point, thrown: Point) {
         this.x = poi.x
@@ -84,8 +67,6 @@ open class PanelElement {
         this.yt = thrown.y
         name = ""
     }
-
-    constructor() {}
 
     open fun doDraw(canvas: Canvas) {
 

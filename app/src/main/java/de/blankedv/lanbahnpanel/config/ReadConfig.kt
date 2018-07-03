@@ -40,7 +40,7 @@ import de.blankedv.lanbahnpanel.util.LinearMath
  */
 object ReadConfig {
 
-    internal val DEBUG_PARSING = false
+    internal val DEBUG_PARSING = true
 
     fun readConfig(context: Context): Boolean {
         // determine whether to read from http server or from local storage
@@ -315,7 +315,7 @@ object ReadConfig {
             } else if (theAttribute.nodeName == "yt") {
                 pe.yt = getPositionNode(theAttribute)
             } else if (theAttribute.nodeName == "adr") {
-                pe.setAddress(Integer.parseInt(theAttribute.nodeValue))
+                pe.adr = getPositionNode(theAttribute)
             } else {
                 if (DEBUG_PARSING)
                     Log.d(TAG,
@@ -323,7 +323,7 @@ object ReadConfig {
                                     + " in config file")
             }
         }
-
+ if (DEBUG_PARSING) Log.d(TAG,"turnout: x="+pe.x+" y="+pe.y+" adr="+pe.adr)
         return pe
 
     }
@@ -351,7 +351,7 @@ object ReadConfig {
             } else if (theAttribute.nodeName == "y2") {
                 pe.y2 = getPositionNode(theAttribute)
             } else if (theAttribute.nodeName == "adr") {
-                pe.setAddress(Integer.parseInt(theAttribute.nodeValue))
+                pe.adr = getPositionNode(theAttribute)
             } else {
                 if (DEBUG_PARSING)
                     Log.d(TAG,
@@ -429,7 +429,7 @@ object ReadConfig {
             } else if (theAttribute.nodeName == "y2") {
                 pe.y2 = getPositionNode(theAttribute)
             } else if (theAttribute.nodeName == "adr") {
-                pe.setAddress(Integer.parseInt(theAttribute.nodeValue))
+                pe.adr = getPositionNode(theAttribute)
             } else {
                 if (DEBUG_PARSING)
                     Log.d(TAG,

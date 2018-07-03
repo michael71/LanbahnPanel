@@ -13,8 +13,6 @@ class TurnoutElement : ActivePanelElement {
 
     // for turnouts which can be interactivly set from panel
 
-    constructor(type: String, x: Int, y: Int, name: String, adr: Int) : super(x, y, name, adr) {}
-
     constructor() {
         adr = INVALID_INT
         state = STATE_UNKNOWN
@@ -27,7 +25,7 @@ class TurnoutElement : ActivePanelElement {
         y2 = turnout.y2
         xt = turnout.xt
         yt = turnout.yt
-        adr = INVALID_INT
+        adr = turnout.adr
         state = STATE_UNKNOWN
     }
 

@@ -11,10 +11,6 @@ import de.blankedv.lanbahnpanel.model.*
 
 class SensorElement : ActivePanelElement {
 
-    constructor(x: Int, y: Int, name: String, adr: Int) : super(x, y, name, adr) {
-
-    }
-
     constructor() : super() {}
 
     override fun doDraw(canvas: Canvas) {

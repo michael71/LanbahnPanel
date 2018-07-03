@@ -82,20 +82,6 @@ abstract class ActivePanelElement : PanelElement {
         }
     }
 
-   fun setAddress(adr: Int) {
-        this.adr = adr
-        this.state = STATE_UNKNOWN
-        this.lastUpdateTime = System.currentTimeMillis()
-        if (adr != INVALID_INT) {
-            sendQ.add("READ $adr") // request update for this element
-        }
-    }
-
-    fun setAPEState(state: Int) {
-        this.state = state
-        lastUpdateTime = System.currentTimeMillis()
-    }
-
     override fun updateData(data: Int) {
         if (data == INVALID_INT) {
             state = STATE_UNKNOWN
