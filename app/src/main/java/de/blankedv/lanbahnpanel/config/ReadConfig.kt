@@ -359,7 +359,7 @@ object ReadConfig {
                                     + " in config file")
             }
         }
-
+        if (DEBUG_PARSING) Log.d(TAG, "signal x=" + pe.x + " y=" + pe.y + " adr=" + pe.adr)
         return pe
 
     }

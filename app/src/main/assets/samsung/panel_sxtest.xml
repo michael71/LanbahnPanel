@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<layout-config>
+    <panel name="sxtest" control="sx" icon="sxtext.png">
+        <sxmapping adr="1000" sxadr="127" sxbit="8" /> <!--standard sx POWER = lanbahn 1000 -->
+        <sxmapping adr="801" sxadr="80" sxbit="1" />
+        <sxmapping adr="802" sxadr="80" sxbit="2" />
+        <sxmapping adr="805" sxadr="80" sxbit="5" />
+        <sxmapping adr="806" sxadr="80" sxbit="6" />
+        <sxmapping adr="781" sxadr="78" sxbit="1" />
+        <sxmapping adr="765" sxadr="76" sxbit="5" nbit="2" />
+        <sxmapping adr="767" sxadr="76" sxbit="7" nbit="2" />
+        <track x="80" y="20" x2="100" y2="40" />
+        <track x="20" y="20" x2="80" y2="20" />
+        <track x="20" y="40" x2="320" y2="40" />
+        <track x="20" y="60" x2="140" y2="60" />
+        <track x="100" y="60" x2="120" y2="40" />
+        <track x="240" y="40" x2="260" y2="60" />
+        <track x="260" y="60" x2="320" y2="60" />
+        <signal x="70" y="30" x2="78" y2="30" adr="765" />
+        <signal x="70" y="50" x2="78" y2="50" adr="767" />
+        <turnout x="100" y="40" x2="86" y2="40" xt="90" yt="30" adr="801" />
+        <turnout x="120" y="40" x2="106" y2="40" xt="110" yt="50" adr="802" />
+        <turnout x="240" y="40" x2="254" y2="40" xt="250" yt="50" adr="805" />
+        <turnout x="100" y="60" x2="114" y2="60" xt="110" yt="50" adr="806" />
+        <sensor name="CS22" x="20" y="20" x2="70" y2="20" adr="781" />
+    </panel>
+</layout-config>
