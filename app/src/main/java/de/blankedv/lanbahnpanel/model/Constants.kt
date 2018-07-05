@@ -1,19 +1,8 @@
 
 // to make constants usable in JAVA via  Constants.GLOBAL_NUMBER for example
-// @file:JvmName("Constants")
+@file:JvmName("Constants")
 
 package de.blankedv.lanbahnpanel.model
-
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Rect
-import android.os.Handler
-import de.blankedv.lanbahnpanel.*
-import java.util.ArrayList
-import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.BlockingQueue
-
 
 const val DEBUG = true
 const val TAG = "LanbahnPanelActivity"
@@ -78,6 +67,11 @@ const val TYPE_ACCESSORY = 2
 const val TYPE_LISSY = 3
 const val TYPE_LOCO = 4
 
+// Message Types for UI Thread
+const val TYPE_FEEDBACK_MSG = 2
+const val TYPE_ERROR_MSG = 3
+const val TYPE_SX_MSG = 4
+const val TYPE_LN_MSG = 5
 
 
 const val MAX_LAMP_BUTTONS = 4

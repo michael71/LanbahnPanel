@@ -1,15 +1,14 @@
 
 // to make constants usable in JAVA via  Constants.GLOBAL_NUMBER for example
-//@file:JvmName("Variables")
+@file:JvmName("Variables")
 
 package de.blankedv.lanbahnpanel.model
 
 import android.content.Context
-import android.os.Handler
 import de.blankedv.lanbahnpanel.elements.CompRoute
 import de.blankedv.lanbahnpanel.elements.PanelElement
 import de.blankedv.lanbahnpanel.elements.Route
-import de.blankedv.lanbahnpanel.railroad.SXnetClientThread
+import de.blankedv.lanbahnpanel.railroad.RRConnectionThread
 import java.util.ArrayList
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingQueue
@@ -21,7 +20,7 @@ var noWifiFlag = false
 var width: Int = 0
 var height:Int = 0
 
-var selectedStyle: String? = "UK" // German style or USS style
+var selectedStyle: String = "UK" // German style or USS style
 
 var panelElements = ArrayList<PanelElement>()
 var routes = ArrayList<Route>()
@@ -30,6 +29,7 @@ var compRoutes = ArrayList<CompRoute>()
 
 var panelName = ""
 var panelProtocol = ""
+var panelVersion = ""
 
 var drawAddresses = false
 var drawAddresses2 = false
@@ -37,15 +37,14 @@ var flipUpsideDown = false  //display all panel element from "other side"
 var saveStates: Boolean = false
 
 // connection state
-var client: SXnetClientThread? = null
+var client: RRConnectionThread? = null
+
 var restartCommFlag = false
 
 // put all messages which should be sent into this queue
 val sendQ: BlockingQueue<String> = ArrayBlockingQueue(
         200)
 
-val TYPE_FEEDBACK_MSG = 2
-val TYPE_ERROR_MSG = 3
 
 @Volatile
 var connString = ""

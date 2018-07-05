@@ -188,6 +188,7 @@ object ReadConfig {
             Log.d(TAG, "config: " + items.length + " panel")
         panelName = parsePanelDescription(items.item(0),"name")
         panelProtocol = parsePanelDescription(items.item(0),"protocol")
+        panelVersion = parsePanelDescription(items.item(0),"version")
 
         // NamedNodeMap attributes = item.getAttributes();
         // Node theAttribute = attributes.items.item(i);

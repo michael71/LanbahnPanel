@@ -237,7 +237,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                 mScaleFactor *= detector.scaleFactor
                 Log.d(TAG, "mScaleFactor=$mScaleFactor")
                 // Don't let the object get too small or too large.
-                mScaleFactor = Math.max(0.5f, Math.min(mScaleFactor, 3.0f))
+                mScaleFactor = Math.max(0.5f, Math.min(mScaleFactor, 4.0f))
                 Log.d(TAG, "mScaleFactor (lim)=$mScaleFactor")
                 scale = mScaleFactor
                 invalidate()

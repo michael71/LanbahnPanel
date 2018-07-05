@@ -38,7 +38,7 @@ import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import de.blankedv.lanbahnpanel.elements.Route
 import de.blankedv.lanbahnpanel.elements.RouteButtonElement
 import de.blankedv.lanbahnpanel.model.*
-import de.blankedv.lanbahnpanel.railroad.SXnetClientThread
+import de.blankedv.lanbahnpanel.railroad.RRConnectionThread
 import org.jetbrains.anko.toast
 
 /**
@@ -436,7 +436,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 .getDefaultSharedPreferences(this)
         val ip = prefs.getString(KEY_IP, "192.168.1.39")
 
-        client = SXnetClientThread(this, ip!!, SXNET_PORT, appHandler)
+        client = RRConnectionThread(this, ip!!, SXNET_PORT, appHandler)
         client?.start()
 
         Thread.sleep(300)
@@ -451,7 +451,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
     }
 
     fun shutdownClient() {
-        Log.d(TAG, "LanbahnPanelActivity - shutting down SXnet Client.")
+        Log.d(TAG, "LanbahnPanelActivity - shutting down Network Client.")
         client?.shutdown()
         client?.disconnectContext()
         client = null
@@ -520,7 +520,8 @@ class LanbahnPanelActivity : AppCompatActivity() {
         private fun requestAllRailroadData() {
             for (pe in panelElements) {
                 if (pe is ActivePanelElement) {
-                    client?.readChannel(pe.adr)
+                    // TODO val type = 0  // TODO - no types for SX, but for loconet (sensor/acc/lissy)
+                    client?.readChannel(pe.adr, pe.javaClass)
                 }
             }
         }
