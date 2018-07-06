@@ -16,6 +16,7 @@ import android.support.v4.app.NotificationCompat
 import android.util.Log
 import de.blankedv.lanbahnpanel.R
 import de.blankedv.lanbahnpanel.elements.ActivePanelElement
+import de.blankedv.lanbahnpanel.elements.SensorElement
 import de.blankedv.lanbahnpanel.util.AndroBitmaps
 import de.blankedv.lanbahnpanel.util.LPaints
 
@@ -40,25 +41,23 @@ class LanbahnPanelApplication : Application() {
         // do some initializations
         // for (int i=0; i<MAX_LANBAHN_ADDR; i++) lanbahnData[i]=0;
         AndroBitmaps.init(resources)
-        LPaints.init(prescale)
 
         val myAndroidDeviceId = Settings.Secure.getString(applicationContext.contentResolver, Settings.Secure.ANDROID_ID)
 
         Log.d(TAG, "LanbahnPanelApplication - androidDeviceID=$myAndroidDeviceId")
         // scaling, zoom prefs are loaded from LanbahnPanelActivity
 
-        // handler for receiving sxnet messages
-
+        // handler for receiving sxnet/loconet messages
+        // this must be done in the "Application" (not activity) to keep track of changes
+        // during other activities like "settings" or "about"
         appHandler = object : Handler() {
             override fun handleMessage(msg: Message) {
                 val what = msg.what
                 val chan = msg.arg1
-                // map channel to lanbahn address, if there is a mapping
-
                 //if (DEBUG) Log.d(TAG,"rec. msg for chan= "+chan);
                 val data = msg.arg2
                 timeOfLastReceivedMessage = System.currentTimeMillis()
-                if (what == TYPE_FEEDBACK_MSG) {
+                if ((what == TYPE_SX_MSG) or (what == TYPE_LN_ACC_MSG) or (what == TYPE_LN_SENSOR_MSG)){
                     if (chan == POWER_CHANNEL) {
                         if (data == 0) {
                             globalPower = POWER_OFF
@@ -67,23 +66,26 @@ class LanbahnPanelApplication : Application() {
                         }
                     }
                     for (pe in panelElements) {
-                        if (pe.adr == chan) {
-                            //               if (DEBUG) Log.d(TAG,"updating "+pe.toString());
-                            pe.updateData(data)
+
+                        if (pe.adr == chan) { //               if (DEBUG) Log.d(TAG,"updating "+pe.toString());
+                            if (what == TYPE_SX_MSG) pe.updateData(data)
+
+                            // different handling for for LN_ACC and LN_SENSOR message !
+                            if ((what == TYPE_LN_ACC_MSG)   and !(pe is SensorElement) ) pe.updateData(data)
+                            if ((what == TYPE_LN_SENSOR_MSG) and (pe is SensorElement) ) pe.updateData(data)
 
                             // it is possible that two elements have the same channel
                             // therefor all channels are iterated
                         }
                     }
 
+                    // TODO check if we should have a different number space for routes
                     for (rt in routes) {
                         if (rt.id == chan) {
                             rt.updateData(data)
                         }
                     }
-
-
-                } else if (what == TYPE_ERROR_MSG) {
+             } else if (what == TYPE_ERROR_MSG) {
                     if (DEBUG) Log.d(TAG, "error msg $chan $data")
                     for (pe in panelElements) {
                         if (pe.adr == chan) {
@@ -103,10 +105,6 @@ class LanbahnPanelApplication : Application() {
         Log.d(TAG, "AndroPanelApp - terminating.")
 
     }
-    /* public static boolean isPowerOn() {
-		return true; // TODO must evaluate stored lanbahn messages
-
-	}  */
 
     fun saveZoomEtc() {
         val prefs = PreferenceManager
@@ -135,7 +133,7 @@ class LanbahnPanelApplication : Application() {
         zoomEnabled = prefs.getBoolean(KEY_ENABLE_ZOOM, false)
         Log.d(TAG, "zoomEnabled=$zoomEnabled")
         selectedStyle = prefs.getString(KEY_STYLE_PREF, "US")
-        LPaints.init(prescale)
+        LPaints.init(prescale,selectedStyle)
         enableEdit = prefs.getBoolean(KEY_ENABLE_EDIT, false)
         saveStates = prefs.getBoolean(KEY_SAVE_STATES, false)
         if (DEBUG)

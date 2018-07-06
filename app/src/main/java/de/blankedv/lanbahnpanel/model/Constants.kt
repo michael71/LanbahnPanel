@@ -71,7 +71,9 @@ const val TYPE_LOCO = 4
 const val TYPE_FEEDBACK_MSG = 2
 const val TYPE_ERROR_MSG = 3
 const val TYPE_SX_MSG = 4
-const val TYPE_LN_MSG = 5
+const val TYPE_LN_ACC_MSG = 5
+const val TYPE_LN_SENSOR_MSG = 6
+const val TYPE_LN_LISSY_MSG = 7
 
 
 const val MAX_LAMP_BUTTONS = 4

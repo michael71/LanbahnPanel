@@ -7,6 +7,7 @@ import android.os.Message
 import android.util.Log
 import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import de.blankedv.lanbahnpanel.model.*
+import org.jetbrains.anko.toast
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -21,9 +22,12 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
     protected var shutdownFlag: Boolean = false
 
     private var count_no_response = 0
+    private var connectionActive = false  // determined with time out counter
+    // TODO implement connectionActive Test for Loconet
+
     private var timeElapsed: Long = 0
 
-    private var myClient : GenericClient? = null
+    private var myClient: GenericClient? = null
 
     override fun run() {
         if (DEBUG) Log.d(TAG, "SXnetClientThread run.")
@@ -32,42 +36,48 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
 
         if (!connResult.contains("ERROR")) {
             // connected !!
-           myClient = SXnetClient()  // TODO make type dependent on connection String
-
+            if (DEBUG) Log.d(TAG, "connected to: " + connResult)
+            if (connResult.toUpperCase().contains("SXNET")) {
+                myClient = SXnetClient()
+            } else if (connResult.toUpperCase().contains("LBSERVER")) {
+                // myClient = LbServerClient()  // TODO
+                context?.toast("ERROR connection to Fremo LbServer not yet implemented")
+            }
+            connectionActive = true
         } else { // the connection could not be established, send Error Message to UI
             val m = Message.obtain()
             m.what = TYPE_ERROR_MSG
             m.obj = connResult
-            rxHandler?.sendMessage(m)  // send SX data to UI Thread via Message
+            rxHandler?.sendMessage(m)  // send data to UI Thread via Message
             return
         }
 
 
-        while (shutdownFlag == false && !Thread.currentThread().isInterrupted && context != null)  {
+        while (shutdownFlag == false && !Thread.currentThread().isInterrupted && context != null) {
             try {
                 if (`in` != null && `in`!!.ready()) {
                     val in1 = `in`!!.readLine()
                     if (DEBUG) Log.d(TAG, "msgFromServer: $in1")
                     myClient?.handleReceive(in1.toUpperCase(), rxHandler)
                     count_no_response = 0 // reset timeout counter.
-
+                    connectionActive = true
                 }
             } catch (e: IOException) {
                 Log.e(TAG, "ERROR: reading from socket - " + e.message)
+            } catch (e: InterruptedException) {
+                Log.e(TAG, "Client thread interrupted - " + e.message)
             }
 
             // check send queue
             if (!sendQ.isEmpty()) {
-
                 var comm = ""
                 try {
                     comm = sendQ.take()
                     if (comm.length > 0) immediateSend(comm)
                     Thread.sleep(20)  // do not send faster than serial port ...
-                } catch (e: InterruptedException) {
+                } catch (e: Exception) {
                     Log.e(TAG, "could not take command from sendQ")
                 }
-
             }
 
             // send a command at least every 10 secs
@@ -78,22 +88,32 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
                 }
                 timeElapsed = System.currentTimeMillis()  // reset
                 if (count_no_response > 2) {
-                    Log.e(TAG, "SXnetClientThread - connection lost.")
+                    Log.e(TAG, "SXnetClientThread - connection lost?")
                     count_no_response = 0
+                    connectionActive = false
+
                 }
             }
             Thread.sleep(20)
         }
 
         socket?.close()
-        Log.e(TAG, "SXnetClientThread - socket closed")
+        Log.e(TAG, "RRConnectionThread - socket closed")
 
     }
 
+    fun readChannel(addr: Int, peClass: Class<ActivePanelElement>) {
 
-     fun readChannel(addr: Int, peClass : Class<ActivePanelElement>) {
+        var cmd = myClient?.readChannel(addr, peClass)
+        val success = sendQ.offer(cmd)
+        if (!success && DEBUG) {
+            Log.d(TAG, "readChannel failed, queue full")
+        }
+    }
 
-        var cmd = myClient.readChannel(addr, peClass)
+    fun readChannel(addr: Int) {
+
+        var cmd = myClient?.readChannel(addr)
         val success = sendQ.offer(cmd)
         if (!success && DEBUG) {
             Log.d(TAG, "readChannel failed, queue full")
@@ -101,7 +121,7 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
     }
 
     private fun immediateSend(command: String) {
-        if (shutdownFlag ) return
+        if (shutdownFlag) return
         if (out == null) {
             if (DEBUG) Log.d(TAG, "out=null, could not send: $command")
         } else {
@@ -117,7 +137,7 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
         }
     }
 
-    fun connect(ip: String, port: Int) : String {
+    fun connect(ip: String, port: Int): String {
         if (DEBUG) Log.d(TAG, "trying conn to - $ip:$port")
         try {
             val socketAddress = InetSocketAddress(ip, port)
@@ -139,8 +159,8 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
             return connString;
 
         } catch (e: Exception) {
-            val err = "ERROR: "+e.message
-            Log.e(TAG, "SXnetClientThread.connect "  + err)
+            val err = "ERROR: " + e.message
+            Log.e(TAG, "RRConnectionThread.connect " + err)
 
             return err
         }
@@ -151,17 +171,16 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
     // see
     // http://stackoverflow.com/questions/969866/java-detect-lost-connection
     fun isConnected(): Boolean {
-        if (socket == null) {
+        if ((socket == null) || (connectionActive == false)){
             return false
         } else {
-            // TODO add "false" when no response from server (but socket still available)
             return socket!!.isConnected && !socket!!.isClosed
         }
     }
 
-   /*fun reconnect() : Boolean {
-       connect(ip, port)
-   } */
+    /*fun reconnect() : Boolean {
+        connect(ip, port)
+    } */
 
     fun shutdown() {
         shutdownFlag = true
@@ -173,20 +192,8 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
         shutdown()
     }
 
-    abstract fun read(adr: Int, type: Int)
-
-    fun read(adr: Int) {
-        read(adr, TYPE_NONE)
-    }
-
-    abstract fun send(adr : Int, data : Int, type : Int) : Boolean
-
-    fun send(adr : Int, data : Int) {
-        send (adr, data, TYPE_NONE)
-    }
-
     companion object {
-        var socket : Socket? = null
+        var socket: Socket? = null
         var out: PrintWriter? = null
         var `in`: BufferedReader? = null
     }

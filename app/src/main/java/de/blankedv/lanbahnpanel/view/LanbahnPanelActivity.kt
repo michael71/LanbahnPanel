@@ -279,7 +279,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
             R.id.action_connect -> {
                 // if (!lnStatusData.connState) {
-                toast("TODO trying reconnect")
+                toast("TODO reconnect NOT YET IMPLEMENTED")
                 //instance.connect()
                 // }
             }
