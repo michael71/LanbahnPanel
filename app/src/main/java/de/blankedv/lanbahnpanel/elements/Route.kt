@@ -70,7 +70,7 @@ class Route (var id: Int, var btn1: Int, var btn2: Int, route: String, allSensor
         val routeElements = route.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         for (i in routeElements.indices) {
             val reInfo = routeElements[i].split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-
+ //TODO re-write with filter - allow multiple pe with same address
             val pe = PanelElement.getPeByAddress(Integer.parseInt(reInfo[0]))
 
             // if this is a signal, then add to my signal list "rtSignals"

@@ -5,6 +5,7 @@ import android.graphics.Point
 import android.util.Log
 import de.blankedv.lanbahnpanel.util.LPaints
 import de.blankedv.lanbahnpanel.model.*
+import kotlin.reflect.KClass
 
 /**
  * generic panel element - this can be a passive (never changing)
@@ -107,21 +108,20 @@ open class PanelElement {
         }
 
         fun update(addr : Int, data : Int) {
-            val pe = getPeByAddress(addr);
-            pe?.state = data
+            for (pe in panelElements.filter{it.adr == addr}) {
+                pe.state = data
+            }
         }
 
         fun updateAcc(addr : Int, data : Int) {
-            val pe = getPeByAddress(addr);
-            if ((pe is SignalElement) or (pe is TurnoutElement)) {
-                pe?.state = data
+            for (pe in panelElements.filter{it.adr == addr}.filter{(it is SignalElement) or (it is TurnoutElement)}) {
+                pe.state = data
             }
         }
 
         fun updateSensor(addr : Int, data : Int) {
-            val pe = getPeByAddress(addr);
-            if (pe is SensorElement) {
-                pe?.state = data
+            for (pe in panelElements.filter{it.adr == addr}.filter{it is SensorElement}) {
+                pe.state = data
             }
         }
         /** scale all panel elements for better fit on display and for
