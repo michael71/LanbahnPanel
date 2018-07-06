@@ -68,12 +68,13 @@ const val TYPE_LISSY = 3
 const val TYPE_LOCO = 4
 
 // Message Types for UI Thread
-const val TYPE_FEEDBACK_MSG = 2
 const val TYPE_ERROR_MSG = 3
-const val TYPE_SX_MSG = 4
+const val TYPE_GENERIC_MSG = 4
 const val TYPE_LN_ACC_MSG = 5
 const val TYPE_LN_SENSOR_MSG = 6
 const val TYPE_LN_LISSY_MSG = 7
+const val TYPE_POWER_MSG = 8
+const val TYPE_ROUTE_MSG = 9
 
 
 const val MAX_LAMP_BUTTONS = 4

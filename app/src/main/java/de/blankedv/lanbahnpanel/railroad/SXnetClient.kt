@@ -79,12 +79,22 @@ class SXnetClient() : GenericClient() {
                     data = extractDataFromString(info[2])
                     if (adr != INVALID_INT && data != INVALID_INT) {
                         val m = Message.obtain()
-                        m.what = TYPE_SX_MSG
+                        m.what = TYPE_GENERIC_MSG
                         m.arg1 = adr
                         m.arg2 = data
                         recHandler.sendMessage(m)  // send SX data to UI Thread via Message
                     } else {
                         Log.e(TAG, "range error in rec. msg, cmd=$cmd adr=$adr data=$data")
+                    }
+                } else if (info.size >= 3 && info[0] == "RT") {
+                    adr = extractChannelFromString(info[1])
+                    data = extractDataFromString(info[2])
+                    if (adr != INVALID_INT && data != INVALID_INT) {
+                        val m = Message.obtain()
+                        m.what = TYPE_ROUTE_MSG
+                        m.arg1 = adr
+                        m.arg2 = data
+                        recHandler.sendMessage(m)  // send route data to UI Thread via Message
                     }
                 } else {
                     Log.e(TAG, "length error in rec. msg, cmd=" + cmd + "info[0]=" + info[0])
@@ -131,5 +141,6 @@ class SXnetClient() : GenericClient() {
 
         return INVALID_INT
     }
+
 
 }

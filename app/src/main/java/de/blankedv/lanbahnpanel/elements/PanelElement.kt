@@ -106,6 +106,24 @@ open class PanelElement {
             return null
         }
 
+        fun update(addr : Int, data : Int) {
+            val pe = getPeByAddress(addr);
+            pe?.state = data
+        }
+
+        fun updateAcc(addr : Int, data : Int) {
+            val pe = getPeByAddress(addr);
+            if ((pe is SignalElement) or (pe is TurnoutElement)) {
+                pe?.state = data
+            }
+        }
+
+        fun updateSensor(addr : Int, data : Int) {
+            val pe = getPeByAddress(addr);
+            if (pe is SensorElement) {
+                pe?.state = data
+            }
+        }
         /** scale all panel elements for better fit on display and for
          * possible "upside down" display (=view from other side of the
          * layout)
