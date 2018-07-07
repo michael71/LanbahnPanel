@@ -29,6 +29,7 @@ class Preferences : PreferenceActivity(), OnSharedPreferenceChangeListener {
     private var selectStylePref: ListPreference? = null
     private var configFilenamePref: ListPreference? = null
     private var ipPref: EditTextPreference? = null
+    private var portPref: EditTextPreference? = null
 
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +44,7 @@ class Preferences : PreferenceActivity(), OnSharedPreferenceChangeListener {
         saveStatesPref = preferenceScreen.findPreference(KEY_SAVE_STATES) as CheckBoxPreference
         routesPref = preferenceScreen.findPreference(KEY_ROUTES) as CheckBoxPreference
         ipPref = preferenceScreen.findPreference(KEY_IP) as EditTextPreference
+        portPref = preferenceScreen.findPreference(KEY_PORT) as EditTextPreference
         flipPref = preferenceScreen.findPreference(KEY_FLIP) as CheckBoxPreference
 
         selectStylePref = preferenceScreen.findPreference(KEY_STYLE_PREF) as ListPreference
@@ -50,7 +52,8 @@ class Preferences : PreferenceActivity(), OnSharedPreferenceChangeListener {
 
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
-        ipPref!!.summary = "= " + prefs.getString(KEY_IP, "")!!
+        ipPref!!.summary = "= " + prefs.getString(KEY_IP, DEFAULT_SXNET_IP)!!
+        portPref!!.summary = "= " + prefs.getString(KEY_PORT, DEFAULT_SXNET_PORT)!!
         selectStylePref!!.summary = "current selected style is " + prefs.getString(KEY_STYLE_PREF, "?")!!
         configFilenamePref = preferenceScreen.findPreference(KEY_CONFIG_FILE) as ListPreference
         //locosFilenamePref = (ListPreference)getPreferenceScreen().findPreference(KEY_LOCOS_FILE);
@@ -100,7 +103,8 @@ class Preferences : PreferenceActivity(), OnSharedPreferenceChangeListener {
                 Log.d(TAG, "saveStates changed =$saveStates")
             }
             KEY_ENABLE_EDIT -> enableEdit = sharedPreferences.getBoolean(KEY_ENABLE_EDIT, false)
-            KEY_IP -> ipPref!!.summary = "= " + sharedPreferences.getString(KEY_IP, "")!!
+            KEY_IP -> ipPref!!.summary = "= " + sharedPreferences.getString(KEY_IP, DEFAULT_SXNET_IP)!!
+            KEY_PORT -> portPref!!.summary = "= " + sharedPreferences.getString(KEY_PORT, DEFAULT_SXNET_PORT)!!
             KEY_CONFIG_FILE -> configFilenamePref!!.summary = "config loaded from " + sharedPreferences.getString(KEY_CONFIG_FILE, "-")!!
             else -> Log.e(TAG, "unhandled preferences change, key=$key")
         }
@@ -132,6 +136,7 @@ class Preferences : PreferenceActivity(), OnSharedPreferenceChangeListener {
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
         ipPref!!.summary = "= " + prefs.getString(KEY_IP, "")!!
+        portPref!!.summary = "= " + prefs.getString(KEY_PORT, DEFAULT_SXNET_PORT)!!
         selectStylePref!!.summary = "current selected style is " + prefs.getString(KEY_STYLE_PREF, "?")!!
     }
 
@@ -145,30 +150,23 @@ class Preferences : PreferenceActivity(), OnSharedPreferenceChangeListener {
         var mExternalStorageAvailable = false
         val state = Environment.getExternalStorageState()
 
-        if (Environment.MEDIA_MOUNTED == state) {
+        if ((Environment.MEDIA_MOUNTED == state) or (Environment.MEDIA_MOUNTED_READ_ONLY == state)) {
             // We can read and write the media
-            mExternalStorageAvailable = true
-        } else if (Environment.MEDIA_MOUNTED_READ_ONLY == state) {
-            // We can only read the media
             mExternalStorageAvailable = true
         } else {
             // Something else is wrong. It may be one of many other states, but all we need
             //  to know is we can neither read nor write
             mExternalStorageAvailable = false
+            Log.d(TAG, "cannot read externalStorageDirectory ")
+            return null
         }
 
-        if (mExternalStorageAvailable) {
+
 
             val dir = File(Environment.getExternalStorageDirectory().toString() + "/" + DIRECTORY)
             Log.d(TAG, "reading directory " + dir.absolutePath)
 
             return dir.list()
-
-
-        } else {
-            Log.d(TAG, "cannot read externalStorageDirectory ")
-            return null
-        }
 
     }
 

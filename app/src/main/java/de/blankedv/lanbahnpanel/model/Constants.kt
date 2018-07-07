@@ -23,6 +23,7 @@ const val KEY_XOFF = "xoffPref"
 const val KEY_YOFF = "yoffPref"
 const val KEY_SCALE = "scalePref"
 const val KEY_IP = "ipPref"
+const val KEY_PORT = "portPref"
 const val KEY_CONFIG_FILE = "configFilenamePref"
 
 const val LBP_NOTIFICATION_ID = 201 //arbitrary id for notification
@@ -53,9 +54,10 @@ const val POWER_UNKNOWN = INVALID_INT
 const val POWER_ON = 1
 const val POWER_OFF = 0
 const val POWER_CHANNEL = 1000   // global power state is requested using  this address
+const val LIFECHECK_SECONDS = 10  // every 10 seconds check if server connection is alive
 
-
-const val SXNET_PORT = 4104
+const val DEFAULT_SXNET_PORT = "4104"  // string
+const val DEFAULT_SXNET_IP = "192.168.178.29"  // string
 const val LBMIN = 1 // minimum sx channel number
 const val LBMAX = 9999 // maximum lanbahn channel number
 

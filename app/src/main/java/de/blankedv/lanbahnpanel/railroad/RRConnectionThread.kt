@@ -15,7 +15,10 @@ import java.io.PrintWriter
 import java.net.InetSocketAddress
 import java.net.Socket
 
-open class RRConnectionThread(private var context: Context?, private val ip: String, private val port: Int, private val rxHandler: Handler) : Thread() {
+/** generic class which implements a connection to any TCP socket server which emits and
+ * receives ASCII messages, can be SXNET or LbServer (or SRCP) */
+open class RRConnectionThread(private var context: Context?, private val ip: String,
+                              private val port: Int, private val rxHandler: Handler) : Thread() {
     // threading und BlockingQueue siehe http://www.javamex.com/tutorials/blockingqueue_example.shtml
 
     @Volatile
@@ -32,19 +35,25 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
     override fun run() {
         if (DEBUG) Log.d(TAG, "SXnetClientThread run.")
         shutdownFlag = false
-        val connResult = connect(ip, port)
+        connectionActive = false
+        val (result,connResult) = connect(ip, port)
 
-        if (!connResult.contains("ERROR")) {
+        if (result) {
             // connected !!
+            connString = connResult
             if (DEBUG) Log.d(TAG, "connected to: " + connResult)
             if (connResult.toUpperCase().contains("SXNET")) {
                 myClient = SXnetClient()
             } else if (connResult.toUpperCase().contains("LBSERVER")) {
                 // myClient = LbServerClient()  // TODO
                 context?.toast("ERROR connection to Fremo LbServer not yet implemented")
+            } else {
+                context?.toast("ERROR - unknown type of RR server (neither SXNET nor LBSERVER)")
+                return
             }
             connectionActive = true
         } else { // the connection could not be established, send Error Message to UI
+            connString = "NOT CONNECTED"
             val m = Message.obtain()
             m.what = TYPE_ERROR_MSG
             m.obj = connResult
@@ -81,9 +90,13 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
             }
 
             // send a command at least every 10 secs
-            if (System.currentTimeMillis() - timeElapsed > 10 * 1000) {
+            if (System.currentTimeMillis() - timeElapsed > LIFECHECK_SECONDS * 1000) {
                 if (isConnected()) {
-                    readChannel(POWER_CHANNEL) //read power channel
+                    if (myClient is SXnetClient) {
+                        readChannel(POWER_CHANNEL) //read power channel
+                    } else {
+                        // TODO implement similar "lifecheck" for loconet
+                    }
                     count_no_response++
                 }
                 timeElapsed = System.currentTimeMillis()  // reset
@@ -137,7 +150,7 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
         }
     }
 
-    fun connect(ip: String, port: Int): String {
+    fun connect(ip: String, port: Int): Pair<Boolean,String> {
         if (DEBUG) Log.d(TAG, "trying conn to - $ip:$port")
         try {
             val socketAddress = InetSocketAddress(ip, port)
@@ -152,17 +165,17 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
             out = PrintWriter(socket!!.getOutputStream(), true)
             `in` = BufferedReader(InputStreamReader(
                     socket!!.getInputStream()))
-            connString = `in`!!.readLine()
+            val resString = `in`!!.readLine()
 
             if (DEBUG) Log.d(TAG, "connected to: $connString")
 
-            return connString;
+            return Pair(true,resString)
 
         } catch (e: Exception) {
             val err = "ERROR: " + e.message
             Log.e(TAG, "RRConnectionThread.connect " + err)
 
-            return err
+            return Pair(false,err)
         }
 
     }

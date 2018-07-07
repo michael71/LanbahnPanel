@@ -73,13 +73,17 @@ class SXnetClient() : GenericClient() {
                 info = cmd.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                 // all feedback message have the Format "X <adr> <data>"
                 // adr range 1 ... 9999, data range 0 ..255
-                // adr=127 is the Selectix "Power" channel
+                // adr=1000 is the sxnet/lanbahn "Power" channel
                 if (info.size >= 3 && info[0] == "X") {
                     adr = extractChannelFromString(info[1])
                     data = extractDataFromString(info[2])
                     if (adr != INVALID_INT && data != INVALID_INT) {
                         val m = Message.obtain()
-                        m.what = TYPE_GENERIC_MSG
+                        if (adr == POWER_CHANNEL) {
+                            m.what = TYPE_POWER_MSG
+                        } else {
+                            m.what = TYPE_GENERIC_MSG
+                        }
                         m.arg1 = adr
                         m.arg2 = data
                         recHandler.sendMessage(m)  // send SX data to UI Thread via Message
@@ -128,18 +132,17 @@ class SXnetClient() : GenericClient() {
     private fun extractChannelFromString(s: String): Int {
 
         try {
-            var channel = INVALID_INT
-            channel = Integer.parseInt(s)
+            var channel = Integer.parseInt(s)
             if ((channel in LBMIN..LBMAX) or (channel == POWER_CHANNEL)) {
                 return channel
             } else {
                 return INVALID_INT
             }
         } catch (e: Exception) {
-
+            return INVALID_INT
         }
 
-        return INVALID_INT
+
     }
 
 

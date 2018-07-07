@@ -11,10 +11,13 @@
 			android:textSize="22sp" /> 
 		<TextView android:id="@+id/version" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:text="@string/versionUnknown"
-			android:textSize="14sp" android:paddingTop="8sp" />
+			android:textSize="14sp" android:paddingTop="10sp" />
+		<TextView android:id="@+id/connection_state" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="@string/not_connected"
+			android:textSize="14sp" android:paddingTop="10sp" />
 		<TextView android:id="@+id/copyright" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:autoLink="all"
-			android:text="@string/copyrightString"
+			android:text="@string/copyright_string"
 			android:textSize="14sp" android:paddingTop="10sp" />
 		<TextView android:id="@+id/moreinfo" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:text="@string/moreInfoString"

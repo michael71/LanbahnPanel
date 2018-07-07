@@ -434,9 +434,10 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
-        val ip = prefs.getString(KEY_IP, "192.168.1.39")
+        val ip = prefs.getString(KEY_IP, DEFAULT_SXNET_IP)
+        val port = Integer.parseInt(prefs.getString(KEY_PORT, DEFAULT_SXNET_PORT))
 
-        client = RRConnectionThread(this, ip!!, SXNET_PORT, appHandler)
+        client = RRConnectionThread(this, ip!!, port, appHandler)
         client?.start()
 
         Thread.sleep(300)

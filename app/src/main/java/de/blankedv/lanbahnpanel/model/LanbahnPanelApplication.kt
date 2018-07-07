@@ -236,7 +236,6 @@ class LanbahnPanelApplication : Application() {
             } else {
                 return client!!.isConnected()
             }
-            return false
         }
     }
 }

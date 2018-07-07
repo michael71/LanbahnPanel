@@ -32,27 +32,29 @@
     <string name="sel_style">Select Display Style</string>
     <string name="sel_style_default">US</string>
     <string name="aboutString">"LanbahnPanel is free software - you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3. LanbahnPanel is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  For details about the GNU General Public License see http://www.gnu.org/licenses "</string>
-    <string name="copyrightString">Copyright 2014-2018 - Michael Blank - mblank@bawue.de</string>
+    <string name="copyright_string" translatable="false">Copyright 2014-2018 - Michael Blank - mblank@bawue.de</string>
     <string name="usageString">to be used with SX3-PC program (SELECTRIX) or LbServer (FREMO, LocoNet)</string>
     <string name="moreInfoString">more info on http://www.oscale.net/android</string>
-    <string name="lanbahnpanelTitleString">LanbahnPanel</string>
+    <string name="lanbahnpanelTitleString" translatable="false">LanbahnPanel</string>
     <string name="versionUnknown">version x.x</string>
     <string name="unknown">-?-</string>
     <string name="wifi_disconnected">No Wifi !</string>
     <string name="draw_routebtn_addresses">Display RouteBtn/Sensor Addresses</string>
     <string name="general_settings" translatable="false">Settings</string>
     <string name="files_settings" translatable="false">Config Files</string>
-    <string name="port_sh" translatable="false">Server Port</string>
+    <string name="default_sxnet_port" translatable="false">4104</string>
     <string name="default_server_ip" translatable="false">192.168.2.50</string>
     <string name="questionmark">-?-</string>
-<string name="notification_title">LanbahnPanel running</string>
-    <string name="notification_text">re-open LanbahnPanel</string>
+<string name="notification_title" translatable="false">LanbahnPanel running</string>
+    <string name="notification_text" translatable="false">re-open LanbahnPanel</string>
     <string name="default_notification_channel_id" translatable="false">lanbahn_default_channel</string>
     <!--
         This is the name that users will see when interacting with this channel.
         It should describe the category of notifications that will be sent through this channel
      -->
-    <string name="default_notification_channel_name" translatable="true">Lanbahn</string>
-    <string name="check_service">Check Service</string>
-    <string name="panel_cfg_files">Panel Config File (\'panel....xml\')</string>
+    <string name="default_notification_channel_name" translatable="false">Lanbahn</string>
+    <string name="check_service" translatable="false">Check Service</string>
+    <string name="panel_cfg_files" translatable="false">Panel Config File (\'panel....xml\')</string>
+    <string name="server_port" translatable="false">Server port</string>
+    <string name="not_connected" translatable="false">currently not connected to a server</string>
 </resources>

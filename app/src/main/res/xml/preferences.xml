@@ -46,11 +46,19 @@
                 android:key="autoIPPref"
                 android:title="Automatically configure IP" /> -->
         <EditTextPreference
-            android:name="SXnet server address"
+            android:name="Server address"
             android:defaultValue="@string/default_server_ip"
             android:key="ipPref"
             android:summary="@string/questionmark"
-            android:title="SXnet server address" />
+            android:title="Server address"
+            android:digits=".0123456789"/>
+        <EditTextPreference
+            android:name="@string/server_port"
+            android:defaultValue="@string/default_sxnet_port"
+            android:key="portPref"
+            android:summary="@string/questionmark"
+            android:title="Server port"
+            android:digits="0123456789"/>
 
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/files_settings">

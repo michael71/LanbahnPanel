@@ -24,43 +24,40 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.NameNotFoundException
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import de.blankedv.lanbahnpanel.R
+import de.blankedv.lanbahnpanel.model.connString
+import org.jetbrains.anko.find
 
 
 class AboutActivity : Activity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val cancel: Button
-        var vinfo = ""
-        val versTv: TextView
 
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.about)
-        versTv = findViewById<View>(R.id.version) as TextView
 
-        val version: Int
-        val vName: String
-
+        var versionInfo = ""
         val pInfo: PackageInfo
         try {
             pInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_META_DATA)
-            version = pInfo.versionCode
-            vName = pInfo.versionName
-            vinfo = "Version: $vName  ($version)"
+            val version = pInfo.versionCode
+            val vName = pInfo.versionName
+            versionInfo = "Version: $vName  ($version)"
 
         } catch (e: NameNotFoundException) {
             e.printStackTrace()
         }
 
-        versTv.text = vinfo
+        val versTv = find(R.id.version) as TextView
+        val connStateTv = find(R.id.connection_state) as TextView
+        versTv.text = versionInfo
+        connStateTv.text = "Server: $connString"
 
-        cancel = findViewById<View>(R.id.cancel) as Button
-
+        val cancel = find(R.id.cancel) as Button
         cancel.setOnClickListener { finish() }
 
 
