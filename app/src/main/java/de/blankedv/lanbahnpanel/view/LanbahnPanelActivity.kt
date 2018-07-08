@@ -46,6 +46,7 @@ import org.jetbrains.anko.*
  * @author mblank
  */
 class LanbahnPanelActivity : AppCompatActivity() {
+
     lateinit internal var builder: Builder
 
     internal var mBound = false
@@ -498,7 +499,6 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 Log.d(TAG, "onResume - reloading panel config.")
             }
             ReadConfig.readConfigFromFile(this) // reload config File with scaling
-            // TODO recalcScale();
         }
     }
 
@@ -548,6 +548,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
             Log.i(TAG, "metrics - w=$width  h=$height")
 
     }
+
 
     companion object {
 

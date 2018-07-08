@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.*
 import android.media.AudioManager
 import android.media.ToneGenerator
+import android.preference.PreferenceManager
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
@@ -206,8 +208,37 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         mWidth = width
         mHeight = height
 
+        if (!zoomEnabled) {
+            recalcScale(mWidth, mHeight)
+        }
     }
 
+    private fun recalcScale(width : Int, height : Int) {
+
+        val sc1X = width / ((panelRect.right - panelRect.left) * 1.0f)  // use bitmap size and not screen size ???
+        val sc1Y = height / ((panelRect.bottom - panelRect.top) * 1.0f)
+
+        if (sc1X < sc1Y) { // x-dimensions of panel elements larger than y-dim
+                            // (this is normally the case for layout panels)
+            scale = sc1X / 2.0f
+            xoff = 0f
+            yoff = height * (sc1X / sc1Y) / 2f
+        } else {
+            scale = sc1Y / 2.0f
+            xoff = width * (sc1Y / sc1X) / 2f
+            yoff = 0f
+        }
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val editor = prefs.edit()
+        Log.d(TAG, "saving modified scale")
+        editor.putString(KEY_XOFF, "" + xoff)
+        editor.putString(KEY_YOFF, "" + yoff)
+        editor.putString(KEY_SCALE, "" + scale)
+        // Commit the edits!
+        editor.apply()
+
+        Log.d(TAG, "used scale=$scale xoff=$xoff yoff=$yoff")
+    }
 
     fun doDraw(canvas: Canvas) {
 
@@ -227,7 +258,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
 
         val matrix = Matrix()
-        matrix.postScale(scale, scale)
+        matrix.postScale(scale,scale)
         matrix.postTranslate(xoff, yoff)
         for (e in panelElements) {
             e.doDraw(mCanvas)

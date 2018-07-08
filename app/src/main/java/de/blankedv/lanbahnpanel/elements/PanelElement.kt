@@ -2,10 +2,10 @@ package de.blankedv.lanbahnpanel.elements
 
 import android.graphics.Canvas
 import android.graphics.Point
+import android.graphics.Rect
 import android.util.Log
 import de.blankedv.lanbahnpanel.util.LPaints
 import de.blankedv.lanbahnpanel.model.*
-import kotlin.reflect.KClass
 
 /**
  * generic panel element - this can be a passive (never changing)
@@ -131,7 +131,11 @@ open class PanelElement {
          * flipUpsideDown is changed in the prefs)
          */
         fun scaleAll() {
-
+if (DEBUG) {
+    Log.d(TAG,"before scaleALL ---------------")
+    //printPES()
+    printTracks()
+}
             // in WriteConfig the NEW values are written !!
 
             var xmin = INVALID_INT
@@ -175,22 +179,27 @@ open class PanelElement {
                     ymax = pe.yt
 
             }
-
+            if (DEBUG)
+                Log.d(TAG, "before adding 20: xmin=" + (xmin) + " xmax=" + (xmax) + " ymin=" + (ymin)
+                        + " ymax=" + (ymax) +"  ----------------" )
             // now move origin to (20,20)
+            val deltaX = 20 - xmin
+            val deltaY = 20 - ymin
+            if (DEBUG) Log.d(TAG, "move by dx="+deltaX+ " dy="+deltaY +"  ----------------" )
             for (pe in panelElements) {
                 if (!flipUpsideDown) {
-                    if (pe.x != INVALID_INT)
-                        pe.x = 20 + (pe.x - xmin)
+                    if (pe.x  != INVALID_INT)
+                        pe.x  += deltaX
                     if (pe.x2 != INVALID_INT)
-                        pe.x2 = 20 + (pe.x2 - xmin)
+                        pe.x2 += deltaX
                     if (pe.xt != INVALID_INT)
-                        pe.xt = 20 + (pe.xt - xmin)
-                    if (pe.y != INVALID_INT)
-                        pe.y = 20 + (pe.y - ymin)
+                        pe.xt += deltaX
+                    if (pe.y  != INVALID_INT)
+                        pe.y  += deltaY
                     if (pe.y2 != INVALID_INT)
-                        pe.y2 = 20 + (pe.y2 - ymin)
+                        pe.y2 += deltaY
                     if (pe.yt != INVALID_INT)
-                        pe.yt = 20 + (pe.yt - ymin)
+                        pe.yt += deltaY
                 } else {
                     if (pe.x != INVALID_INT)
                         pe.x = 20 + (xmax - pe.x)
@@ -208,12 +217,38 @@ open class PanelElement {
 
             }
 
+            if (DEBUG) {
+                Log.d(TAG,"after origin move ---------------")
+                //printPES()
+                printTracks()
+            }
+
             if (DEBUG)
-                Log.d(TAG, "xmin=" + xmin + " xmax=" + xmax + " ymin=" + ymin
-                        + " ymax=" + ymax)
+                Log.d(TAG, "after origin move (incl Rand) xmin=" + (0) + " xmax=" + (xmax + deltaX + 20) + " ymin=" + 0
+                        + " ymax=" + (ymax +deltaY +20)  +"  ----------------" )
+
+            panelRect = Rect(0, 0, xmax + deltaX + 20, ymax +deltaY +20)
 
             configHasChanged = true
 
+        }
+
+        fun printPES() {
+            var i = 0
+            Log.d(TAG, "pe# " + "(x,x2)/(y,y2)")
+            for (pe in panelElements) {
+                Log.d(TAG, "pe#"+i+ "("+pe.x+","+pe.x2+")/("+pe.y+","+pe.y2+")")
+                i++
+            }
+        }
+
+        fun printTracks() {
+            var i = 0
+            Log.d(TAG, "pe# " + "(x,x2)/(y,y2)")
+            for (pe in panelElements.filter{ !( it is ActivePanelElement)}) {
+                Log.d(TAG, "pe#"+i+ "("+pe.x+","+pe.x2+")/("+pe.y+","+pe.y2+")")
+                i++
+            }
         }
     }
 

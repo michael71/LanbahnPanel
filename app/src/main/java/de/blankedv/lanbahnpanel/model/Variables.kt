@@ -5,6 +5,7 @@
 package de.blankedv.lanbahnpanel.model
 
 import android.content.Context
+import android.graphics.Rect
 import de.blankedv.lanbahnpanel.elements.CompRoute
 import de.blankedv.lanbahnpanel.elements.PanelElement
 import de.blankedv.lanbahnpanel.elements.Route
@@ -79,3 +80,5 @@ var conn_state_string = "?"
 var appContext: Context? = null
 
 var globalPower = POWER_UNKNOWN
+
+var panelRect : Rect = Rect(0,0,100,100)
