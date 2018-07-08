@@ -42,35 +42,6 @@ object ReadConfig {
 
     internal val DEBUG_PARSING = true
 
-    fun readConfig(context: Context): Boolean {
-        // determine whether to read from http server or from local storage
-        // during preferences loading the variables
-        // configServer and configFilename are read.
-
-        /*	if (!configServer.isEmpty()) {
-			if (DEBUG) Log.d(TAG,"configServer="+configServer+" trying to read from the server.");
-
-			if (DEBUG) Log.d(TAG,"configFilename="+configFilename);
-			// try to read from server - if not successful, read from local storage
-			MakeHttpRequestTask httpTask = new MakeHttpRequestTask();
-			String req = "http://"+configServer+"/"+configFilename;
-			httpTask.execute(req);
-
-		} else {  */
-        //if (DEBUG) Log.d(TAG,"configServer string is empty, reading from local file.");
-        if (DEBUG) Log.d(TAG, "reading data from configFilename=$configFilename")
-        // read config from file
-        val error = readConfigFromFile(context)
-        if (!error.isEmpty()) {
-            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
-            return false
-        } else {
-            return true
-        }
-        // }
-        // return true;
-    }
-
     /**
      *
      * read all PanelElements from a configuration (XML) file and add deducted
@@ -85,36 +56,27 @@ object ReadConfig {
      */
     fun readConfigFromFile(context: Context): String {
 
-        // TODO determine whether we can read a config file from a web server
+        val result: String
 
-        val mExternalStorageAvailable: Boolean
-        val state = Environment.getExternalStorageState()
-        val error: String
-
-        when (state) {
-            Environment.MEDIA_MOUNTED ->
-                // We can read and write the media
-                mExternalStorageAvailable = true
-            Environment.MEDIA_MOUNTED_READ_ONLY ->
-                // We can only read the media
-                mExternalStorageAvailable = true
-            else ->
-                // Something else is wrong. It may be one of many other states, but
-                // all we need to know is we can neither read nor write
-                mExternalStorageAvailable = false
+        if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {
+            // We cannot read/write the media
+            Log.e(TAG, "external storage not available or not writeable")
+            Toast.makeText(context, "ERROR:External storage not readable",
+                    Toast.LENGTH_LONG).show()
+            return "ERROR:External storage not readable"
         }
 
-        if (mExternalStorageAvailable) {
+
             try {
                 val f = File(Environment.getExternalStorageDirectory().toString()
-                        + "/" + DIRECTORY + "/" + configFilename)
+                        + DIRECTORY + configFilename)
                 // auf dem Nexus 7 unter /mnt/shell/emulated/0/lanbahnpanel
                 val fis: FileInputStream
                 if (!f.exists()) {
                     Log.e(TAG, "config file=$configFilename not found, using demo data.")
                     val demoIs = context.assets.open(DEMO_FILE)
                     configHasChanged = true
-                    error = readXMLConfigFile(demoIs)
+                    result = readXMLConfigFile(demoIs)
                     demoIs.close()
 
                     // create the folder for later use (if it does not exist already)
@@ -126,8 +88,10 @@ object ReadConfig {
                     }
                 } else {
                     fis = FileInputStream(f)
-                    error = readXMLConfigFile(fis)
+                    result = readXMLConfigFile(fis)
+
                 }
+                return result
             } catch (e: FileNotFoundException) {
                 Log.e(TAG, "FileNotFound " + e.message)
                 return "FileNotFound " + e.message
@@ -136,13 +100,6 @@ object ReadConfig {
                 return "IOException " + e.message
             }
 
-        } else {
-            Toast.makeText(context, "ERROR:External storage not readable",
-                    Toast.LENGTH_LONG).show()
-            return "ERROR:External storage not readable"
-        }
-
-        return error
     }
 
     private fun readXMLConfigFile(fis: InputStream): String {

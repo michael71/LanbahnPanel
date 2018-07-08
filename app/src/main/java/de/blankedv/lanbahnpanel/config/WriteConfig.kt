@@ -28,66 +28,43 @@ object WriteConfig {
      * @return true, if succeeds - false, if not.
      */
 
-    fun writeToXML(): Boolean {
+    fun toXMLFile(): Boolean {
 
-        val mExternalStorageWriteable: Boolean
-        val state = Environment.getExternalStorageState()
-
-        when (state) {
-            Environment.MEDIA_MOUNTED ->
-                // We can read and write the media
-                mExternalStorageWriteable = true
-            Environment.MEDIA_MOUNTED_READ_ONLY ->
-                // We can only read the media
-                mExternalStorageWriteable = false
-            else ->
-                // Something else is wrong.
-                mExternalStorageWriteable = false
-        }
-
-        if (mExternalStorageWriteable) {
-
-            var fWriter: FileWriter? = null
-            try {
-                val suffix = Utils.dateTime
-                fWriter = FileWriter(
-                        Environment.getExternalStorageDirectory().toString() + "/"
-                                + DIRECTORY + configFilename + "." + suffix)
-                fWriter.write(writeXml())
-                fWriter.flush()
-                fWriter.close()
-
-                if (DEBUG)
-                    Log.d(TAG, "Config File $configFilename.$suffix saved! ")
-                configHasChanged = false // reset flag
-
-            } catch (e: Exception) {
-                Log.e(TAG, "Exception: " + e.message)
-                return false
-            } finally {
-                if (fWriter != null) {
-                    try {
-                        fWriter.close()
-                    } catch (e: IOException) {
-                        Log.e(TAG, "could not close output file!")
-                    }
-
-                }
-            }
-        } else {
+        if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {
             Log.e(TAG, "external storage not writeable!")
             return false
         }
+
+        var fWriter: FileWriter? = null
+        try {
+            val suffix = Utils.dateTime
+            fWriter = FileWriter(
+                    Environment.getExternalStorageDirectory().toString()
+                            + DIRECTORY + configFilename + "." + suffix)
+            fWriter.write(writeXml())
+            fWriter.flush()
+
+            if (DEBUG)
+                Log.d(TAG, "Config File $configFilename.$suffix saved! ")
+            configHasChanged = false // reset flag
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Exception: " + e.message)
+            return false
+        } finally {
+
+            fWriter?.close()
+
+        }
+
         return true
     }
 
     /**
-     * writeConfigToXML
+     * writeXml
      *
-     * saves all PanelElements (including deducted elements) turnout an XML file
+     * make xml string from all PanelElements (including deducted elements)
      *
-     * @param
-     * @return true, if succeeds - false, if not.
      */
     private fun writeXml(): String {
         val serializer = Xml.newSerializer()

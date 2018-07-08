@@ -31,6 +31,10 @@
             android:defaultValue="false"
             android:key="routesPref"
             android:title="@string/enableRoutes" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="powerControlPref"
+            android:title="@string/enable_power_control" />
         <ListPreference
             android:defaultValue="@string/sel_style_default"
             android:entries="@array/styles"

@@ -17,8 +17,8 @@ import java.util.concurrent.BlockingQueue
 var noWifiFlag = false
 
 
-var width: Int = 0
-var height:Int = 0
+//var width: Int = 0
+//var height:Int = 0
 
 var selectedStyle: String = "UK" // German style or USS style
 
@@ -49,8 +49,8 @@ val sendQ: BlockingQueue<String> = ArrayBlockingQueue(
 @Volatile
 var connString = ""
 
-val DIRECTORY = "lanbahnpanel/"
-// with trailing slash !!
+val DIRECTORY = "/lanbahnpanel/"
+// with leading and trailing slash !!
 
 var configFilename = "lb-panel1.xml"
 

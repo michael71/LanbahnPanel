@@ -24,21 +24,16 @@ abstract class ActivePanelElement : PanelElement {
     var lastToggle = 0L
     var lastUpdateTime = 0L
 
-    protected// dot type sensor
-    // line type sensor
-    // Rect rect = new Rect(left, top, right, bottom)
-    // Rect rect = new Rect(left, top, right, bottom)
-    val rect: Rect
+    protected val rect: Rect
         get() {
             if (this is SignalElement) {
                 return Rect(x - RASTER / 5, y - RASTER / 7, x + RASTER / 5, y + RASTER / 7)
             } else if (this is SensorElement) {
-                return if (x2 == INVALID_INT) {
+                return if (x2 == INVALID_INT) { // dot type sensor
                     Rect(x - RASTER / 5, y - RASTER / 7, x + RASTER / 5, y + RASTER / 7)
-                } else {
+                } else { // line type sensor
                     Rect((x + x2) / 2 - RASTER / 5, (y + y2) / 2 - RASTER / 7, (x + x2) / 2 + RASTER / 5,
                             (y + y2) / 2 + RASTER / 7)
-
                 }
             } else {
                 val minx = Utils.min(x, xt, x2)
@@ -75,11 +70,7 @@ abstract class ActivePanelElement : PanelElement {
     }
 
     override fun hasAdrX(address: Int): Boolean {
-        return if (adr == address) {
-            true
-        } else {
-            false
-        }
+        return (adr == address)
     }
 
     override fun updateData(data: Int) {
@@ -96,7 +87,7 @@ abstract class ActivePanelElement : PanelElement {
         // search x for range in x..(x+/-w)
         // search y for range in y..(y+/-h)
 
-        val rect = rect
+        //val rect = rect
 
         // the touchpoint should be within rectangle of panel element
         // similar  rect.contains() methods, BUT the lines of the rect are

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="hello">hello</string>
     <string name="app_name">Lanbahn Panel</string>
     <string name="sxnet_server_settings">Lanbahn Settings</string>
@@ -16,6 +15,7 @@
     <string name="draw_addresses">Display Turnout/Signal Addresses</string>
     <string name="enableZoom">Enable Panel Zoom</string>
     <string name="enableEdit">Enable Edit Mode</string>
+    <string name="enable_power_control">Enable Global Power On/Off Control</string>
     <string name="enableDemo" translatable="false">Enable Demo Mode</string>
     <string name="flipUpsideDown">view panel element from the other side</string>
     <string name="saveStates">Save States of Device on Appl. Pause/Stop</string>
@@ -57,4 +57,5 @@
     <string name="panel_cfg_files" translatable="false">Panel Config File (\'panel....xml\')</string>
     <string name="server_port" translatable="false">Server port</string>
     <string name="not_connected" translatable="false">currently not connected to a server</string>
+<string name="get_panel_from_server" translatable="false">Get panel file from server</string>
 </resources>

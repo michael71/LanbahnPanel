@@ -1,12 +1,12 @@
 package de.blankedv.lanbahnpanel.railroad
 
 import android.content.Context
-import android.hardware.Sensor
 import android.os.Handler
 import android.os.Message
 import android.util.Log
 import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import de.blankedv.lanbahnpanel.model.*
+import de.blankedv.lanbahnpanel.util.Utils.threadSleep
 import org.jetbrains.anko.toast
 import java.io.BufferedReader
 import java.io.IOException
@@ -24,11 +24,12 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
     @Volatile
     protected var shutdownFlag: Boolean = false
 
-    private var count_no_response = 0
+    private var countNoResponse = 0
     private var connectionActive = false  // determined with time out counter
+    private var timeElapsed: Long = 0
+
     // TODO implement connectionActive Test for Loconet
 
-    private var timeElapsed: Long = 0
 
     private var myClient: GenericClient? = null
 
@@ -68,7 +69,7 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
                     val in1 = `in`!!.readLine()
                     if (DEBUG) Log.d(TAG, "msgFromServer: $in1")
                     myClient?.handleReceive(in1.toUpperCase(), rxHandler)
-                    count_no_response = 0 // reset timeout counter.
+                    countNoResponse = 0 // reset timeout counter.
                     connectionActive = true
                 }
             } catch (e: IOException) {
@@ -97,17 +98,17 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
                     } else {
                         // TODO implement similar "lifecheck" for loconet
                     }
-                    count_no_response++
+                    countNoResponse++
                 }
                 timeElapsed = System.currentTimeMillis()  // reset
-                if (count_no_response > 2) {
+                if (countNoResponse > 2) {
                     Log.e(TAG, "SXnetClientThread - connection lost?")
-                    count_no_response = 0
+                    countNoResponse = 0
                     connectionActive = false
 
                 }
             }
-            Thread.sleep(20)
+            threadSleep(20)
         }
 
         socket?.close()
@@ -133,6 +134,14 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
         }
     }
 
+    fun setPower(onoff : Boolean) {
+        var cmd = myClient?.setPowerState(onoff)
+        val success = sendQ.offer(cmd)
+        if (!success && DEBUG) {
+            Log.d(TAG, "setPower failed, queue full")
+            }
+    }
+
     private fun immediateSend(command: String) {
         if (shutdownFlag) return
         if (out == null) {
@@ -146,11 +155,10 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
                 if (DEBUG) Log.d(TAG, "could not send: $command")
                 Log.e(TAG, e.javaClass.name + " " + e.message)
             }
-
         }
     }
 
-    fun connect(ip: String, port: Int): Pair<Boolean,String> {
+    private fun connect(ip: String, port: Int): Pair<Boolean,String> {
         if (DEBUG) Log.d(TAG, "trying conn to - $ip:$port")
         try {
             val socketAddress = InetSocketAddress(ip, port)
@@ -191,18 +199,8 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
         }
     }
 
-    /*fun reconnect() : Boolean {
-        connect(ip, port)
-    } */
-
     fun shutdown() {
         shutdownFlag = true
-    }
-
-    fun disconnectContext() {
-        this.context = null
-        Log.d(TAG, "lost context, stopping thread")
-        shutdown()
     }
 
     companion object {

@@ -3,13 +3,10 @@ package de.blankedv.lanbahnpanel.view
 import android.Manifest
 import android.app.AlertDialog
 import android.app.AlertDialog.Builder
-import android.content.ComponentName
-import android.content.Intent
-import android.content.ServiceConnection
+import android.content.*
 import android.content.pm.PackageManager
-import android.os.Bundle
-import android.os.Handler
-import android.os.IBinder
+
+import android.os.*
 import android.preference.PreferenceManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -33,13 +30,15 @@ import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.clearPan
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.connectionIsAlive
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.appHandler
 import de.blankedv.lanbahnpanel.config.ReadConfig
+import de.blankedv.lanbahnpanel.config.RequestPanel
 import de.blankedv.lanbahnpanel.config.WriteConfig
 import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import de.blankedv.lanbahnpanel.elements.Route
 import de.blankedv.lanbahnpanel.elements.RouteButtonElement
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.railroad.RRConnectionThread
-import org.jetbrains.anko.toast
+import de.blankedv.lanbahnpanel.util.Utils.threadSleep
+import org.jetbrains.anko.*
 
 /**
  * LanbahnPanelActivity is the MAIN activity of the lanbahn panel
@@ -50,7 +49,6 @@ class LanbahnPanelActivity : AppCompatActivity() {
     lateinit internal var builder: Builder
 
     internal var mBound = false
-
     lateinit internal var tv: TextView
     lateinit internal var params: LayoutParams
 
@@ -61,9 +59,6 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
     private val KEY_STATES = "states"
     private var shuttingDown = false
-
-
-    private val MY_PERMISSIONS_REQUEST_WRITE_STORAGE = 12
 
     /**
      * Defines callbacks for service binding, passed to bindService()
@@ -114,26 +109,17 @@ class LanbahnPanelActivity : AppCompatActivity() {
         builder.setMessage(
                 applicationContext.getString(R.string.exit_confirm))
                 .setCancelable(false)
-                .setPositiveButton(
-                        applicationContext.getString(R.string.yes)
+                .setPositiveButton(applicationContext.getString(R.string.yes)
                 ) { dialog, id ->
-                    shuttingDown = true
-                    shutdownLanbahnClient()
-                    try {
-                        Thread.sleep(100)
-                    } catch (e: InterruptedException) {
-                        Log.e(TAG, e.message)
-                    }
-
-                    clearPanelData() // needs to be done
-                    // to start
-                    // again with a state of "UNKNOWN" when no
-                    // current data
+                    shutdownClient()
+                    threadSleep(100L)
+                    clearPanelData() // needs to be done to start again with
+                    // a state of "UNKNOWN" when no current data
                     finish()
                 }
-                .setNegativeButton(
-                        applicationContext.getString(R.string.no)
+                .setNegativeButton(applicationContext.getString(R.string.no)
                 ) { dialog, id -> dialog.cancel() }
+
         openCommunication()
 
     }
@@ -148,7 +134,8 @@ class LanbahnPanelActivity : AppCompatActivity() {
         super.onStart()
         // TODO Bind to LoconetService
         //Intent intent = new Intent(this, LoconetService.class);
-        // bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        // bindService(intent, mConnection, Context.BIND_AUTO_CREATE);     val onComplete : BroadcastReceiver {
+
     }
 
     override fun onStop() {
@@ -163,18 +150,14 @@ class LanbahnPanelActivity : AppCompatActivity() {
         super.onPause()
         if (DEBUG)
             Log.d(TAG, "onPause - LanbahnPanelActivity")
-        // firstStart=false; // flag to avoid re-connection call during
-        // first
-        // start
-        // sendQ.add(DISCONNECT);
+
         (application as LanbahnPanelApplication).saveZoomEtc()
         if (configHasChanged)
             if (checkStorageWritePermission()) {
-                WriteConfig.writeToXML()
+                WriteConfig.toXMLFile()
             } else {
                 toast("ERROR: App has NO PERMISSION to write files !")
             }
-
 
         if (saveStates)
             saveStates()
@@ -185,13 +168,15 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
     }
 
-    fun shutdownLanbahnClient() {
+    fun shutdownClient() {
+        shuttingDown = true
         Log.d(TAG, "LanbahnPanelActivity - shutting down Client.")
         (application as LanbahnPanelApplication).removeNotification()
-
         client?.shutdown()
+        client = null
 
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -199,31 +184,12 @@ class LanbahnPanelActivity : AppCompatActivity() {
             Log.d(TAG, "onResume - LanbahnPanelActivity")
         sendQ.clear()
 
-        val prefs = PreferenceManager
-                .getDefaultSharedPreferences(this)
-        val cfFilename = prefs.getString(KEY_CONFIG_FILE, "-")
-        if (cfFilename != configFilename) {
-            // reload, if a new panel config file selected
-            configFilename = cfFilename
-            if (DEBUG) {
-                Log.d(TAG, "onResume - reloading panel config.")
-            }
-            ReadConfig.readConfigFromFile(this) // reload config File with scaling
-            (application as LanbahnPanelApplication).loadZoomEtc()
-            // TODO recalcScale();
-        } else {
-            (application as LanbahnPanelApplication).loadZoomEtc() // reload
-            // settings without scaling
-        }
+        reloadConfigIfPanelFileChanged()
 
-        val metrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(metrics)
-        width = metrics.widthPixels
-        height = metrics.heightPixels
-        if (DEBUG)
-            Log.i(TAG, "metrics - w=$width  h=$height")
 
         (application as LanbahnPanelApplication).loadZoomEtc()
+
+        if (DEBUG) debugLogDisplayMetrics()
 
         if (enableRoutes == false) {
             RouteButtonElement.autoReset()  // this will also reset the sensors to STATE_FREE
@@ -264,10 +230,6 @@ class LanbahnPanelActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        return super.onPrepareOptionsMenu(menu)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         when (item.itemId) {
@@ -278,17 +240,24 @@ class LanbahnPanelActivity : AppCompatActivity() {
             }
 
             R.id.action_connect -> {
-                // if (!lnStatusData.connState) {
-                toast("TODO reconnect NOT YET IMPLEMENTED")
-                //instance.connect()
-                // }
+                toast("trying reconnect")
+                restartCommFlag = true
+                return true
             }
-            R.id.action_power -> toast("switching power ON/OFF not allowed")
+            R.id.action_power -> {
+                togglePower() // toast("switching power ON/OFF not allowed")
+                return true
+            }
             R.id.menu_about // call preferences activity
             -> {
                 startActivity(Intent(this, AboutActivity::class.java))
                 return true
             }
+            R.id.menu_get_panel -> {
+                readPanelFromServer()
+                return true
+            }
+
             R.id.menu_check_service -> {
                 //TODO int num = mService.getRandomNumber();
                 Toast.makeText(this, "not implemented", Toast.LENGTH_SHORT).show()
@@ -298,6 +267,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
             R.id.menu_quit -> {
                 val alert = builder.create()
                 alert.show()
+                // done in alert: shutdownClient()
                 return true
             }
             else -> return true //super.onOptionsItemSelected(item)
@@ -305,19 +275,14 @@ class LanbahnPanelActivity : AppCompatActivity() {
         return true
     }
 
+
     fun openCommunication() {
 
         Log.d(TAG, "LanbahnPanelActivity - openCommunication.")
         if (client != null) {
             sendQ.clear()
             client?.shutdown()
-            try {
-                Thread.sleep(100) // give client some time to shut down.
-            } catch (e: InterruptedException) {
-                if (DEBUG)
-                    Log.e(TAG, "could not sleep...")
-            }
-
+            threadSleep(100) // give client some time to shut down.
         }
         sendQ.clear()
 
@@ -356,6 +321,23 @@ class LanbahnPanelActivity : AppCompatActivity() {
         mHandler.postDelayed({ updateUI() }, 500)
     }
 
+    private fun togglePower() {
+        val prefs = PreferenceManager
+                .getDefaultSharedPreferences(this)
+        val allowed = prefs.getBoolean(KEY_ENABLE_POWER_CONTROL, false)
+        if ((client == null) or (!client!!.isConnected())) {
+            toast("ERROR: not connected - cannot set global power state")
+        } else if (allowed) {
+            when (globalPower) {
+                POWER_OFF -> client?.setPower(true)
+                POWER_ON -> client?.setPower(false)
+                POWER_UNKNOWN -> client?.setPower(true)
+            }
+        } else {
+            toast("not allowed to set global power state, check settings")
+        }
+    }
+
     fun saveStates() {
         val sb = StringBuilder()
 
@@ -364,7 +346,6 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 if (pe.state != INVALID_INT)
                     sb.append(pe.adr).append(",").append(pe.state).append(";")
             }
-
         }
 
         val prefs = PreferenceManager
@@ -409,8 +390,10 @@ class LanbahnPanelActivity : AppCompatActivity() {
     private fun setConnectionIcon() {
         if (LanbahnPanelApplication.connectionIsAlive()) {
             mOptionsMenu?.findItem(R.id.action_connect)?.setIcon(R.drawable.commok)
-        } else
+        } else {
             mOptionsMenu?.findItem(R.id.action_connect)?.setIcon(R.drawable.nocomm)
+            globalPower = POWER_UNKNOWN
+        }
     }
 
     private fun setPowerStateIcon() {
@@ -446,16 +429,9 @@ class LanbahnPanelActivity : AppCompatActivity() {
             requestAllRailroadData()
         } else {
             val msg = " NO CONNECTION TO $ip ! Check WiFi/SSID and IP"
-            toast(msg)
+            longToast(msg)
             conn_state_string = "NOT CONNECTED"
         }
-    }
-
-    fun shutdownClient() {
-        Log.d(TAG, "LanbahnPanelActivity - shutting down Network Client.")
-        client?.shutdown()
-        client?.disconnectContext()
-        client = null
     }
 
     private fun checkStorageWritePermission(): Boolean {
@@ -495,7 +471,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 // If request is cancelled, the result arrays are empty.
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     // finally, we got the permission, write updated config file NOW
-                    WriteConfig.writeToXML()
+                    WriteConfig.toXMLFile()
                 } else {
                     // permission denied, boo! Disable the functionality that depends on this permission.
                     toast("cannot write log to File without permissions")
@@ -511,6 +487,67 @@ class LanbahnPanelActivity : AppCompatActivity() {
         }
     }
 
+    private fun reloadConfigIfPanelFileChanged() {
+        val prefs = PreferenceManager
+                .getDefaultSharedPreferences(this)
+        val cfFilename = prefs.getString(KEY_CONFIG_FILE, "-")
+        if (cfFilename != configFilename) {
+            // reload, if a new panel config file selected
+            configFilename = cfFilename
+            if (DEBUG) {
+                Log.d(TAG, "onResume - reloading panel config.")
+            }
+            ReadConfig.readConfigFromFile(this) // reload config File with scaling
+            // TODO recalcScale();
+        }
+    }
+
+    private fun readPanelFromServer() {
+        if (checkStorageWritePermission()) {
+            val prefs = PreferenceManager
+                    .getDefaultSharedPreferences(this)
+            val server = prefs.getString(KEY_IP, "")
+            getPanel(server)
+        } else {
+            longToast("ERROR: App has NO PERMISSION to write files !")
+        }
+    }
+
+    private fun getPanel(server: String) {
+
+        val state = Environment.getExternalStorageState()
+        if (state != Environment.MEDIA_MOUNTED) {// We cannot read/write the media
+            Log.e(TAG, "external storage not available or not writeable")
+            toast("external storage not available or not writeable")
+            return
+        }
+
+        doAsync {
+
+            val url = "http://" + server + ":8000/config"
+            val (res, content) = RequestPanel(url).run()
+            uiThread {
+                if (res) {
+                    //Log.d(TAG, content)
+                    longToast("panel file read => Select 'panel_from_server.xml' in Settings to use it")
+                } else {
+                    Log.e(TAG, content)  // content == error message
+                    longToast("panel file NOT read - ERROR:\n$content")
+                }
+
+            }
+        }
+    }
+
+    private fun debugLogDisplayMetrics() {
+        val metrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(metrics)
+        val width = metrics.widthPixels
+        val height = metrics.heightPixels
+        if (DEBUG)
+            Log.i(TAG, "metrics - w=$width  h=$height")
+
+    }
 
     companion object {
 

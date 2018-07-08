@@ -16,6 +16,7 @@ const val KEY_DRAW_ADR2 = "drawAddressesPref2"
 const val KEY_STYLE_PREF = "selectStylePref"
 const val KEY_ENABLE_ZOOM = "enableZoomPref"
 const val KEY_ENABLE_EDIT = "enableEditPref"
+const val KEY_ENABLE_POWER_CONTROL = "powerControlPref"
 const val KEY_SAVE_STATES = "saveStatesPref"
 const val KEY_ROUTES = "routesPref"
 const val KEY_FLIP = "flipPref"
@@ -25,6 +26,8 @@ const val KEY_SCALE = "scalePref"
 const val KEY_IP = "ipPref"
 const val KEY_PORT = "portPref"
 const val KEY_CONFIG_FILE = "configFilenamePref"
+
+const val FNAME_PANEL_FROM_SERVER = "panel_from_server.xml"
 
 const val LBP_NOTIFICATION_ID = 201 //arbitrary id for notification
 
@@ -90,3 +93,5 @@ const val RASTER = 20 * prescale // raster points
 // with xx pixels
 const val TURNOUT_LENGTH = 10 // NOT to be prescaled
 const val TURNOUT_LENGTH_LONG = (TURNOUT_LENGTH * 1.4f).toInt()
+
+const val MY_PERMISSIONS_REQUEST_WRITE_STORAGE = 12

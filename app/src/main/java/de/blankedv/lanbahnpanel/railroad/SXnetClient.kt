@@ -34,6 +34,17 @@ class SXnetClient() : GenericClient() {
         return "S $addr $data"
     }
 
+    override fun setChannel(addr: Int, data: Int) :String {
+        return "S $addr $data"
+    }
+
+    override fun setPowerState (switchOn : Boolean) : String {
+        if (switchOn) {
+            return "S "+ POWER_CHANNEL + " 1"
+        } else {
+            return "S "+ POWER_CHANNEL + " 0"
+        }
+    }
 
     /**
      * SX Net Protocol (all msg terminated with CR)

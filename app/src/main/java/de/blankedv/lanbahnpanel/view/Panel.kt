@@ -2,6 +2,8 @@ package de.blankedv.lanbahnpanel.view
 
 import android.content.Context
 import android.graphics.*
+import android.media.AudioManager
+import android.media.ToneGenerator
 import android.util.Log
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
@@ -39,6 +41,8 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
     private var mWidth: Int = 0
     private var mHeight: Int = 0
 
+    private val toneG  = ToneGenerator(AudioManager.STREAM_ALARM, 70)
+
     // public static Bitmap myBitmap = Bitmap.createBitmap(4000,1600,
 // Bitmap.Config.ARGB_4444);
     private var mBitmap = Bitmap.createBitmap(2000, 800,
@@ -51,6 +55,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         LanbahnPanelApplication.updatePanelData()
         holder.addCallback(this)
         mThread = ViewThread(this)
+
     }
 
 
@@ -157,6 +162,9 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                                     Dialogs.selectAddressDialog(e) //
                                 } else {
                                     e.toggle()
+                                    // vibrate(500L)
+
+                                    toneG.startTone(ToneGenerator.TONE_CDMA_ABBR_INTERCEPT, 100) //TONE_CDMA_PIP) //TONE_CDMA_KEYPAD_VOLUME_KEY_LITE)
                                 }
                                 break // only 1 can be selected with one touch
                             }
@@ -259,5 +267,24 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
             x += step
         }
     }
+
+    /* does not work for most tablets
+    private fun vibrate(ms : Long) {
+
+        val v = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (v.hasVibrator()) {
+            Log.d(TAG, "Vibrating !!!");
+        } else {
+            Log.v(TAG, "Device cannot vibrate");
+        }
+
+        // Vibrate for 500 milliseconds
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createOneShot(ms, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            //deprecated in API 26
+            v.vibrate(ms);
+        }
+    } */
 
 }

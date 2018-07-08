@@ -74,5 +74,11 @@ object Utils {
         return m
     }
 
-
+    fun threadSleep(millis : Long) {
+        try {
+            Thread.sleep(millis)
+        } catch (e: InterruptedException) {
+            Log.e(TAG, e.message)
+        }
+    }
 }
