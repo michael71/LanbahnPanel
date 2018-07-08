@@ -22,6 +22,7 @@ var noWifiFlag = false
 //var height:Int = 0
 
 var selectedStyle: String = "UK" // German style or USS style
+var selectedScale: String = "auto" // automatic scaling
 
 var panelElements = ArrayList<PanelElement>()
 var routes = ArrayList<Route>()
@@ -62,7 +63,7 @@ var configHasChanged = false // store info whether config
 // has changed
 // if true, then a new config file is written at the end of the Activity
 
-var zoomEnabled: Boolean = false
+//var zoomEnabled: Boolean = false
 var scale = 1.0f // user selectable scaling of panel area
 
 var xoff = (10 * prescale).toFloat()

@@ -22,7 +22,7 @@ class SignalElement : ActivePanelElement {
     }
 
     override fun getSensitiveRect() : Rect {
-        return Rect(x - RASTER / 5, y - RASTER / 7, x + RASTER / 5, y + RASTER / 7)
+       return Rect(x - RASTER / 11, y - RASTER / 15, x + RASTER / 11, y + RASTER / 15)
     }
 
     override fun doDraw(canvas: Canvas) {

@@ -118,7 +118,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
                         mPosX += dx
                         mPosY += dy
-                        if (zoomEnabled && mX > 300 && mY > 200) {
+                        if ((selectedScale == "manual") && mX > 300 && mY > 200) {
                             xoff += dx
                             yoff += dy
                             scalingTime = System.currentTimeMillis()  // avoid control of SX elements during pan-move
@@ -208,24 +208,25 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         mWidth = width
         mHeight = height
 
-        if (!zoomEnabled) {
+        if (selectedScale == "auto") {
             recalcScale(mWidth, mHeight)
+
         }
     }
 
     private fun recalcScale(width : Int, height : Int) {
 
-        val sc1X = width / ((panelRect.right - panelRect.left) * 1.0f)  // use bitmap size and not screen size ???
-        val sc1Y = height / ((panelRect.bottom - panelRect.top) * 1.0f)
+        val sc1X = width / ((panelRect.right - panelRect.left) * 1.0f)
+        val sc1Y =  height  / ((panelRect.bottom - panelRect.top) * 1.0f)
 
         if (sc1X < sc1Y) { // x-dimensions of panel elements larger than y-dim
                             // (this is normally the case for layout panels)
-            scale = sc1X / 2.0f
+            scale = sc1X
             xoff = 0f
-            yoff = height * (sc1X / sc1Y) / 2f
+            yoff = height * 2f * (sc1X / sc1Y) / prescale
         } else {
-            scale = sc1Y / 2.0f
-            xoff = width * (sc1Y / sc1X) / 2f
+            scale = sc1Y
+            xoff = width * 2f * (sc1Y / sc1X) / prescale
             yoff = 0f
         }
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
@@ -250,7 +251,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
         // label with panel name and display green "unlock", if zoom enabled
         val topLeft = ( mHeight * 0.05).toFloat()
-        if (zoomEnabled) {
+        if (selectedScale == "manual") {
             canvas.drawBitmap(bitmaps["unlock"], 5f, topLeft, null)
         } else {
             canvas.drawBitmap(bitmaps["lock"], 5f, topLeft, null)
@@ -263,6 +264,8 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         for (e in panelElements) {
             e.doDraw(mCanvas)
         }
+        //debugDraw(mCanvas)
+
         drawRaster(mCanvas, RASTER)
 
         canvas.drawBitmap(mBitmap, matrix, null)
@@ -272,7 +275,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
     private inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
-            if (zoomEnabled) {
+            if (selectedScale == "manual") {
                 mScaleFactor *= detector.scaleFactor
                 Log.d(TAG, "mScaleFactor=$mScaleFactor")
                 // Don't let the object get too small or too large.
@@ -288,6 +291,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
 
     private fun drawRaster(canvas: Canvas, step: Int) {
+
         var x = 0
         while (x < canvas.width) {
             var y = 0
@@ -318,4 +322,10 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         }
     } */
 
+    private fun debugDraw(mCanvas : Canvas) {
+        // surface  w=1280 h=618
+        //mCanvas.drawPoint(panelRect.right.toFloat(), panelRect.bottom.toFloat(), LPaints.greenPaint)
+        mCanvas.drawPoint(0f, 0f, LPaints.redPaint)
+        mCanvas.drawPoint(300f, 80f, LPaints.redPaint)
+    }
 }

@@ -14,7 +14,9 @@ const val INVALID_INT = -1
 const val KEY_DRAW_ADR = "drawAddressesPref"
 const val KEY_DRAW_ADR2 = "drawAddressesPref2"
 const val KEY_STYLE_PREF = "selectStylePref"
-const val KEY_ENABLE_ZOOM = "enableZoomPref"
+//const val KEY_ENABLE_ZOOM = "enableZoomPref"
+//const val KEY_ENABLE_AUTOSCALE = "enableAutoscalePref"
+const val KEY_SCALE_PREF = "selectScalePref"
 const val KEY_ENABLE_EDIT = "enableEditPref"
 const val KEY_ENABLE_POWER_CONTROL = "powerControlPref"
 const val KEY_SAVE_STATES = "saveStatesPref"
@@ -87,7 +89,7 @@ const val MAX_LAMP_BUTTONS = 4
 // fixed prefix for scaling - should be =1 for small displays and =2 for
 // large displays
 // all Paints and x/y-s are scaled before drawing
-const val prescale = 2
+const val prescale = 4
 
 const val RASTER = 20 * prescale // raster points
 // with xx pixels

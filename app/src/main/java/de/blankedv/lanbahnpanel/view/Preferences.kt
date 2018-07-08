@@ -20,7 +20,9 @@ import de.blankedv.lanbahnpanel.model.*
 class Preferences : PreferenceActivity(), OnSharedPreferenceChangeListener {
 
     private var drawAddressesPref: CheckBoxPreference? = null
-    private var enableZoomPref: CheckBoxPreference? = null
+    //private var enableZoomPref: CheckBoxPreference? = null
+    //private var enableAutoscalePref: CheckBoxPreference? = null
+    private var selectScalePref: ListPreference? = null
     private var enableEditPref: CheckBoxPreference? = null
     private var saveStatesPref: CheckBoxPreference? = null
     private var flipPref: CheckBoxPreference? = null
@@ -39,7 +41,8 @@ class Preferences : PreferenceActivity(), OnSharedPreferenceChangeListener {
         //locoAdrPref = (EditTextPreference)getPreferenceScreen().findPreference(KEY_LOCO_ADR);
         drawAddressesPref = preferenceScreen.findPreference(KEY_DRAW_ADR) as CheckBoxPreference
         drawAddressesPref2 = preferenceScreen.findPreference(KEY_DRAW_ADR2) as CheckBoxPreference
-        enableZoomPref = preferenceScreen.findPreference(KEY_ENABLE_ZOOM) as CheckBoxPreference
+        //enableZoomPref = preferenceScreen.findPreference(KEY_ENABLE_ZOOM) as CheckBoxPreference
+        //enableAutoscalePref = preferenceScreen.findPreference(KEY_ENABLE_AUTOSCALE) as CheckBoxPreference
         enableEditPref = preferenceScreen.findPreference(KEY_ENABLE_EDIT) as CheckBoxPreference
         saveStatesPref = preferenceScreen.findPreference(KEY_SAVE_STATES) as CheckBoxPreference
         routesPref = preferenceScreen.findPreference(KEY_ROUTES) as CheckBoxPreference
@@ -50,14 +53,16 @@ class Preferences : PreferenceActivity(), OnSharedPreferenceChangeListener {
         selectStylePref = preferenceScreen.findPreference(KEY_STYLE_PREF) as ListPreference
         selectStylePref!!.summary = "current selected style is " + selectedStyle!!
 
+        selectScalePref = preferenceScreen.findPreference(KEY_SCALE_PREF) as ListPreference
+        selectScalePref!!.summary = "current selected scaling type is " + selectedScale!!
+
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
         ipPref!!.summary = "= " + prefs.getString(KEY_IP, DEFAULT_SXNET_IP)!!
         portPref!!.summary = "= " + prefs.getString(KEY_PORT, DEFAULT_SXNET_PORT)!!
         selectStylePref!!.summary = "current selected style is " + prefs.getString(KEY_STYLE_PREF, "?")!!
         configFilenamePref = preferenceScreen.findPreference(KEY_CONFIG_FILE) as ListPreference
-        //locosFilenamePref = (ListPreference)getPreferenceScreen().findPreference(KEY_LOCOS_FILE);
-        //val extCat = findPreference("extended_cat") as PreferenceCategory
+
 
 
         val entries = matchingXMLFiles()
@@ -66,9 +71,9 @@ class Preferences : PreferenceActivity(), OnSharedPreferenceChangeListener {
 
         configFilenamePref!!.summary = "config loaded from " + prefs.getString(KEY_CONFIG_FILE, "-")!!
         // locosFilenamePref.setSummary("locos loaded from "+prefs.getString(KEY_LOCOS_FILE,"-"));
+//locosFilenamePref = (ListPreference)getPreferenceScreen().findPreference(KEY_LOCOS_FILE);
+        //val extCat = findPreference("extended_cat") as PreferenceCategory
 
-        selectStylePref = preferenceScreen.findPreference(KEY_STYLE_PREF) as ListPreference
-        selectStylePref!!.summary = "current selected style is " + selectedStyle!!
 
     }
 
@@ -89,14 +94,28 @@ class Preferences : PreferenceActivity(), OnSharedPreferenceChangeListener {
                 flipUpsideDown = sharedPreferences.getBoolean(KEY_FLIP, false)
                 Log.d(TAG, "upside down changed.")
             }
-            KEY_ENABLE_ZOOM -> {
+            /*KEY_ENABLE_ZOOM -> {
                 zoomEnabled = sharedPreferences.getBoolean(KEY_ENABLE_ZOOM, false)
+                if (zoomEnabled) {
+                    sharedPreferences.setBoolean(KEY_ENABLE_AUTOSCALE, false)
+                }
                 Log.d(TAG, "zoomEnabled changed.")
-            }
+            } KEY_ENABLE_AUTOSCALE -> {
+                autoscaleEnabled = sharedPreferences.getBoolean(KEY_ENABLE_ZOOM, false)
+                if (autoscaleEnabled) {
+                    sharedPreferences.setBoolean(KEY_ENABLE_AUTOSCALE, false)
+                }
+                Log.d(TAG, "zoomEnabled changed.")
+            } */
             KEY_STYLE_PREF -> {
                 selectedStyle = sharedPreferences.getString(KEY_STYLE_PREF, "US")
                 Log.d(TAG, "selectedStyle = " + selectedStyle!!)
                 selectStylePref!!.summary = "current selected style is " + selectedStyle!!
+            }
+            KEY_SCALE_PREF -> {
+                selectedScale = sharedPreferences.getString(KEY_SCALE_PREF, "auto")
+                Log.d(TAG, "selectedScale = " + selectedScale!!)
+                selectScalePref!!.summary = "current selected scaling type is " + selectedScale!!
             }
             KEY_SAVE_STATES -> {
                 saveStates = sharedPreferences.getBoolean(KEY_SAVE_STATES, false)

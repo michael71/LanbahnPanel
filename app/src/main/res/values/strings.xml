@@ -58,4 +58,7 @@
     <string name="server_port" translatable="false">Server port</string>
     <string name="not_connected" translatable="false">currently not connected to a server</string>
 <string name="get_panel_from_server" translatable="false">Get panel file from server</string>
+    <string name="enableAutoscale">Automatic scale</string>
+    <string name="sel_scale">Select type of scaling</string>
+    <string name="sel_scale_default">Auto scale</string>
 </resources>

@@ -10,6 +10,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Handler
 import android.os.Message
+import android.preference.ListPreference
 import android.preference.PreferenceManager
 import android.provider.Settings
 import android.support.v4.app.NotificationCompat
@@ -117,7 +118,8 @@ class LanbahnPanelApplication : Application() {
         editor.putBoolean(KEY_DRAW_ADR, drawAddresses)
         editor.putBoolean(KEY_DRAW_ADR2, drawAddresses2)
         editor.putString(KEY_STYLE_PREF, selectedStyle)
-        editor.putBoolean(KEY_ENABLE_ZOOM, zoomEnabled)
+        editor.putString(KEY_SCALE_PREF, selectedScale)
+        //editor.putBoolean(KEY_ENABLE_ZOOM, zoomEnabled)
         editor.putBoolean(KEY_ENABLE_EDIT, enableEdit)
         editor.putBoolean(KEY_SAVE_STATES, saveStates)
         editor.putBoolean(KEY_ROUTES, enableRoutes)
@@ -133,10 +135,11 @@ class LanbahnPanelApplication : Application() {
     fun loadZoomEtc() {
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
-        zoomEnabled = prefs.getBoolean(KEY_ENABLE_ZOOM, false)
-        Log.d(TAG, "zoomEnabled=$zoomEnabled")
+        //zoomEnabled = prefs.getBoolean(KEY_ENABLE_ZOOM, false)
+        //Log.d(TAG, "zoomEnabled=$zoomEnabled")
         selectedStyle = prefs.getString(KEY_STYLE_PREF, "US")
         LPaints.init(prescale,selectedStyle)
+        selectedScale = prefs.getString(KEY_SCALE_PREF, "auto")
         enableEdit = prefs.getBoolean(KEY_ENABLE_EDIT, false)
         saveStates = prefs.getBoolean(KEY_SAVE_STATES, false)
         if (DEBUG)

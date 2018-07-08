@@ -61,12 +61,12 @@ object LPaints {
         // linePaint.setPathEffect(new DashPathEffect(new float[] {10,20}, 0));
 
         linePaintRedDash.color = Color.RED
-        linePaintRedDash.strokeWidth = 3.5f * prescale
+        linePaintRedDash.strokeWidth = 3.0f * prescale
         linePaintRedDash.isAntiAlias = true
         linePaintRedDash.isDither = true
         linePaintRedDash.style = Paint.Style.STROKE
         linePaintRedDash.strokeCap = Paint.Cap.SQUARE
-        linePaintRedDash.pathEffect = DashPathEffect(floatArrayOf(10f, 20f), 0f)
+        linePaintRedDash.pathEffect = DashPathEffect(floatArrayOf(5f*prescale, 10f*prescale), 0f)
 
         linePaintGrayDash = Paint(linePaintRedDash)
         linePaintGrayDash.color = -0x555556
@@ -88,6 +88,7 @@ object LPaints {
         rasterPaint.color = Color.LTGRAY
         rasterPaint.isAntiAlias = true
         rasterPaint.isDither = true
+        rasterPaint.strokeWidth = 0.8f * prescale
 
         circlePaint.color = -0x7700ddde
         circlePaint.isAntiAlias = true
@@ -176,7 +177,7 @@ object LPaints {
                 linePaint.color = Color.BLACK
                 signalLine.color = Color.BLACK
                 linePaint2.color = Color.BLACK
-                rasterPaint.color = Color.LTGRAY
+                rasterPaint.color = Color.GRAY
                 rasterPaint.isAntiAlias = true
                 rasterPaint.isDither = true
                 greyPaint.color = Color.GRAY

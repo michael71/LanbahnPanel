@@ -94,11 +94,12 @@ abstract class ActivePanelElement : PanelElement {
     }
 
     fun prescaleRect(r: Rect): Rect {
-        r.top = r.top * prescale
-        r.bottom = r.bottom * prescale
-        r.left = r.left * prescale
-        r.right = r.right * prescale
-        return r
+
+        var t = r.top * prescale
+        var b = r.bottom * prescale
+        var l = r.left * prescale
+        var ri = r.right * prescale
+        return Rect(l, t,ri,b)
     }
 
     protected fun doDrawAddresses(canvas: Canvas) {

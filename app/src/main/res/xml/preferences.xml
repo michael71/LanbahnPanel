@@ -11,10 +11,13 @@
             android:defaultValue="false"
             android:key="drawAddressesPref2"
             android:title="@string/draw_routebtn_addresses" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="enableZoomPref"
-            android:title="@string/enableZoom" />
+        <ListPreference
+            android:defaultValue="@string/sel_scale_default"
+            android:entries="@array/scaling"
+            android:entryValues="@array/scaling_values"
+            android:key="selectScalePref"
+            android:summary="select the scaling: auto or manual or locked"
+            android:title="@string/sel_scale" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="flipPref"

@@ -180,11 +180,11 @@ if (DEBUG) {
 
             }
             if (DEBUG)
-                Log.d(TAG, "before adding 20: xmin=" + (xmin) + " xmax=" + (xmax) + " ymin=" + (ymin)
+                Log.d(TAG, "before adding 10: xmin=" + (xmin) + " xmax=" + (xmax) + " ymin=" + (ymin)
                         + " ymax=" + (ymax) +"  ----------------" )
-            // now move origin to (20,20)
-            val deltaX = 20 - xmin
-            val deltaY = 20 - ymin
+            // now move origin to (10,10)
+            val deltaX = 10 - xmin
+            val deltaY = 10 - ymin
             if (DEBUG) Log.d(TAG, "move by dx="+deltaX+ " dy="+deltaY +"  ----------------" )
             for (pe in panelElements) {
                 if (!flipUpsideDown) {
@@ -202,17 +202,17 @@ if (DEBUG) {
                         pe.yt += deltaY
                 } else {
                     if (pe.x != INVALID_INT)
-                        pe.x = 20 + (xmax - pe.x)
+                        pe.x = 10 + (xmax - pe.x)
                     if (pe.x2 != INVALID_INT)
-                        pe.x2 = 20 + (xmax - pe.x2)
+                        pe.x2 = 10 + (xmax - pe.x2)
                     if (pe.xt != INVALID_INT)
-                        pe.xt = 20 + (xmax - pe.xt)
+                        pe.xt = 10 + (xmax - pe.xt)
                     if (pe.y != INVALID_INT)
-                        pe.y = 20 + (ymax - pe.y)
+                        pe.y = 10 + (ymax - pe.y)
                     if (pe.y2 != INVALID_INT)
-                        pe.y2 = 20 + (ymax - pe.y2)
+                        pe.y2 = 10 + (ymax - pe.y2)
                     if (pe.yt != INVALID_INT)
-                        pe.yt = 20 + (ymax - pe.yt)
+                        pe.yt = 10 + (ymax - pe.yt)
                 }
 
             }
@@ -224,10 +224,10 @@ if (DEBUG) {
             }
 
             if (DEBUG)
-                Log.d(TAG, "after origin move (incl Rand) xmin=" + (0) + " xmax=" + (xmax + deltaX + 20) + " ymin=" + 0
-                        + " ymax=" + (ymax +deltaY +20)  +"  ----------------" )
+                Log.d(TAG, "after origin move (incl Rand) xmin=" + (0) + " xmax=" + (xmax + deltaX + 10) + " ymin=" + 0
+                        + " ymax=" + (ymax +deltaY +10)  +"  ----------------" )
 
-            panelRect = Rect(0, 0, xmax + deltaX + 20, ymax +deltaY +20)
+            panelRect = Rect(0, 0, (xmax + deltaX + 10) * prescale, (ymax +deltaY + 10) * prescale)
 
             configHasChanged = true
 
