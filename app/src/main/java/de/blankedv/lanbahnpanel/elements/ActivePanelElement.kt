@@ -24,26 +24,6 @@ abstract class ActivePanelElement : PanelElement {
     var lastToggle = 0L
     var lastUpdateTime = 0L
 
-    protected val rect: Rect
-        get() {
-            if (this is SignalElement) {
-                return Rect(x - RASTER / 5, y - RASTER / 7, x + RASTER / 5, y + RASTER / 7)
-            } else if (this is SensorElement) {
-                return if (x2 == INVALID_INT) { // dot type sensor
-                    Rect(x - RASTER / 5, y - RASTER / 7, x + RASTER / 5, y + RASTER / 7)
-                } else { // line type sensor
-                    Rect((x + x2) / 2 - RASTER / 5, (y + y2) / 2 - RASTER / 7, (x + x2) / 2 + RASTER / 5,
-                            (y + y2) / 2 + RASTER / 7)
-                }
-            } else {
-                val minx = Utils.min(x, xt, x2)
-                val maxx = Utils.max(x, xt, x2)
-                val miny = Utils.min(y, yt, y2)
-                val maxy = Utils.max(y, yt, y2)
-                return Rect(minx, miny, maxx, maxy)
-            }
-        }
-
     /**
      *
      * @return true, if the state of this element has not been communicated
@@ -69,6 +49,14 @@ abstract class ActivePanelElement : PanelElement {
         lastUpdateTime = System.currentTimeMillis()
     }
 
+    open fun getSensitiveRect() : Rect {
+        val minx = Utils.min(x, xt, x2)
+        val maxx = Utils.max(x, xt, x2)
+        val miny = Utils.min(y, yt, y2)
+        val maxy = Utils.max(y, yt, y2)
+        return Rect(minx, miny, maxx, maxy)
+    }
+
     override fun hasAdrX(address: Int): Boolean {
         return (adr == address)
     }
@@ -87,7 +75,7 @@ abstract class ActivePanelElement : PanelElement {
         // search x for range in x..(x+/-w)
         // search y for range in y..(y+/-h)
 
-        //val rect = rect
+        val rect = getSensitiveRect()
 
         // the touchpoint should be within rectangle of panel element
         // similar  rect.contains() methods, BUT the lines of the rect are
@@ -126,7 +114,7 @@ abstract class ActivePanelElement : PanelElement {
         val text_height = bounds.height()
         val text_width = bounds.width()
 
-        val pre = prescaleRect(rect)
+        val pre = prescaleRect(getSensitiveRect())
         canvas.drawRect(pre, LPaints.addressBGPaint) // dark rectangle
         canvas.drawText(txt, (pre.left + text_width / 8).toFloat(), (pre.top + 3 * text_height / 2).toFloat(), LPaints.addressPaint) // the
         // numbers

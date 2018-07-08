@@ -59,8 +59,8 @@ class Preferences : PreferenceActivity(), OnSharedPreferenceChangeListener {
         //locosFilenamePref = (ListPreference)getPreferenceScreen().findPreference(KEY_LOCOS_FILE);
         //val extCat = findPreference("extended_cat") as PreferenceCategory
 
-        val allfiles = allFiles()
-        val entries = matchingFiles("panel", allfiles)
+
+        val entries = matchingXMLFiles()
         if (entries != null) configFilenamePref!!.entries = entries
         if (entries != null) configFilenamePref!!.entryValues = entries
 
@@ -146,52 +146,30 @@ class Preferences : PreferenceActivity(), OnSharedPreferenceChangeListener {
         preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
     }
 
-    private fun allFiles(): Array<String>? {
-        var mExternalStorageAvailable = false
-        val state = Environment.getExternalStorageState()
+    private fun matchingXMLFiles(): Array<String?>? {
 
-        if ((Environment.MEDIA_MOUNTED == state) or (Environment.MEDIA_MOUNTED_READ_ONLY == state)) {
-            // We can read and write the media
-            mExternalStorageAvailable = true
-        } else {
-            // Something else is wrong. It may be one of many other states, but all we need
-            //  to know is we can neither read nor write
-            mExternalStorageAvailable = false
-            Log.d(TAG, "cannot read externalStorageDirectory ")
+        if ((Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED)
+                and (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED_READ_ONLY)) {
+            // Something  is wrong
+            Log.d(TAG, "cannot read ExternalStorage Directory ")
             return null
         }
 
+        val dir = File(Environment.getExternalStorageDirectory().toString() + "/" + DIRECTORY)
+        Log.d(TAG, "reading directory " + dir.absolutePath)
 
-
-            val dir = File(Environment.getExternalStorageDirectory().toString() + "/" + DIRECTORY)
-            Log.d(TAG, "reading directory " + dir.absolutePath)
-
-            return dir.list()
-
-    }
-
-    private fun matchingFiles(match: String, all: Array<String>?): Array<String?>? {
-        if (all == null) return null
         val files = ArrayList<String>()
-        for (s in all) {
-            val i = s.indexOf(match)
-            if (i == 0) {
-                // found a filename beginning with content of "match"
-                files.add(s)
+        for (filename in dir.list()) {
+            if ((filename.startsWith("panel")) and (filename.endsWith(".xml"))) {
+                files.add(filename)
             }
         }
-        //	return (String[]) files.toArray(); funktioniert nicht ...
-        val size = files.size
-        if (size > 0) {
-            val fl = arrayOfNulls<String>(size)
-            for (i in 0 until size) {
-                fl[i] = files[i]
-            }
-            return fl
+        if (files.size > 0) {
+            val array = arrayOfNulls<String>(files.size)
+            return files.toArray(array)
         } else {
             return null
         }
     }
-
 
 }

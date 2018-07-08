@@ -2,6 +2,7 @@ package de.blankedv.lanbahnpanel.elements
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Rect
 import android.util.Log
 import de.blankedv.lanbahnpanel.util.AndroBitmaps.bitmaps
 import de.blankedv.lanbahnpanel.util.LPaints.linePaintDarkYellowDash
@@ -12,6 +13,15 @@ import de.blankedv.lanbahnpanel.model.*
 class SensorElement : ActivePanelElement {
 
     constructor() : super() {}
+
+    override fun getSensitiveRect() : Rect {
+        if (x2 == INVALID_INT) { // dot type sensor
+            return Rect(x - RASTER / 5, y - RASTER / 7, x + RASTER / 5, y + RASTER / 7)
+        } else { // line type sensor
+            return Rect((x + x2) / 2 - RASTER / 5, (y + y2) / 2 - RASTER / 7, (x + x2) / 2 + RASTER / 5,
+                    (y + y2) / 2 + RASTER / 7)
+        }
+    }
 
     override fun doDraw(canvas: Canvas) {
 

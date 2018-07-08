@@ -1,6 +1,7 @@
 package de.blankedv.lanbahnpanel.elements
 
 import android.graphics.Canvas
+import android.graphics.Rect
 import android.util.Log
 import de.blankedv.lanbahnpanel.util.LPaints.greenSignal
 import de.blankedv.lanbahnpanel.util.LPaints.redSignal
@@ -18,6 +19,10 @@ class SignalElement : ActivePanelElement {
     constructor() {
         adr = INVALID_INT
         state = STATE_UNKNOWN
+    }
+
+    override fun getSensitiveRect() : Rect {
+        return Rect(x - RASTER / 5, y - RASTER / 7, x + RASTER / 5, y + RASTER / 7)
     }
 
     override fun doDraw(canvas: Canvas) {
