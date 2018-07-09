@@ -37,6 +37,7 @@ var drawAddresses = false
 var drawAddresses2 = false
 var flipUpsideDown = false  //display all panel element from "other side"
 var saveStates: Boolean = false
+var enableDiscoverTurnouts = false
 
 // connection state
 var client: RRConnectionThread? = null

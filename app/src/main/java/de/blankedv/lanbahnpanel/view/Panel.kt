@@ -43,12 +43,14 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
     private var mWidth: Int = 0
     private var mHeight: Int = 0
 
-    private val toneG  = ToneGenerator(AudioManager.STREAM_ALARM, 70)
+    private val toneG = ToneGenerator(AudioManager.STREAM_ALARM, 70)
+
+    private var time0 = System.currentTimeMillis()
 
     // public static Bitmap myBitmap = Bitmap.createBitmap(4000,1600,
 // Bitmap.Config.ARGB_4444);
-    private var mBitmap = Bitmap.createBitmap(2000, 800,
-            Bitmap.Config.ARGB_4444)
+    private var mBitmap = Bitmap.createBitmap(3200, 1400,
+            Bitmap.Config.ARGB_8888)
     private var mCanvas = Canvas(mBitmap)
 
     init {
@@ -214,16 +216,16 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         }
     }
 
-    private fun recalcScale(width : Int, height : Int) {
+    private fun recalcScale(width: Int, height: Int) {
 
         val sc1X = width / ((panelRect.right - panelRect.left) * 1.0f)
-        val sc1Y =  height  / ((panelRect.bottom - panelRect.top) * 1.0f)
+        val sc1Y = height / ((panelRect.bottom - panelRect.top) * 1.0f)
 
         if (sc1X < sc1Y) { // x-dimensions of panel elements larger than y-dim
-                            // (this is normally the case for layout panels)
+            // (this is normally the case for layout panels)
             scale = sc1X
             xoff = 0f
-            yoff = height * 2f * (sc1X / sc1Y) / prescale
+            yoff = 0f // TODO !!! height * 2f * (sc1X / sc1Y) / prescale
         } else {
             scale = sc1Y
             xoff = width * 2f * (sc1Y / sc1X) / prescale
@@ -250,17 +252,32 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         mBitmap.eraseColor(Color.TRANSPARENT) // Color.DKGRAY);
 
         // label with panel name and display green "unlock", if zoom enabled
-        val topLeft = ( mHeight * 0.05).toFloat()
+        // upper left corner of display
         if (selectedScale == "manual") {
-            canvas.drawBitmap(bitmaps["unlock"], 5f, topLeft, null)
+            canvas.drawBitmap(bitmaps["unlock"], 5f, 5f, null)
         } else {
-            canvas.drawBitmap(bitmaps["lock"], 5f, topLeft, null)
+            canvas.drawBitmap(bitmaps["lock"], 5f, 5f, null)
         }
 
 
+        if ((DEBUG) and ((System.currentTimeMillis() - time0) > 10000)) {
+            Log.d(TAG, "panelRect x=(" + panelRect.left + "," + panelRect.right + ") y=(" + panelRect.top + "," + panelRect.bottom + ")")
+            Log.d(TAG, "used scale=$scale xoff=$xoff yoff=$yoff")
+            // Samsung SM-T580  panelRect 2040x960 *prescale (=2)
+            // metric 1920x1200 pixel , ratio 1.6
+            /* for the 4 quadrants       (full layout  autoscale: 0.94 / 0 0)       (experimental)
+                                         autoscale centered  0.94 / 0 70
+            q1: scale = 2*scale, xoff = 0, yoff = 0                               (1.8 /  0     20)
+            q2:    xoff = -((xmax+10) * prescale  yoff = 0                        (1.8 / -1770  155)
+            q3:    xoff = 0   yoff = -((Ymax+10) * prescale                       (1.8 / 45   -680)
+            q4:    xoff = -((xmax+10) * prescale   yoff = -((Ymax+10) * prescale  (1.8 / -1770 -620)
+             */
+            time0 = System.currentTimeMillis()
+        }
+
         val matrix = Matrix()
-        matrix.postScale(scale,scale)
-        matrix.postTranslate(xoff, yoff)
+        matrix.postScale(scale , scale)
+        matrix.postTranslate( xoff , yoff)
         for (e in panelElements) {
             e.doDraw(mCanvas)
         }
@@ -322,7 +339,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         }
     } */
 
-    private fun debugDraw(mCanvas : Canvas) {
+    private fun debugDraw(mCanvas: Canvas) {
         // surface  w=1280 h=618
         //mCanvas.drawPoint(panelRect.right.toFloat(), panelRect.bottom.toFloat(), LPaints.greenPaint)
         mCanvas.drawPoint(0f, 0f, LPaints.redPaint)

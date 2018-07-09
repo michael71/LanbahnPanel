@@ -14,7 +14,7 @@
             android:gravity="center|center_vertical"
             android:prompt="@string/sel_loco_prompt" />
 
-        <de.blankedv.lanbahnpanel.NumberPicker
+        <NumberPicker
             android:id="@+id/picker1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

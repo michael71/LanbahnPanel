@@ -179,7 +179,7 @@ class Preferences : PreferenceActivity(), OnSharedPreferenceChangeListener {
 
         val files = ArrayList<String>()
         for (filename in dir.list()) {
-            if ((filename.startsWith("panel")) and (filename.endsWith(".xml"))) {
+            if (filename.endsWith(".xml")) {
                 files.add(filename)
             }
         }

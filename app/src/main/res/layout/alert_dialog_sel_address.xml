@@ -25,7 +25,7 @@
         android:layout_margin="5dip"
         android:gravity="center" >
 
-        <de.blankedv.lanbahnpanel.NumberPicker
+        <NumberPicker
             android:id="@+id/picker1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

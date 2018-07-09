@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
-<layout-config>
+<layout-config filename="panel_sxtext.xml">
 <panel name="sxtest" control="sx" icon="sxtext.png" version="04jul2018">
 <sxmapping adr="1000" sxadr="127" sxbit="8" /> <!--standard sx POWER = lanbahn 1000 -->
 <sxmapping adr="801" sxadr="80" sxbit="1" />

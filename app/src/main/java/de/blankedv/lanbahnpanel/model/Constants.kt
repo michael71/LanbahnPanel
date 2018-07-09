@@ -89,7 +89,7 @@ const val MAX_LAMP_BUTTONS = 4
 // fixed prefix for scaling - should be =1 for small displays and =2 for
 // large displays
 // all Paints and x/y-s are scaled before drawing
-const val prescale = 4
+const val prescale = 2
 
 const val RASTER = 20 * prescale // raster points
 // with xx pixels

@@ -107,35 +107,29 @@ open class PanelElement {
             return null
         }
 
-        fun update(addr : Int, data : Int) {
-            for (pe in panelElements.filter{it.adr == addr}) {
+        fun update(addr: Int, data: Int) {
+            for (pe in panelElements.filter { it.adr == addr }) {
                 pe.state = data
             }
         }
 
-        fun updateAcc(addr : Int, data : Int) {
-            for (pe in panelElements.filter{it.adr == addr}.filter{(it is SignalElement) or (it is TurnoutElement)}) {
+        fun updateAcc(addr: Int, data: Int) {
+            for (pe in panelElements.filter { it.adr == addr }.filter { (it is SignalElement) or (it is TurnoutElement) }) {
                 pe.state = data
             }
         }
 
-        fun updateSensor(addr : Int, data : Int) {
-            for (pe in panelElements.filter{it.adr == addr}.filter{it is SensorElement}) {
+        fun updateSensor(addr: Int, data: Int) {
+            for (pe in panelElements.filter { it.adr == addr }.filter { it is SensorElement }) {
                 pe.state = data
             }
         }
-        /** scale all panel elements for better fit on display and for
-         * possible "upside down" display (=view from other side of the
-         * layout)
-         * currently only called from readXMLConfigFile (i.e. NOT when
-         * flipUpsideDown is changed in the prefs)
+
+        /** scale all panel elements for better fit on display and for possible "upside down"
+         * display (=view from other side of the layout - currently only called from
+         * readXMLConfigFile (i.e. NOT when flipUpsideDown is changed in the prefs)
          */
         fun scaleAll() {
-if (DEBUG) {
-    Log.d(TAG,"before scaleALL ---------------")
-    //printPES()
-    printTracks()
-}
             // in WriteConfig the NEW values are written !!
 
             var xmin = INVALID_INT
@@ -179,23 +173,26 @@ if (DEBUG) {
                     ymax = pe.yt
 
             }
-            if (DEBUG)
-                Log.d(TAG, "before adding 10: xmin=" + (xmin) + " xmax=" + (xmax) + " ymin=" + (ymin)
-                        + " ymax=" + (ymax) +"  ----------------" )
+            if (DEBUG) {
+                Log.d(TAG, "before adding 10: xmin=" + (xmin) + " xmax="
+                        + (xmax) + " ymin=" + (ymin) + " ymax=" + (ymax) + "  ----------------")
+            }
             // now move origin to (10,10)
             val deltaX = 10 - xmin
             val deltaY = 10 - ymin
-            if (DEBUG) Log.d(TAG, "move by dx="+deltaX+ " dy="+deltaY +"  ----------------" )
+            if (DEBUG) {
+                Log.d(TAG, "move by dx=" + deltaX + " dy=" + deltaY + "  ----------------")
+            }
             for (pe in panelElements) {
                 if (!flipUpsideDown) {
-                    if (pe.x  != INVALID_INT)
-                        pe.x  += deltaX
+                    if (pe.x != INVALID_INT)
+                        pe.x += deltaX
                     if (pe.x2 != INVALID_INT)
                         pe.x2 += deltaX
                     if (pe.xt != INVALID_INT)
                         pe.xt += deltaX
-                    if (pe.y  != INVALID_INT)
-                        pe.y  += deltaY
+                    if (pe.y != INVALID_INT)
+                        pe.y += deltaY
                     if (pe.y2 != INVALID_INT)
                         pe.y2 += deltaY
                     if (pe.yt != INVALID_INT)
@@ -218,16 +215,12 @@ if (DEBUG) {
             }
 
             if (DEBUG) {
-                Log.d(TAG,"after origin move ---------------")
-                //printPES()
-                printTracks()
+                Log.d(TAG, "after origin move (incl Rand) xmin=" + (0) + " xmax="
+                        + (xmax + deltaX + 10) + " ymin=" + 0
+                        + " ymax=" + (ymax + deltaY + 10) + "  ----------------")
             }
 
-            if (DEBUG)
-                Log.d(TAG, "after origin move (incl Rand) xmin=" + (0) + " xmax=" + (xmax + deltaX + 10) + " ymin=" + 0
-                        + " ymax=" + (ymax +deltaY +10)  +"  ----------------" )
-
-            panelRect = Rect(0, 0, (xmax + deltaX + 10) * prescale, (ymax +deltaY + 10) * prescale)
+            panelRect = Rect(0, 0, (xmax + deltaX + 10) * prescale, (ymax + deltaY + 10) * prescale)
 
             configHasChanged = true
 
@@ -237,7 +230,7 @@ if (DEBUG) {
             var i = 0
             Log.d(TAG, "pe# " + "(x,x2)/(y,y2)")
             for (pe in panelElements) {
-                Log.d(TAG, "pe#"+i+ "("+pe.x+","+pe.x2+")/("+pe.y+","+pe.y2+")")
+                Log.d(TAG, "pe#" + i + "(" + pe.x + "," + pe.x2 + ")/(" + pe.y + "," + pe.y2 + ")")
                 i++
             }
         }
@@ -245,8 +238,8 @@ if (DEBUG) {
         fun printTracks() {
             var i = 0
             Log.d(TAG, "pe# " + "(x,x2)/(y,y2)")
-            for (pe in panelElements.filter{ !( it is ActivePanelElement)}) {
-                Log.d(TAG, "pe#"+i+ "("+pe.x+","+pe.x2+")/("+pe.y+","+pe.y2+")")
+            for (pe in panelElements.filter { !(it is ActivePanelElement) }) {
+                Log.d(TAG, "pe#" + i + "(" + pe.x + "," + pe.x2 + ")/(" + pe.y + "," + pe.y2 + ")")
                 i++
             }
         }

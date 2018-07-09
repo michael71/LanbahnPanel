@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.app.AlertDialog.Builder
 import android.content.*
 import android.content.pm.PackageManager
+import android.content.res.Resources
 
 import android.os.*
 import android.preference.PreferenceManager
@@ -30,7 +31,7 @@ import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.clearPan
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.connectionIsAlive
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.appHandler
 import de.blankedv.lanbahnpanel.config.ReadConfig
-import de.blankedv.lanbahnpanel.config.RequestPanel
+import de.blankedv.lanbahnpanel.config.DownloadPanel
 import de.blankedv.lanbahnpanel.config.WriteConfig
 import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import de.blankedv.lanbahnpanel.elements.Route
@@ -204,6 +205,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         LanbahnPanelApplication.updatePanelData()
         (application as LanbahnPanelApplication).removeNotification()
         title = "Lanbahn Panel \"$panelName\""
+
     }
 
     /**
@@ -245,6 +247,26 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 restartCommFlag = true
                 return true
             }
+            R.id.action_q1 -> {
+                toast("quadrant1")
+                return true
+            }
+            R.id.action_q2 -> {
+                toast("quadrant2")
+                return true
+            }
+            R.id.action_q3 -> {
+                toast("quadrant3")
+                return true
+            }
+            R.id.action_q4 -> {
+                toast("quadrant4")
+                return true
+            }
+            R.id.action_qall -> {
+                toast("alle quadranten")
+                return true
+            }
             R.id.action_power -> {
                 togglePower() // toast("switching power ON/OFF not allowed")
                 return true
@@ -261,7 +283,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
             R.id.menu_check_service -> {
                 //TODO int num = mService.getRandomNumber();
-                Toast.makeText(this, "not implemented", Toast.LENGTH_SHORT).show()
+                toast("not implemented")
                 // "number: " + num, Toast.LENGTH_SHORT).show();
                 return true
             }
@@ -400,8 +422,14 @@ class LanbahnPanelActivity : AppCompatActivity() {
     private fun setPowerStateIcon() {
 
         when (globalPower) {
-            POWER_OFF -> mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_stop) //power_red)
-            POWER_ON -> mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_green)
+            POWER_OFF -> {
+                mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_stop)
+                mOptionsMenu?.findItem(R.id.action_q4)?.setIcon(R.drawable.trans_48)  // TODO -debug
+            } //power_red)
+            POWER_ON -> {
+                mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_green)
+                mOptionsMenu?.findItem(R.id.action_q4)?.setIcon(R.drawable.q4_48)  // TODO -debug
+            }
             POWER_UNKNOWN -> mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_unknown)
         }
     }
@@ -523,18 +551,17 @@ class LanbahnPanelActivity : AppCompatActivity() {
         }
 
         doAsync {
-
             val url = "http://" + server + ":8000/config"
-            val (res, content) = RequestPanel(url).run()
+            val (res, content) = DownloadPanel(url).run()
             uiThread {
                 if (res) {
                     //Log.d(TAG, content)
-                    longToast("panel file read => Select 'panel_from_server.xml' in Settings to use it")
+                    // content == filename
+                    longToast("panel file read => select $content in settings to use it")
                 } else {
                     Log.e(TAG, content)  // content == error message
                     longToast("panel file NOT read - ERROR:\n$content")
                 }
-
             }
         }
     }

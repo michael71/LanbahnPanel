@@ -9,6 +9,7 @@
     <string name="settings">Settings</string>
     <string name="about">Info</string>
     <string name="reconnect">Re-Connect</string>
+    <string name="connect">Connect</string>
     <string name="cancel">Cancel</string>
     <string name="disp_settings">Display Settings</string>
     <string name="loco_address">Loco Address (1..103) </string>
@@ -16,6 +17,7 @@
     <string name="enableZoom">Enable Panel Zoom</string>
     <string name="enableEdit">Enable Edit Mode</string>
     <string name="enable_power_control">Enable Global Power On/Off Control</string>
+    <string name="power">Power</string>
     <string name="enableDemo" translatable="false">Enable Demo Mode</string>
     <string name="flipUpsideDown">view panel element from the other side</string>
     <string name="saveStates">Save States of Device on Appl. Pause/Stop</string>
@@ -54,11 +56,11 @@
      -->
     <string name="default_notification_channel_name" translatable="false">Lanbahn</string>
     <string name="check_service" translatable="false">Check Service</string>
-    <string name="panel_cfg_files" translatable="false">Panel Config File (\'panel....xml\')</string>
+    <string name="panel_cfg_files" translatable="false">Panel XML Config File</string>
     <string name="server_port" translatable="false">Server port</string>
     <string name="not_connected" translatable="false">currently not connected to a server</string>
 <string name="get_panel_from_server" translatable="false">Get panel file from server</string>
     <string name="enableAutoscale">Automatic scale</string>
     <string name="sel_scale">Select type of scaling</string>
-    <string name="sel_scale_default">Auto scale</string>
+    <string name="sel_scale_default">auto</string>
 </resources>

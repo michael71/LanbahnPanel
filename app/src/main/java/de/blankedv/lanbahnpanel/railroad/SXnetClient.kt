@@ -22,6 +22,7 @@ class SXnetClient() : GenericClient() {
 
     override fun readChannel(addr: Int, peClass : Class<ActivePanelElement>) : String {
         // class can be ignored for selectrix
+
       return "R $addr"
     }
 

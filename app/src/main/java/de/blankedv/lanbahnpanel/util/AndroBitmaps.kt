@@ -31,8 +31,15 @@ object AndroBitmaps {
         bitmaps["incr"] = BitmapFactory.decodeResource(resources, R.drawable.incr)
         bitmaps["decr"] = BitmapFactory.decodeResource(resources, R.drawable.decr)
 
-        bitmaps["lock"] = BitmapFactory.decodeResource(resources, R.drawable.lock_s)
-        bitmaps["unlock"] = BitmapFactory.decodeResource(resources, R.drawable.unlock_s)
+        bitmaps["lock"] = BitmapFactory.decodeResource(resources, R.drawable.ic_locked)
+        bitmaps["unlock"] = BitmapFactory.decodeResource(resources, R.drawable.ic_unlocked)
+
+        bitmaps["q1"] = BitmapFactory.decodeResource(resources, R.drawable.q1)
+        bitmaps["q2"] = BitmapFactory.decodeResource(resources, R.drawable.q2)
+        bitmaps["q3"] = BitmapFactory.decodeResource(resources, R.drawable.q3)
+        bitmaps["q4"] = BitmapFactory.decodeResource(resources, R.drawable.q4_48)
+        bitmaps["qa"] = BitmapFactory.decodeResource(resources, R.drawable.qa_48)
+
 
         bitmaps["clearrouteson"] = BitmapFactory.decodeResource(resources, R.drawable.clearrouteson)
         bitmaps["clearroutesoff"] = BitmapFactory.decodeResource(resources, R.drawable.clearroutesoff)

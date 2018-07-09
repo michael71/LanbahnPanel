@@ -67,38 +67,38 @@ object ReadConfig {
         }
 
 
-            try {
-                val f = File(Environment.getExternalStorageDirectory().toString()
-                        + DIRECTORY + configFilename)
-                // auf dem Nexus 7 unter /mnt/shell/emulated/0/lanbahnpanel
-                val fis: FileInputStream
-                if (!f.exists()) {
-                    Log.e(TAG, "config file=$configFilename not found, using demo data.")
-                    val demoIs = context.assets.open(DEMO_FILE)
-                    configHasChanged = true
-                    result = readXMLConfigFile(demoIs)
-                    demoIs.close()
+        try {
+            val f = File(Environment.getExternalStorageDirectory().toString()
+                    + DIRECTORY + configFilename)
+            // auf dem Nexus 7 unter /mnt/shell/emulated/0/lanbahnpanel
+            val fis: FileInputStream
+            if (!f.exists()) {
+                Log.e(TAG, "config file=$configFilename not found, using demo data.")
+                val demoIs = context.assets.open(DEMO_FILE)
+                configHasChanged = true
+                result = readXMLConfigFile(demoIs)
+                demoIs.close()
 
-                    // create the folder for later use (if it does not exist already)
-                    val f2 = File(Environment.getExternalStorageDirectory().toString()
-                            + "/" + DIRECTORY + "/")
-                    if (!f2.exists()) {
-                        f2.mkdirs()
-                        Log.e(TAG, "creating 'lanbahnpanel' folder")
-                    }
-                } else {
-                    fis = FileInputStream(f)
-                    result = readXMLConfigFile(fis)
-
+                // create the folder for later use (if it does not exist already)
+                val f2 = File(Environment.getExternalStorageDirectory().toString()
+                        + "/" + DIRECTORY + "/")
+                if (!f2.exists()) {
+                    f2.mkdirs()
+                    Log.e(TAG, "creating 'lanbahnpanel' folder")
                 }
-                return result
-            } catch (e: FileNotFoundException) {
-                Log.e(TAG, "FileNotFound " + e.message)
-                return "FileNotFound " + e.message
-            } catch (e: IOException) {
-                Log.e(TAG, "IOException " + e.message)
-                return "IOException " + e.message
+            } else {
+                fis = FileInputStream(f)
+                result = readXMLConfigFile(fis)
+
             }
+            return result
+        } catch (e: FileNotFoundException) {
+            Log.e(TAG, "FileNotFound " + e.message)
+            return "FileNotFound " + e.message
+        } catch (e: IOException) {
+            Log.e(TAG, "IOException " + e.message)
+            return "IOException " + e.message
+        }
 
     }
 
@@ -117,6 +117,7 @@ object ReadConfig {
         try {
             doc = builder.parse(fis)
             panelElements = parsePanelElements(doc)
+
             PanelElement.scaleAll()
             routes = parseRoutes(doc) // can be done only after all panel
             // elements have been read
@@ -138,101 +139,46 @@ object ReadConfig {
         // assemble new ArrayList of tickets.
         val pes = ArrayList<PanelElement>()
         var items: NodeList
-        val root = doc.documentElement
+        val root = doc.documentElement ?: return pes
 
         items = root.getElementsByTagName("panel")
-        if (DEBUG)
-            Log.d(TAG, "config: " + items.length + " panel")
-        panelName = parsePanelDescription(items.item(0),"name")
-        panelProtocol = parsePanelDescription(items.item(0),"protocol")
-        panelVersion = parsePanelDescription(items.item(0),"version")
+        if (DEBUG) Log.d(TAG, "config: " + items.length + " panel")
+        panelName = parsePanelDescription(items.item(0), "name")
+        panelProtocol = parsePanelDescription(items.item(0), "protocol")
+        panelVersion = parsePanelDescription(items.item(0), "version")
 
         // NamedNodeMap attributes = item.getAttributes();
         // Node theAttribute = attributes.items.item(i);
 
         // look for TrackElements - this is the lowest layer
         items = root.getElementsByTagName("track")
-        if (DEBUG)
-            Log.d(TAG, "config: " + items.length + " track")
+        if (DEBUG) Log.d(TAG, "config: " + items.length + " track")
         for (i in 0 until items.length) {
             pes.add(parseTrack(items.item(i)))
         }
 
         // look for existing and known turnouts - on top of track
         items = root.getElementsByTagName("turnout")
-        if (DEBUG)
-            Log.d(TAG, "config: " + items.length + " turnouts")
+        if (DEBUG) Log.d(TAG, "config: " + items.length + " turnouts")
         for (i in 0 until items.length) {
             pes.add(parseTurnout(items.item(i)))
         }
 
         // look for signals - on top of track
         items = root.getElementsByTagName("signal")
-        if (DEBUG)
-            Log.d(TAG, "config: " + items.length + " signals")
+        if (DEBUG) Log.d(TAG, "config: " + items.length + " signals")
         for (i in 0 until items.length) {
             pes.add(parseSignal(items.item(i)))
         }
 
-        // check for intersection of track, if new, add a turnout with unknown
-        // lanbahn address
-        for (i in pes.indices) {
-            val p = pes[i]
-
-            for (j in i + 1 until pes.size) {
-                val q = pes[j]
-
-                val panelelement = LinearMath.trackIntersect(p, q)
-
-                if (panelelement != null) {
-                    if (panelelement.type == "doubleslip") {
-                        // do nothing in the meantime
-                        // TODO implement for doubleslip a similar method as
-                        // with turnout
-                        // TODO currently doubleslip are two turnouts, separated
-                        // by a single pixel
-                        if (DEBUG_PARSING)
-                            Log.d(TAG, "(i,j)=(" + i + "," + j
-                                    + ") new? doubleslip found at x="
-                                    + panelelement.x + " y=" + panelelement.y)
-
-                    } else {
-                        // there is an intersection with a turnout => make new
-                        // turnout
-                        if (DEBUG_PARSING)
-                            Log.d(TAG, "(i,j)=(" + i + "," + j
-                                    + ") new? turnout found at x="
-                                    + panelelement.x + " y=" + panelelement.y
-                                    + " xc=" + panelelement.x2 + " yc="
-                                    + panelelement.y2 + " xt="
-                                    + panelelement.xt + " yt="
-                                    + panelelement.yt)
-
-                        // check whether this turnout is already known
-                        var known = false
-                        for (e in pes) {
-                            if (e.type == "turnout"
-                                    && e.x == panelelement.x
-                                    && e.y == panelelement.y) {
-                                // at same position => match
-                                known = true
-                                break
-                            }
-                        }
-                        if (!known) {
-                            configHasChanged = true
-                            pes.add(TurnoutElement(panelelement))
-                        }
-                    }
-                }
-
-            }
+        if (enableDiscoverTurnouts) {
+            val newTurnouts = discoverTurnouts(pes)
+            for (pe in newTurnouts) pes.add(pe)
         }
 
         // nach dem Track => on top
         items = root.getElementsByTagName("routebutton")
-        if (DEBUG)
-            Log.d(TAG, "config: " + items.length + " routebuttons")
+        if (DEBUG) Log.d(TAG, "config: " + items.length + " routebuttons")
         for (i in 0 until items.length) {
             pes.add(parseRouteButton(items.item(i)))
         }
@@ -241,8 +187,7 @@ object ReadConfig {
         // SENSORS als LETZTE !!!! important (sind damit immer "on top")
 
         items = root.getElementsByTagName("sensor")
-        if (DEBUG)
-            Log.d(TAG, "config: " + items.length + " sensors")
+        if (DEBUG) Log.d(TAG, "config: " + items.length + " sensors")
         for (i in 0 until items.length) {
             pes.add(parseSensor(items.item(i)))
         }
@@ -282,7 +227,7 @@ object ReadConfig {
                                     + " in config file")
             }
         }
- if (DEBUG_PARSING) Log.d(TAG,"turnout: x="+pe.x+" y="+pe.y+" adr="+pe.adr)
+        if (DEBUG_PARSING) Log.d(TAG, "turnout: x=" + pe.x + " y=" + pe.y + " adr=" + pe.adr)
         return pe
 
     }
@@ -359,8 +304,8 @@ object ReadConfig {
             val theAttribute = attributes.item(i)
             if (theAttribute.nodeName == type) {
                 if (DEBUG_PARSING)
-                    Log.d(TAG, theAttribute.nodeName + " : " + type  +" value="
-                                    + theAttribute.nodeValue)
+                    Log.d(TAG, theAttribute.nodeName + " : " + type + " value="
+                            + theAttribute.nodeValue)
                 return theAttribute.nodeValue
             }
         }
@@ -442,23 +387,6 @@ object ReadConfig {
 
     }
 
-    private fun getConcatNodeValues(prop: Node): String {
-        // behaves well for non-existing nodes and for node values which are
-        // broken into several values because of special characters like '"'
-        // needed for the android code - this problem only exists in
-        // Android xml library and not on the PC !!
-        if (prop.hasChildNodes()) { // false for optional attributes
-            val text = StringBuilder()
-            val chars = prop.childNodes
-            for (k in 0 until chars.length) {
-                text.append(chars.item(k).nodeValue)
-            }
-            return text.toString().trim { it <= ' ' }
-        } else {
-            return "" // return empty string if empty
-        }
-    }
-
     private fun parseRoutes(doc: Document): ArrayList<Route> {
         // assemble new ArrayList of tickets.
         val myroutes = ArrayList<Route>()
@@ -469,8 +397,7 @@ object ReadConfig {
 
         // look for routes - this is the lowest layer
         items = root.getElementsByTagName("route")
-        if (DEBUG)
-            Log.d(TAG, "config: " + items.length + " routes")
+        if (DEBUG) Log.d(TAG, "config: " + items.length + " routes")
         for (i in 0 until items.length) {
             val rt = parseRoute(items.item(i))
             if (rt != null)
@@ -547,8 +474,7 @@ object ReadConfig {
 
         // look for comp routes - this is the lowest layer
         items = root.getElementsByTagName("comproute")
-        if (DEBUG)
-            Log.d(TAG, "config: " + items.length + " comproutes")
+        if (DEBUG) Log.d(TAG, "config: " + items.length + " comproutes")
         for (i in 0 until items.length) {
             val rt = parseCompRoute(items.item(i))
             if (rt != null)
@@ -579,10 +505,9 @@ object ReadConfig {
             } else if (theAttribute.nodeName == "routes") {
                 routes = theAttribute.nodeValue
             } else {
-                if (DEBUG_PARSING)
-                    Log.d(TAG,
-                            "unknown attribute " + theAttribute.nodeName
-                                    + " in config file")
+                if (DEBUG_PARSING) {
+                    Log.d(TAG, "unknown attribute " + theAttribute.nodeName + " in config file")
+                }
             }
         }
 
@@ -608,6 +533,64 @@ object ReadConfig {
 
     }
 
+    private fun discoverTurnouts(pes: ArrayList<PanelElement>): ArrayList<PanelElement> {
+        // check for intersection of track, if new, add a turnout with unknown
+        // lanbahn address
 
+        val newPe = ArrayList<PanelElement>()
 
+        for (i in pes.indices) {
+            val p = pes[i]
+
+            for (j in i + 1 until pes.size) {
+                val q = pes[j]
+
+                val panelelement = LinearMath.trackIntersect(p, q)
+
+                if (panelelement != null) {
+                    if (panelelement.type == "doubleslip") {
+                        // do nothing in the meantime
+                        // TODO implement for doubleslip a similar method as
+                        // with turnout
+                        // TODO currently doubleslip are two turnouts, separated
+                        // by a single pixel
+                        if (DEBUG_PARSING)
+                            Log.d(TAG, "(i,j)=(" + i + "," + j
+                                    + ") new? doubleslip found at x="
+                                    + panelelement.x + " y=" + panelelement.y)
+
+                    } else {
+                        // there is an intersection with a turnout => make new
+                        // turnout
+                        if (DEBUG_PARSING)
+                            Log.d(TAG, "(i,j)=(" + i + "," + j
+                                    + ") new? turnout found at x="
+                                    + panelelement.x + " y=" + panelelement.y
+                                    + " xc=" + panelelement.x2 + " yc="
+                                    + panelelement.y2 + " xt="
+                                    + panelelement.xt + " yt="
+                                    + panelelement.yt)
+
+                        // check whether this turnout is already known
+                        var known = false
+                        for (e in pes) {
+                            if (e.type == "turnout"
+                                    && e.x == panelelement.x
+                                    && e.y == panelelement.y) {
+                                // at same position => match
+                                known = true
+                                break
+                            }
+                        }
+                        if (!known) {
+                            configHasChanged = true
+                            newPe.add(TurnoutElement(panelelement))
+                        }
+                    }
+                }
+
+            }
+        }
+        return newPe
+    }
 }

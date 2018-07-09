@@ -27,15 +27,65 @@
         android:title="@string/quit"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_q1"
+        android:layout_width="wrap_content"
+        android:icon="@drawable/q1_48"
+        android:orderInCategory="35"
+        android:title="@string/power"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_q2"
+        android:layout_width="wrap_content"
+        android:icon="@drawable/q2_48"
+        android:orderInCategory="36"
+        android:title="@string/power"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_q3"
+        android:layout_width="wrap_content"
+        android:icon="@drawable/q3_48"
+        android:orderInCategory="37"
+        android:title="@string/power"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_q4"
+        android:layout_width="wrap_content"
+        android:icon="@drawable/q4_48"
+        android:orderInCategory="38"
+        android:title="@string/power"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_qall"
+        android:layout_width="wrap_content"
+        android:icon="@drawable/qa_48"
+        android:orderInCategory="40"
+        android:title="@string/power"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_trans2"
+        android:layout_width="wrap_content"
+        android:icon="@drawable/trans_48"
+        android:orderInCategory="46"
+        android:title="@string/power"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_trans"
+        android:layout_width="wrap_content"
+        android:icon="@drawable/trans_48"
+        android:orderInCategory="48"
+        android:title="@string/power"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_power"
+        android:layout_width="wrap_content"
         android:icon="@drawable/power_unknown"
         android:orderInCategory="50"
-        android:title="Power"
+        android:title="@string/power"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_connect"
         android:icon="@drawable/nocomm"
-        android:orderInCategory="50"
-        android:title="Connect"
+        android:orderInCategory="60"
+        android:title="@string/connect"
         app:showAsAction="always" />
 </menu>

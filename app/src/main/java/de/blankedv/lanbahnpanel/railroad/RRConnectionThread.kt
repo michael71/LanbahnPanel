@@ -117,7 +117,7 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
     }
 
     fun readChannel(addr: Int, peClass: Class<ActivePanelElement>) {
-
+        if (addr == INVALID_INT) return
         var cmd = myClient?.readChannel(addr, peClass)
         val success = sendQ.offer(cmd)
         if (!success && DEBUG) {
@@ -126,7 +126,7 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
     }
 
     fun readChannel(addr: Int) {
-
+        if (addr == INVALID_INT) return
         var cmd = myClient?.readChannel(addr)
         val success = sendQ.offer(cmd)
         if (!success && DEBUG) {

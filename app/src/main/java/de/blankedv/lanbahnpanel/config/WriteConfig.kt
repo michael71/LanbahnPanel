@@ -28,6 +28,8 @@ object WriteConfig {
      * @return true, if succeeds - false, if not.
      */
 
+    private val DEBUG_WRITE = false
+
     fun toXMLFile(): Boolean {
 
         if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {
@@ -44,7 +46,7 @@ object WriteConfig {
             fWriter.write(writeXml())
             fWriter.flush()
 
-            if (DEBUG)
+            if (DEBUG or DEBUG_WRITE)
                 Log.d(TAG, "Config File $configFilename.$suffix saved! ")
             configHasChanged = false // reset flag
 
@@ -82,10 +84,10 @@ object WriteConfig {
 
             // now write all panel elements to the file
             for (pe in panelElements) {
-                if (DEBUG)
+                if (DEBUG_WRITE)
                     Log.d(TAG, "writing panel element " + pe.toString())
                 serializer.startTag("", pe.type)
-                if (DEBUG)
+                if (DEBUG_WRITE)
                     Log.d(TAG, " type=" + pe.type)
                 if (pe.name.length > 0) {
                     serializer.attribute("", "name", "" + pe.name)
@@ -111,7 +113,7 @@ object WriteConfig {
 
             // write the routes
             for (rt in routes) {
-                if (DEBUG)
+                if (DEBUG_WRITE)
                     Log.d(TAG, "writing routes " + rt.toString())
                 serializer.startTag("", "route")
 
@@ -128,7 +130,7 @@ object WriteConfig {
 
             // write the composite routes
             for (rt in compRoutes) {
-                if (DEBUG)
+                if (DEBUG_WRITE)
                     Log.d(TAG, "writing routes " + rt.toString())
                 serializer.startTag("", "comproute")
 
