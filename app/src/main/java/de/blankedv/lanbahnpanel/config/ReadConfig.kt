@@ -42,6 +42,7 @@ object ReadConfig {
 
     internal val DEBUG_PARSING = true
 
+
     /**
      *
      * read all PanelElements from a configuration (XML) file and add deducted
@@ -124,6 +125,7 @@ object ReadConfig {
             Route.calcOffendingRoutes() // calculate offending routes
             compRoutes = parseCompRoutes(doc) // can be done only after routes
             // have been read
+            Log.d(TAG, "a total of " + panelElements.size + " panel Elements have been read")
         } catch (e: SAXException) {
             Log.e(TAG, "SAX Exception - " + e.message)
             return "SAX Exception - " + e.message
@@ -200,6 +202,10 @@ object ReadConfig {
 
         val pe = TurnoutElement()
         val attributes = item.attributes
+        var sxadr = INVALID_INT
+        var sxbit = INVALID_INT
+        var nbit = INVALID_INT
+
         for (i in 0 until attributes.length) {
             val theAttribute = attributes.item(i)
             // if (DEBUG_PARSING) Log.d(TAG,theAttribute.getNodeName() + "=" +
@@ -220,6 +226,17 @@ object ReadConfig {
                 pe.yt = getPositionNode(theAttribute)
             } else if (theAttribute.nodeName == "adr") {
                 pe.adr = getPositionNode(theAttribute)
+
+                // turnout have either an lanbahn/dcc address ("adr") or a combination of
+                // sxadr and sxbit (for ex. sxadr="98" sxbit="7") which will be compiled to
+                // lanbahn address "987" and an sxmapping will be created.
+
+            } else if (theAttribute.nodeName == "sxadr") {
+                sxadr = getPositionNode(theAttribute)
+            } else if (theAttribute.nodeName == "sxbit") {
+                sxbit = getPositionNode(theAttribute)
+            } else if (theAttribute.nodeName == "nbits") {
+                nbit = getPositionNode(theAttribute)  // TODO implement for multi-aspect signals
             } else {
                 if (DEBUG_PARSING)
                     Log.d(TAG,
@@ -227,6 +244,13 @@ object ReadConfig {
                                     + " in config file")
             }
         }
+        if ((pe.adr == INVALID_INT) and (sxadr != INVALID_INT) and (sxbit != INVALID_INT)) {
+            // calc from sx add a LanbahnSXPair for later storage
+            val lbSxPair = LanbahnSXPair(INVALID_INT, sxadr, sxbit)
+            pe.adr = lbSxPair.lbAddr
+            sxMappings.add(lbSxPair)
+        }
+
         if (DEBUG_PARSING) Log.d(TAG, "turnout: x=" + pe.x + " y=" + pe.y + " adr=" + pe.adr)
         return pe
 
@@ -240,6 +264,11 @@ object ReadConfig {
 
         val pe = SignalElement()
         val attributes = item.attributes
+
+        var sxadr = INVALID_INT
+        var sxbit = INVALID_INT
+        var nbit = INVALID_INT
+
         for (i in 0 until attributes.length) {
             val theAttribute = attributes.item(i)
             // if (DEBUG_PARSING) Log.d(TAG,theAttribute.getNodeName() + "=" +
@@ -256,12 +285,24 @@ object ReadConfig {
                 pe.y2 = getPositionNode(theAttribute)
             } else if (theAttribute.nodeName == "adr") {
                 pe.adr = getPositionNode(theAttribute)
+            } else if (theAttribute.nodeName == "sxadr") {
+                sxadr = getPositionNode(theAttribute)
+            } else if (theAttribute.nodeName == "sxbit") {
+                sxbit = getPositionNode(theAttribute)
+            } else if (theAttribute.nodeName == "nbits") {
+                nbit = getPositionNode(theAttribute)  // TODO implement for multi-aspect signals
             } else {
                 if (DEBUG_PARSING)
                     Log.d(TAG,
                             "unknown attribute " + theAttribute.nodeName
                                     + " in config file")
             }
+        }
+        if ((pe.adr == INVALID_INT) and (sxadr != INVALID_INT) and (sxbit != INVALID_INT)) {
+            // calc from sx add a LanbahnSXPair for later storage
+            val lbSxPair = LanbahnSXPair(INVALID_INT, sxadr, sxbit)
+            pe.adr = lbSxPair.lbAddr
+            sxMappings.add(lbSxPair)
         }
         if (DEBUG_PARSING) Log.d(TAG, "signal x=" + pe.x + " y=" + pe.y + " adr=" + pe.adr)
         return pe
@@ -318,6 +359,11 @@ object ReadConfig {
         pe.x2 = INVALID_INT // to be able to distinguish between
         // different types of sensors (LAMP or dashed track)
         val attributes = item.attributes
+
+        var sxadr = INVALID_INT
+        var sxbit = INVALID_INT
+        var nbit = INVALID_INT
+
         for (i in 0 until attributes.length) {
             val theAttribute = attributes.item(i)
             // if (DEBUG_PARSING) Log.d(TAG,theAttribute.getNodeName() + "=" +
@@ -334,11 +380,26 @@ object ReadConfig {
                 pe.y2 = getPositionNode(theAttribute)
             } else if (theAttribute.nodeName == "adr") {
                 pe.adr = getPositionNode(theAttribute)
+            } else if (theAttribute.nodeName == "sxadr") {
+                sxadr = getPositionNode(theAttribute)
+            } else if (theAttribute.nodeName == "sxbit") {
+                sxbit = getPositionNode(theAttribute)
+            } else if (theAttribute.nodeName == "nbits") {
+                nbit = getPositionNode(theAttribute)  // TODO implement for multi-aspect signals
             } else {
                 if (DEBUG_PARSING)
                     Log.d(TAG,
                             "unknown attribute " + theAttribute.nodeName
                                     + " in config file")
+            }
+        }
+
+        if ((pe.adr == INVALID_INT) and (sxadr != INVALID_INT) and (sxbit != INVALID_INT)) {
+            // calc from sx add a LanbahnSXPair for later storage
+            val lbSxPair = LanbahnSXPair(INVALID_INT, sxadr, sxbit)
+            pe.adr = lbSxPair.lbAddr
+            if (!sxMappings.contains(lbSxPair)) {
+                sxMappings.add(lbSxPair)
             }
         }
 

@@ -77,11 +77,33 @@ object WriteConfig {
             serializer.startDocument("UTF-8", true)
             serializer.text("\n")
             serializer.startTag("", "layout-config") // namespace ="" always
+            // TODO add other "header" attributes like filename
             serializer.text("\n")
             serializer.startTag("", "panel")
             serializer.attribute("", "name", panelName)
             serializer.text("\n")
 
+            // write first all lanbahnsxmappings (if any)
+
+            val sortedSxMappings
+                    = sxMappings.distinctBy({it.lbAddr}).sortedWith(compareBy({ it.lbAddr }))
+
+            for(sxmap in sortedSxMappings) {
+                if (DEBUG_WRITE)
+                    Log.d(TAG, "writing sxmapping " + sxmap.toString())
+                serializer.startTag("", "sxmapping")
+                if (sxmap.lbAddr != INVALID_INT) {
+                    serializer.attribute("", "adr", "" + sxmap.lbAddr)
+                }
+                if (sxmap.sxAddr != INVALID_INT) {
+                    serializer.attribute("", "sxadr", "" + sxmap.sxAddr)
+                }
+                if (sxmap.sxBit != INVALID_INT) {
+                    serializer.attribute("", "sxBit", "" + sxmap.sxBit)
+                }
+                serializer.endTag("", "sxmapping")
+                serializer.text("\n")
+            }
             // now write all panel elements to the file
             for (pe in panelElements) {
                 if (DEBUG_WRITE)

@@ -18,15 +18,13 @@ import java.util.concurrent.BlockingQueue
 var noWifiFlag = false
 
 
-//var width: Int = 0
-//var height:Int = 0
-
 var selectedStyle: String = "UK" // German style or USS style
 var selectedScale: String = "auto" // automatic scaling
 
 var panelElements = ArrayList<PanelElement>()
 var routes = ArrayList<Route>()
 var compRoutes = ArrayList<CompRoute>()
+var sxMappings = ArrayList<LanbahnSXPair>();  // maps lanbahn addresses to SX addresses
 
 
 var panelName = ""
@@ -38,6 +36,14 @@ var drawAddresses2 = false
 var flipUpsideDown = false  //display all panel element from "other side"
 var saveStates: Boolean = false
 var enableDiscoverTurnouts = false
+var enableFourQuadrantsView = false
+
+var quadrant = 0  // TODO move away from global scope
+var mWidth: Int = 0  // TODO move away from global scope
+var mHeight: Int = 0  // TODO move away from global scope
+
+var hCalc = 0f // DEBUG only
+var hRect = 0f // DEBUG only
 
 // connection state
 var client: RRConnectionThread? = null

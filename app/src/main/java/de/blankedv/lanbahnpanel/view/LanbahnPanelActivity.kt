@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.app.AlertDialog.Builder
 import android.content.*
 import android.content.pm.PackageManager
-import android.content.res.Resources
 
 import android.os.*
 import android.preference.PreferenceManager
@@ -21,7 +20,6 @@ import android.widget.LinearLayout
 import android.widget.LinearLayout.LayoutParams
 import android.widget.PopupWindow
 import android.widget.TextView
-import android.widget.Toast
 import de.blankedv.lanbahnpanel.*
 
 import java.util.Timer
@@ -37,6 +35,7 @@ import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import de.blankedv.lanbahnpanel.elements.Route
 import de.blankedv.lanbahnpanel.elements.RouteButtonElement
 import de.blankedv.lanbahnpanel.model.*
+import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.recalcScale
 import de.blankedv.lanbahnpanel.railroad.RRConnectionThread
 import de.blankedv.lanbahnpanel.util.Utils.threadSleep
 import org.jetbrains.anko.*
@@ -154,13 +153,13 @@ class LanbahnPanelActivity : AppCompatActivity() {
             Log.d(TAG, "onPause - LanbahnPanelActivity")
 
         (application as LanbahnPanelApplication).saveZoomEtc()
-        if (configHasChanged)
+        //if (configHasChanged) {
             if (checkStorageWritePermission()) {
                 WriteConfig.toXMLFile()
             } else {
                 toast("ERROR: App has NO PERMISSION to write files !")
             }
-
+        //}
         if (saveStates)
             saveStates()
         sendQ.clear()
@@ -203,6 +202,10 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
         refreshAllData()
         LanbahnPanelApplication.updatePanelData()
+
+        enableFourQuadrantsView = panelElements.size > 50
+
+        enableForQuadrantButtons(enableFourQuadrantsView)
         (application as LanbahnPanelApplication).removeNotification()
         title = "Lanbahn Panel \"$panelName\""
 
@@ -230,6 +233,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu, menu)
         mOptionsMenu = menu
         setConnectionIcon()
+
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -248,23 +252,23 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 return true
             }
             R.id.action_q1 -> {
-                toast("quadrant1")
+                if (enableFourQuadrantsView) displayQuadrant(1)
                 return true
             }
             R.id.action_q2 -> {
-                toast("quadrant2")
+                if (enableFourQuadrantsView) displayQuadrant(2)
                 return true
             }
             R.id.action_q3 -> {
-                toast("quadrant3")
+                if (enableFourQuadrantsView) displayQuadrant(3)
                 return true
             }
             R.id.action_q4 -> {
-                toast("quadrant4")
+                if (enableFourQuadrantsView) displayQuadrant(4)
                 return true
             }
             R.id.action_qall -> {
-                toast("alle quadranten")
+                if (enableFourQuadrantsView) displayQuadrant(0)
                 return true
             }
             R.id.action_power -> {
@@ -343,6 +347,30 @@ class LanbahnPanelActivity : AppCompatActivity() {
         Route.auto()
         mHandler.postDelayed({ updateUI() }, 500)
     }
+
+    private fun enableForQuadrantButtons(yes: Boolean) {
+        if ((yes) && (selectedScale == "auto")) {
+            mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.q1_v2_48)
+            mOptionsMenu?.findItem(R.id.action_q2)?.setIcon(R.drawable.q2_v2_48)
+            mOptionsMenu?.findItem(R.id.action_q3)?.setIcon(R.drawable.q3_v2_48)
+            mOptionsMenu?.findItem(R.id.action_q4)?.setIcon(R.drawable.q4_v2_48)
+            mOptionsMenu?.findItem(R.id.action_qall)?.setIcon(R.drawable.qa_v2_48)
+
+        } else {
+            mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.trans_48)
+            mOptionsMenu?.findItem(R.id.action_q2)?.setIcon(R.drawable.trans_48)
+            mOptionsMenu?.findItem(R.id.action_q3)?.setIcon(R.drawable.trans_48)
+            mOptionsMenu?.findItem(R.id.action_q4)?.setIcon(R.drawable.trans_48)
+            mOptionsMenu?.findItem(R.id.action_qall)?.setIcon(R.drawable.trans_48)
+        }
+    }
+
+    private fun displayQuadrant(q: Int) {
+        // 0 means "ALL"
+          quadrant = q
+          recalcScale(mWidth, mHeight, quadrant)
+    }
+
 
     private fun togglePower() {
         val prefs = PreferenceManager
@@ -508,8 +536,8 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 return
             }
 
-        // Add other 'when' lines to check for other
-        // permissions this app might request.
+// Add other 'when' lines to check for other
+// permissions this app might request.
             else -> {
                 // Ignore all other requests.
             }
@@ -527,6 +555,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 Log.d(TAG, "onResume - reloading panel config.")
             }
             ReadConfig.readConfigFromFile(this) // reload config File with scaling
+            enableFourQuadrantsView = panelElements.size > 50
         }
     }
 

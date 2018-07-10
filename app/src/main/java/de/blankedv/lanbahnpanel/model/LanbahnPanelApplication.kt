@@ -125,7 +125,7 @@ class LanbahnPanelApplication : Application() {
         editor.putBoolean(KEY_ROUTES, enableRoutes)
         editor.putBoolean(KEY_FLIP, flipUpsideDown)
         editor.putString(KEY_XOFF, "" + xoff)
-        editor.putString(KEY_YOFF, "" + yoff)
+        editor.putString(KEY_YOFF,"" + yoff)
         editor.putString(KEY_SCALE, "" + scale)
 
         // Commit the edits!
@@ -219,7 +219,7 @@ class LanbahnPanelApplication : Application() {
         }
 
         /**
-         * needs to be executed always at shutdown to have a state of "UNKNOWN" when
+         * needs to be executed aPreferenceManagerlways at shutdown to have a state of "UNKNOWN" when
          * no current data at application restart
          */
         fun clearPanelData() {
@@ -240,5 +240,54 @@ class LanbahnPanelApplication : Application() {
                 return client!!.isConnected()
             }
         }
+
+        fun recalcScale(width: Int, height: Int, qua: Int) {
+            // nexus7 (surface changed) - format=4 w=1280 h=618
+            // samsung SM-T580 (surface changed) - format=4 w=1920 h=1068
+            val sc1X = width / ((panelRect.right - panelRect.left) * 1.0f)
+            val sc1Y = height / ((panelRect.bottom - panelRect.top) * 1.0f)
+            var mult = 1f
+            if (qua != 0) mult = 2f
+
+            if (sc1X < sc1Y) { // x-dimensions of panel elements larger than y-dim
+                // (this is normally the case for layout panels)
+
+                scale = sc1X * mult
+                val hCalc = height / scale
+                val hRect = 1.0f * (panelRect.bottom - panelRect.top) / mult
+                val wCalc = height / scale
+                val wRect = 1.0f * (panelRect.right - panelRect.left) / mult
+
+                when (qua) {
+                    0,1,3 -> xoff = 0f
+                    2,4   -> xoff = - wRect * scale
+                }
+                when (qua) {
+                    0 -> yoff = (hCalc - hRect) / 2
+                    1,2 -> yoff = 0f + (hCalc - hRect) / 2
+                    3,4 -> yoff = (- hRect * scale) + (hCalc - hRect) / 2
+                }
+
+            } else {
+                // TODO implement
+                scale = sc1Y
+                xoff = 0f // width * 2f * (sc1Y / sc1X) / prescale
+                yoff = 0f
+            }
+
+            val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+            val editor = prefs.edit()
+            Log.d(TAG, "saving modified scale")
+            editor.putString(KEY_XOFF, "" + xoff)
+            editor.putString(KEY_YOFF, "" + yoff)
+            editor.putString(KEY_SCALE, "" + scale)
+            // Commit the edits!
+            editor.apply()
+
+            Log.d(TAG, "calc" +
+                    "" +
+                    " scale=$scale xoff=$xoff yoff=$yoff")
+        }
+
     }
 }

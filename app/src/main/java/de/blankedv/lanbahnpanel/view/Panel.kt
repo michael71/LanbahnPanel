@@ -5,7 +5,6 @@ import android.graphics.*
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.preference.PreferenceManager
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
@@ -40,12 +39,13 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
     private var mScaleFactor = 1f
     private var scalingTime = 0L
 
-    private var mWidth: Int = 0
-    private var mHeight: Int = 0
+
 
     private val toneG = ToneGenerator(AudioManager.STREAM_ALARM, 70)
 
     private var time0 = System.currentTimeMillis()
+
+
 
     // public static Bitmap myBitmap = Bitmap.createBitmap(4000,1600,
 // Bitmap.Config.ARGB_4444);
@@ -206,42 +206,16 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int,
                                 height: Int) {
-        Log.i(TAG, "surface changed - format=$format w=$width h=$height")
+        Log.i(TAG, "surface changed - mWidth=$width mHeight=$height")
         mWidth = width
         mHeight = height
 
         if (selectedScale == "auto") {
-            recalcScale(mWidth, mHeight)
-
+            LanbahnPanelApplication.recalcScale(mWidth, mHeight, quadrant)
         }
     }
 
-    private fun recalcScale(width: Int, height: Int) {
 
-        val sc1X = width / ((panelRect.right - panelRect.left) * 1.0f)
-        val sc1Y = height / ((panelRect.bottom - panelRect.top) * 1.0f)
-
-        if (sc1X < sc1Y) { // x-dimensions of panel elements larger than y-dim
-            // (this is normally the case for layout panels)
-            scale = sc1X
-            xoff = 0f
-            yoff = 0f // TODO !!! height * 2f * (sc1X / sc1Y) / prescale
-        } else {
-            scale = sc1Y
-            xoff = width * 2f * (sc1Y / sc1X) / prescale
-            yoff = 0f
-        }
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val editor = prefs.edit()
-        Log.d(TAG, "saving modified scale")
-        editor.putString(KEY_XOFF, "" + xoff)
-        editor.putString(KEY_YOFF, "" + yoff)
-        editor.putString(KEY_SCALE, "" + scale)
-        // Commit the edits!
-        editor.apply()
-
-        Log.d(TAG, "used scale=$scale xoff=$xoff yoff=$yoff")
-    }
 
     fun doDraw(canvas: Canvas) {
 
@@ -262,7 +236,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
         if ((DEBUG) and ((System.currentTimeMillis() - time0) > 10000)) {
             Log.d(TAG, "panelRect x=(" + panelRect.left + "," + panelRect.right + ") y=(" + panelRect.top + "," + panelRect.bottom + ")")
-            Log.d(TAG, "used scale=$scale xoff=$xoff yoff=$yoff")
+            Log.d(TAG, "mWidth=$mWidth mHeight=$mHeight - actual scale=$scale xoff=$xoff yoff=$yoff hCalc=$hCalc hRect=$hRect")
             // Samsung SM-T580  panelRect 2040x960 *prescale (=2)
             // metric 1920x1200 pixel , ratio 1.6
             /* for the 4 quadrants       (full layout  autoscale: 0.94 / 0 0)       (experimental)
@@ -345,4 +319,5 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         mCanvas.drawPoint(0f, 0f, LPaints.redPaint)
         mCanvas.drawPoint(300f, 80f, LPaints.redPaint)
     }
+
 }

@@ -58,7 +58,7 @@ const val STATE_UNKNOWN = -1
 const val POWER_UNKNOWN = INVALID_INT
 const val POWER_ON = 1
 const val POWER_OFF = 0
-const val POWER_CHANNEL = 1000   // global power state is requested using  this address
+const val POWER_CHANNEL = 1278   // global power state is requested using  this address
 const val LIFECHECK_SECONDS = 10  // every 10 seconds check if server connection is alive
 
 const val DEFAULT_SXNET_PORT = "4104"  // string
