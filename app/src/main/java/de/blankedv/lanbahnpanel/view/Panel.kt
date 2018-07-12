@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.*
 import android.media.AudioManager
 import android.media.ToneGenerator
-import android.preference.PreferenceManager
 import android.util.Log
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
@@ -211,7 +210,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         mHeight = height
 
         if (selectedScale == "auto") {
-            LanbahnPanelApplication.recalcScale(mWidth, mHeight, quadrant)
+            LanbahnPanelApplication.calcAutoScale(mWidth, mHeight, quadrant)
         }
     }
 

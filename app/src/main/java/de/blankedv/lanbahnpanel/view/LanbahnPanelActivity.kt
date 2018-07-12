@@ -35,7 +35,7 @@ import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import de.blankedv.lanbahnpanel.elements.Route
 import de.blankedv.lanbahnpanel.elements.RouteButtonElement
 import de.blankedv.lanbahnpanel.model.*
-import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.recalcScale
+import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.calcAutoScale
 import de.blankedv.lanbahnpanel.railroad.RRConnectionThread
 import de.blankedv.lanbahnpanel.util.Utils.threadSleep
 import org.jetbrains.anko.*
@@ -111,7 +111,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 applicationContext.getString(R.string.exit_confirm))
                 .setCancelable(false)
                 .setPositiveButton(applicationContext.getString(R.string.yes)
-                ) { dialog, id ->
+                ) { _, _ ->
                     shutdownClient()
                     threadSleep(100L)
                     clearPanelData() // needs to be done to start again with
@@ -185,10 +185,16 @@ class LanbahnPanelActivity : AppCompatActivity() {
             Log.d(TAG, "onResume - LanbahnPanelActivity")
         sendQ.clear()
 
-        reloadConfigIfPanelFileChanged()
-
-
         (application as LanbahnPanelApplication).loadZoomEtc()
+
+        var newPanel = reloadConfigIfPanelFileChanged()
+        if (newPanel) quadrant = 0  // reset view
+
+        // set quadrants mode only for large panels and auto-scale mode
+        enableFourQuadrantsView = ((selectedScale == "auto") && ( panelElements.size > 50))
+        enableForQuadrantButtons(enableFourQuadrantsView)
+        displayQuadrant(quadrant);
+
 
         if (DEBUG) debugLogDisplayMetrics()
 
@@ -203,9 +209,9 @@ class LanbahnPanelActivity : AppCompatActivity() {
         refreshAllData()
         LanbahnPanelApplication.updatePanelData()
 
-        enableFourQuadrantsView = panelElements.size > 50
 
-        enableForQuadrantButtons(enableFourQuadrantsView)
+
+
         (application as LanbahnPanelApplication).removeNotification()
         title = "Lanbahn Panel \"$panelName\""
 
@@ -233,7 +239,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu, menu)
         mOptionsMenu = menu
         setConnectionIcon()
-
+        enableForQuadrantButtons(enableFourQuadrantsView)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -299,7 +305,6 @@ class LanbahnPanelActivity : AppCompatActivity() {
             }
             else -> return true //super.onOptionsItemSelected(item)
         }
-        return true
     }
 
 
@@ -349,15 +354,16 @@ class LanbahnPanelActivity : AppCompatActivity() {
     }
 
     private fun enableForQuadrantButtons(yes: Boolean) {
-        if ((yes) && (selectedScale == "auto")) {
-            mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.q1_v2_48)
+        if (DEBUG) Log.d(TAG, "enableForQuadrantButtons($yes)")
+        if (yes) {
+            mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.q1_v2_48) ?: Log.e(TAG,"mOptionsMenu is not set")
             mOptionsMenu?.findItem(R.id.action_q2)?.setIcon(R.drawable.q2_v2_48)
             mOptionsMenu?.findItem(R.id.action_q3)?.setIcon(R.drawable.q3_v2_48)
             mOptionsMenu?.findItem(R.id.action_q4)?.setIcon(R.drawable.q4_v2_48)
             mOptionsMenu?.findItem(R.id.action_qall)?.setIcon(R.drawable.qa_v2_48)
 
         } else {
-            mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.trans_48)
+            mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.trans_48) ?: Log.e(TAG,"mOptionsMenu is not set")
             mOptionsMenu?.findItem(R.id.action_q2)?.setIcon(R.drawable.trans_48)
             mOptionsMenu?.findItem(R.id.action_q3)?.setIcon(R.drawable.trans_48)
             mOptionsMenu?.findItem(R.id.action_q4)?.setIcon(R.drawable.trans_48)
@@ -368,7 +374,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
     private fun displayQuadrant(q: Int) {
         // 0 means "ALL"
           quadrant = q
-          recalcScale(mWidth, mHeight, quadrant)
+          calcAutoScale(mWidth, mHeight, quadrant)
     }
 
 
@@ -452,11 +458,9 @@ class LanbahnPanelActivity : AppCompatActivity() {
         when (globalPower) {
             POWER_OFF -> {
                 mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_stop)
-                mOptionsMenu?.findItem(R.id.action_q4)?.setIcon(R.drawable.trans_48)  // TODO -debug
             } //power_red)
             POWER_ON -> {
                 mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_green)
-                mOptionsMenu?.findItem(R.id.action_q4)?.setIcon(R.drawable.q4_48)  // TODO -debug
             }
             POWER_UNKNOWN -> mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_unknown)
         }
@@ -544,10 +548,11 @@ class LanbahnPanelActivity : AppCompatActivity() {
         }
     }
 
-    private fun reloadConfigIfPanelFileChanged() {
+    private fun reloadConfigIfPanelFileChanged() : Boolean {
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
         val cfFilename = prefs.getString(KEY_CONFIG_FILE, "-")
+        var result = false
         if (cfFilename != configFilename) {
             // reload, if a new panel config file selected
             configFilename = cfFilename
@@ -555,9 +560,11 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 Log.d(TAG, "onResume - reloading panel config.")
             }
             ReadConfig.readConfigFromFile(this) // reload config File with scaling
-            enableFourQuadrantsView = panelElements.size > 50
+            result = true
         }
+        return result
     }
+
 
     private fun readPanelFromServer() {
         if (checkStorageWritePermission()) {

@@ -28,6 +28,7 @@ const val KEY_SCALE = "scalePref"
 const val KEY_IP = "ipPref"
 const val KEY_PORT = "portPref"
 const val KEY_CONFIG_FILE = "configFilenamePref"
+const val KEY_QUADRANT = "lastQuadrant"
 
 const val FNAME_PANEL_FROM_SERVER = "panel_from_server.xml"
 

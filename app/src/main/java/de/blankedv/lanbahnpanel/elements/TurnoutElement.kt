@@ -1,12 +1,14 @@
 package de.blankedv.lanbahnpanel.elements
 
 import android.graphics.Canvas
+import android.graphics.Rect
 import android.util.Log
 import de.blankedv.lanbahnpanel.util.LPaints.bgPaint
 import de.blankedv.lanbahnpanel.util.LPaints.greenPaint
 import de.blankedv.lanbahnpanel.util.LPaints.linePaint2
 import de.blankedv.lanbahnpanel.util.LPaints.redPaint
 import de.blankedv.lanbahnpanel.model.*
+import de.blankedv.lanbahnpanel.util.Utils
 
 
 class TurnoutElement : ActivePanelElement {
@@ -27,6 +29,14 @@ class TurnoutElement : ActivePanelElement {
         yt = turnout.yt
         adr = turnout.adr
         state = STATE_UNKNOWN
+    }
+
+    override fun getSensitiveRect() : Rect {
+        val minx = Utils.min(x, xt, x2) - RASTER / 11
+        val maxx = Utils.max(x, xt, x2) + RASTER / 11
+        val miny = Utils.min(y, yt, y2) - RASTER / 11
+        val maxy = Utils.max(y, yt, y2) + RASTER / 11
+        return Rect(minx, miny, maxx, maxy)
     }
 
     override fun doDraw(canvas: Canvas) {
@@ -76,20 +86,6 @@ class TurnoutElement : ActivePanelElement {
         // state = STATE_UNKNOWN; // until updated via lanbahn message
         sendQ.add("SET $adr $state")  // ==> send changed data over network turnout interface
         if (DEBUG) Log.d(TAG, "toggle(adr=$adr) new state=$state")
-    }
-
-    companion object {
-
-        fun findTurnoutByAddress(address: Int): TurnoutElement? {
-            for (pe in panelElements) {
-                if (pe is TurnoutElement) {
-                    if (pe.adr == address) {
-                        return pe
-                    }
-                }
-            }
-            return null
-        }
     }
 
 }

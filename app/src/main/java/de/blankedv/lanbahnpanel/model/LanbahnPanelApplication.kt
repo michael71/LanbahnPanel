@@ -106,7 +106,7 @@ class LanbahnPanelApplication : Application() {
 
     override fun onTerminate() {
         super.onTerminate()
-        Log.d(TAG, "AndroPanelApp - terminating.")
+        Log.d(TAG, "LanbahnPanelApp - terminating.")
 
     }
 
@@ -127,6 +127,7 @@ class LanbahnPanelApplication : Application() {
         editor.putString(KEY_XOFF, "" + xoff)
         editor.putString(KEY_YOFF,"" + yoff)
         editor.putString(KEY_SCALE, "" + scale)
+        editor.putInt(KEY_QUADRANT, quadrant)
 
         // Commit the edits!
         editor.apply()
@@ -155,6 +156,7 @@ class LanbahnPanelApplication : Application() {
         xoff = java.lang.Float.parseFloat(prefs.getString(KEY_XOFF, "20"))
         yoff = java.lang.Float.parseFloat(prefs.getString(KEY_YOFF, "50"))
         scale = java.lang.Float.parseFloat(prefs.getString(KEY_SCALE, "1.0"))
+        quadrant = prefs.getInt(KEY_QUADRANT, 0)
 
     }
 
@@ -201,7 +203,7 @@ class LanbahnPanelApplication : Application() {
         lateinit var appHandler: Handler // used for communication from RRConnection Thread to UI (application)
 
         fun updatePanelData() {
-            Log.d(TAG, "AndroPanelApp - updatePanelData()")
+            Log.d(TAG, "LanbahnPanelApp - updatePanelData()")
             for (e in panelElements) {
                 if (e is ActivePanelElement) {
                     // add its address to list of interesting addresses
@@ -241,7 +243,16 @@ class LanbahnPanelApplication : Application() {
             }
         }
 
-        fun recalcScale(width: Int, height: Int, qua: Int) {
+        /**
+         * calculate optimum scale from surfaceHolder width and height
+         *
+         * @param width of surfaceHolder (in pixels)
+         * @param height of surfaceHolder (in pixels)
+         * @param qua qudrant to display (0= all, 1=q1, 2=q2 ...)
+         *
+         * set global scale values scale, xoff, yoff
+         */
+        fun calcAutoScale(width: Int, height: Int, qua: Int) {
             // nexus7 (surface changed) - format=4 w=1280 h=618
             // samsung SM-T580 (surface changed) - format=4 w=1920 h=1068
             val sc1X = width / ((panelRect.right - panelRect.left) * 1.0f)

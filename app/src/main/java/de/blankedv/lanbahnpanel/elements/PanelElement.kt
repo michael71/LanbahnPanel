@@ -125,11 +125,11 @@ open class PanelElement {
             }
         }
 
-        /** scale all panel elements for better fit on display and for possible "upside down"
-         * display (=view from other side of the layout - currently only called from
-         * readXMLConfigFile (i.e. NOT when flipUpsideDown is changed in the prefs)
+        /** relocate panel origin for better fit on display and for possible "upside down"
+         * display (=view from other side of the layout -
+         *
          */
-        fun scaleAll() {
+        fun relocatePanelOrigin() {
             // in WriteConfig the NEW values are written !!
 
             var xmin = INVALID_INT
@@ -174,14 +174,14 @@ open class PanelElement {
 
             }
             if (DEBUG) {
-                Log.d(TAG, "before adding 10: xmin=" + (xmin) + " xmax="
+                Log.d(TAG, "scallAll: before adding 10: xmin=" + (xmin) + " xmax="
                         + (xmax) + " ymin=" + (ymin) + " ymax=" + (ymax) + "  ----------------")
             }
             // now move origin to (10,10)
             val deltaX = 10 - xmin
             val deltaY = 10 - ymin
             if (DEBUG) {
-                Log.d(TAG, "move by dx=" + deltaX + " dy=" + deltaY + "  ----------------")
+                Log.d(TAG, "scallAll: move by dx=" + deltaX + " dy=" + deltaY + "  ----------------")
             }
             for (pe in panelElements) {
                 if (!flipUpsideDown) {
@@ -213,14 +213,14 @@ open class PanelElement {
                 }
 
             }
+            panelRect = Rect(0, 0, (xmax + deltaX + 10) * prescale, (ymax + deltaY + 10) * prescale)
 
             if (DEBUG) {
-                Log.d(TAG, "after origin move (incl Rand) xmin=" + (0) + " xmax="
-                        + (xmax + deltaX + 10) + " ymin=" + 0
-                        + " ymax=" + (ymax + deltaY + 10) + "  ----------------")
+                Log.d(TAG, "scallAll: after origin move (incl Rand) xmin=" + panelRect.left + " xmax="
+                        + panelRect.right + " ymin=" + panelRect.top
+                        + " ymax=" + panelRect.bottom + "  ----------------")
             }
 
-            panelRect = Rect(0, 0, (xmax + deltaX + 10) * prescale, (ymax + deltaY + 10) * prescale)
 
             configHasChanged = true
 

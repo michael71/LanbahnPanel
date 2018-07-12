@@ -23,44 +23,35 @@ class SXnetClient() : GenericClient() {
     override fun readChannel(addr: Int, peClass : Class<ActivePanelElement>) : String {
         // class can be ignored for selectrix
 
-      return "R $addr"
+      return "READ $addr"
     }
 
     override fun readChannel(addr: Int) : String {
         // class can be ignored for selectrix
-        return "R $addr"
+        return "READ $addr"
     }
 
     override fun setChannel(addr: Int, data: Int, peClass : Class<ActivePanelElement>) :String {
-        return "S $addr $data"
+        return "SET $addr $data"
     }
 
     override fun setChannel(addr: Int, data: Int) :String {
-        return "S $addr $data"
+        return "SET $addr $data"
     }
 
     override fun setPowerState (switchOn : Boolean) : String {
         if (switchOn) {
-            return "S "+ POWER_CHANNEL + " 1"
+            return "SET "+ POWER_CHANNEL + " 1"
         } else {
-            return "S "+ POWER_CHANNEL + " 0"
+            return "SET "+ POWER_CHANNEL + " 0"
         }
     }
 
     /**
-     * SX Net Protocol (all msg terminated with CR)
+     * SX Net Protocol rev3 (all msg terminated with CR)
+     * SET 803 2  / READ 803  / XL 803 2 (feedback message)
      *
-     * client sends                           |  SXnetServer Response
-     * ---------------------------------------|-------------------
-     * R cc    = Read channel cc (0..127)     |  "X" cc dd
-     * B cc b  = SetBit Ch. cc Bit b (1..8)   |  "OK" (and later, when changed in CS: X cc dd )
-     * C cc b  = Clear Ch cc Bit b (1..8)     |  "OK" (and later, when changed in CS: X cc dd )
-     * S cc dd = set channel cc Data dd (<256)|  "OK" (and later, when changed in CS: X cc dd )
-     * DSDF 89sf  (i.e. garbage)              |  "ERROR"
-     *
-     * channel 127 bit 8 == Track Power
-     *
-     * for a list of channels (which the client has set or read in the past) all changes are
+     * for a list of the channels which the client has set or read in the past all changes are
      * transmitted back to the client
      */
 
@@ -83,10 +74,11 @@ class SXnetClient() : GenericClient() {
             //Log.d(TAG,"single cmd="+cmd);
             if (!cmd.contains("ERROR")) {
                 info = cmd.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                // all feedback message have the Format "X <adr> <data>"
+                // all lanbahn feedback message have the Format "XL <adr> <data>"
+                //                          pure SX (=andropanel) has "X" message
                 // adr range 1 ... 9999, data range 0 ..255
                 // adr=1000 is the sxnet/lanbahn "Power" channel
-                if (info.size >= 3 && info[0] == "X") {
+                if (info.size >= 3 && info[0] == "XL") {
                     adr = extractChannelFromString(info[1])
                     data = extractDataFromString(info[2])
                     if (adr != INVALID_INT && data != INVALID_INT) {
@@ -112,8 +104,6 @@ class SXnetClient() : GenericClient() {
                         m.arg2 = data
                         recHandler.sendMessage(m)  // send route data to UI Thread via Message
                     }
-                } else {
-                    Log.e(TAG, "length error in rec. msg, cmd=" + cmd + "info[0]=" + info[0])
                 }
             }
         }

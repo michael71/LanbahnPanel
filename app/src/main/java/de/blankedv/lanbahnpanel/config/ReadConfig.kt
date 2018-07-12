@@ -5,24 +5,18 @@ import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
-import java.net.URI
-import java.net.URISyntaxException
 import java.util.ArrayList
 
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
 
-import org.apache.http.HttpResponse
-import org.apache.http.client.methods.HttpGet
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import org.xml.sax.SAXException
 
 import android.content.Context
-import android.net.http.AndroidHttpClient
-import android.os.AsyncTask
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
@@ -119,7 +113,7 @@ object ReadConfig {
             doc = builder.parse(fis)
             panelElements = parsePanelElements(doc)
 
-            PanelElement.scaleAll()
+            PanelElement.relocatePanelOrigin()
             routes = parseRoutes(doc) // can be done only after all panel
             // elements have been read
             Route.calcOffendingRoutes() // calculate offending routes
