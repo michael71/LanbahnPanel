@@ -1,0 +1,35 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="drawAddressesPref"
+        android:title="@string/draw_addresses" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="drawAddressesPref2"
+        android:title="@string/draw_routebtn_addresses" />
+    <ListPreference
+        android:defaultValue="@string/sel_scale_default"
+        android:entries="@array/scaling"
+        android:entryValues="@array/scaling_values"
+        android:key="selectScalePref"
+        android:summary="select the scaling: auto or manual or locked"
+        android:title="@string/sel_scale" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="flipPref"
+        android:title="@string/flipUpsideDown" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="enableEditPref"
+        android:title="@string/enableEdit" />
+
+    <ListPreference
+        android:defaultValue="@string/sel_style_default"
+        android:entries="@array/styles"
+        android:entryValues="@array/style_values"
+        android:key="selectStylePref"
+        android:summary="select a Style for dark or white background etc."
+        android:title="@string/sel_style" />
+
+ </PreferenceScreen>

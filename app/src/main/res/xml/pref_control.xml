@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--<CheckBoxPreference
+        android:defaultValue="false"
+        android:key="saveStatesPref"
+        android:title="@string/saveStates" /> -->
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="routesPref"
+        android:title="@string/enableRoutes" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="powerControlPref"
+        android:title="@string/enable_power_control" />
+    <ListPreference
+        android:entries="@array/listEmpty"
+        android:entryValues="@array/listEmpty"
+        android:key="configFilenamePref"
+        android:summary="Bitte auswählen"
+        android:title="@string/panel_cfg_files" />
+</PreferenceScreen>

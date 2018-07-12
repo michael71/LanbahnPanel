@@ -37,6 +37,7 @@ import de.blankedv.lanbahnpanel.elements.RouteButtonElement
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.calcAutoScale
 import de.blankedv.lanbahnpanel.railroad.RRConnectionThread
+import de.blankedv.lanbahnpanel.settings.SettingsActivity
 import de.blankedv.lanbahnpanel.util.Utils.threadSleep
 import org.jetbrains.anko.*
 
@@ -185,7 +186,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
             Log.d(TAG, "onResume - LanbahnPanelActivity")
         sendQ.clear()
 
-        (application as LanbahnPanelApplication).loadZoomEtc()
+        (application as LanbahnPanelApplication).loadZoomEtc()   // get preferences
 
         var newPanel = reloadConfigIfPanelFileChanged()
         if (newPanel) quadrant = 0  // reset view
@@ -249,7 +250,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.menu_settings // call preferences activity
             -> {
-                startActivity(Intent(this, Preferences::class.java))
+                startActivity(Intent(this, SettingsActivity::class.java))
                 return true
             }
 
