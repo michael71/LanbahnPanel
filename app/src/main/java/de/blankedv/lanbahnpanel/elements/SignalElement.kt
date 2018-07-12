@@ -68,7 +68,10 @@ class SignalElement : ActivePanelElement {
         }
 
         // state = STATE_UNKNOWN; // until updated via lanbahn message
-        sendQ.add("SET $adr $state")  // ==> send changed data over network turnout interface
+        val cmd = "SET $adr $state"
+        if (!sendQ.contains(cmd)) {
+            sendQ.add(cmd) // ==> send changed data over network turnout interface
+        }
         if (DEBUG) Log.d(TAG, "toggle(adr=$adr) new state=$state")
     }
 

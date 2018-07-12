@@ -51,9 +51,7 @@ var client: RRConnectionThread? = null
 var restartCommFlag = false
 
 // put all messages which should be sent into this queue
-val sendQ: BlockingQueue<String> = ArrayBlockingQueue(
-        200)
-
+val sendQ: BlockingQueue<String> = ArrayBlockingQueue(400)
 
 @Volatile
 var connString = ""

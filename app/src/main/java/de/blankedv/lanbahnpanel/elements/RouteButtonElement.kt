@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.util.Log
 import de.blankedv.lanbahnpanel.util.LPaints
 import de.blankedv.lanbahnpanel.model.*
+import org.jetbrains.anko.toast
 
 /**  button for selecting routes
  *
@@ -36,12 +37,13 @@ class RouteButtonElement : ActivePanelElement {
         state = STATE_UNKNOWN
     }
 
+    /** draw route buttons  (vector draw
+     *
+     * @param canvas
+     *
+     * */
     override fun doDraw(canvas: Canvas) {
 
-        // read data from SX bus and paint position of turnout accordingly
-        // draw a line and not a bitmap
-        //canvas.drawLine(x*prescale,y*prescale, x2*prescale,y2*prescale, signalLine);
-        //canvas.drawLine(x2*prescale,(y2-2.5f)*prescale, x2*prescale,(y2+2.5f)*prescale, signalLine);
         if (!enableRoutes) return
 
         canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 4f * prescale, LPaints.whitePaint)
@@ -217,7 +219,7 @@ class RouteButtonElement : ActivePanelElement {
                     }
                 }
                 if (!routeFound) {
-                    // TODO toast("keine passende Fahrstrasse.")
+                    appContext?.toast("keine passende Fahrstrasse.")
                     findRouteButtonByAddress(adrFirstBtn)!!.reset()  // clear the button also
                     findRouteButtonByAddress(adrSecondBtn)!!.reset()  // clear the button also
                 }
@@ -230,7 +232,7 @@ class RouteButtonElement : ActivePanelElement {
                         pe.reset()
                     }
                 }
-                // TODO toast("zu viele Buttons.")
+                appContext?.toast("zu viele Route-Buttons gedrückt.")
             }
 
 

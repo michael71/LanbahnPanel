@@ -84,7 +84,6 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
                 try {
                     comm = sendQ.take()
                     if (comm.length > 0) immediateSend(comm)
-                    Thread.sleep(20)  // do not send faster than serial port ...
                 } catch (e: Exception) {
                     Log.e(TAG, "could not take command from sendQ")
                 }
@@ -108,7 +107,7 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
 
                 }
             }
-            threadSleep(20)
+            threadSleep(10)
         }
 
         socket?.close()

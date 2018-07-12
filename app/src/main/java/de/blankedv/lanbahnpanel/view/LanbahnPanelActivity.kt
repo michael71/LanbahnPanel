@@ -189,9 +189,10 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
         var newPanel = reloadConfigIfPanelFileChanged()
         if (newPanel) quadrant = 0  // reset view
+        Route.clearAllRoutes()
 
         // set quadrants mode only for large panels and auto-scale mode
-        enableFourQuadrantsView = ((selectedScale == "auto") && ( panelElements.size > 50))
+        enableFourQuadrantsView = ((selectedScale == "auto") && ( panelElements.size >= N_PANEL_FOR_4Q))
         enableForQuadrantButtons(enableFourQuadrantsView)
         displayQuadrant(quadrant);
 
@@ -553,13 +554,14 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 .getDefaultSharedPreferences(this)
         val cfFilename = prefs.getString(KEY_CONFIG_FILE, "-")
         var result = false
-        if (cfFilename != configFilename) {
+        // panel file changed or empty panel => (re-)load panel
+        if ( (cfFilename != configFilename) || (panelElements.size == 0)) {
             // reload, if a new panel config file selected
             configFilename = cfFilename
             if (DEBUG) {
                 Log.d(TAG, "onResume - reloading panel config.")
             }
-            ReadConfig.readConfigFromFile(this) // reload config File with scaling
+            ReadConfig.readConfigFromFile(this) // reload config File with relocate of origin
             result = true
         }
         return result

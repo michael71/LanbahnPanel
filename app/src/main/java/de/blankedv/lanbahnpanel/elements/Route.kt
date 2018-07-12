@@ -29,8 +29,8 @@ import de.blankedv.lanbahnpanel.model.*
  * @param offending
  * string with offending routes, separated by comma
  */
-class Route (var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors: String,
- offending: String) {
+class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors: String,
+            offending: String) {
 
     private val blink = System.currentTimeMillis()
     private val toggleBlink = false
@@ -70,7 +70,7 @@ class Route (var id: Int, var btn1: Int, var btn2: Int, route: String, allSensor
         val routeElements = route.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         for (i in routeElements.indices) {
             val reInfo = routeElements[i].split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
- //TODO re-write with filter - allow multiple pe with same address
+            //TODO re-write with filter - allow multiple pe with same address
             val pe = PanelElement.getPeByAddress(Integer.parseInt(reInfo[0]))
 
             // if this is a signal, then add to my signal list "rtSignals"
@@ -141,7 +141,9 @@ class Route (var id: Int, var btn1: Int, var btn2: Int, route: String, allSensor
         for (se in rtSensors) {
             se.state = STATE_FREE
             val cmd = "SET " + se.adr + " " + STATE_FREE
-            sendQ.add(cmd)
+            if (!sendQ.contains(cmd)) {
+                sendQ.add(cmd)
+            }
         }
 
         // set signals turnout red
@@ -149,7 +151,9 @@ class Route (var id: Int, var btn1: Int, var btn2: Int, route: String, allSensor
             rs.signal.state = STATE_RED
 
             val cmd = "SET " + rs.signal.adr + " " + STATE_RED
-            sendQ.add(cmd)
+            if (!sendQ.contains(cmd)) {
+                sendQ.add(cmd)
+            }
         }
 
         // TODO unlock turnouts
@@ -168,22 +172,22 @@ class Route (var id: Int, var btn1: Int, var btn2: Int, route: String, allSensor
     }
 
     fun clearOffendingRoutes() {
-        /* TODO
-    if (DEBUG)
-        Log.d(TAG, "clearing (active) offending Routes")
-    val offRoutes = offendingString.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-    for (i in offRoutes.indices) {
-        for (rt in routes) {
-            try {
-                val offID = Integer.parseInt(offRoutes[i])
-                if (rt.id == offID && rt.isActive) {
-                    rt.clear()
-                }
-            } catch (e: NumberFormatException) {
-            }
 
+        if (DEBUG)
+            Log.d(TAG, "clearing (active) offending Routes")
+        val offRoutes = offendingString.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        for (i in offRoutes.indices) {
+            for (rt in routes) {
+                try {
+                    val offID = Integer.parseInt(offRoutes[i])
+                    if (rt.id == offID && rt.isActive) {
+                        rt.clear()
+                    }
+                } catch (e: NumberFormatException) {
+                }
+
+            }
         }
-    } */
     }
 
     fun set() {
@@ -304,64 +308,66 @@ class Route (var id: Int, var btn1: Int, var btn2: Int, route: String, allSensor
     }
 
 
-fun getOffendString(): String {
+    fun getOffendString(): String {
 
 
-    val sb = StringBuilder("")
-    for (r in rtOffending) {
-        if (sb.length == 0) {
-            sb.append(r.id)
-        } else {
-            sb.append(",")
-            sb.append(r.id)
+        val sb = StringBuilder("")
+        for (r in rtOffending) {
+            if (sb.length == 0) {
+                sb.append(r.id)
+            } else {
+                sb.append(",")
+                sb.append(r.id)
+            }
         }
-    }
-    /*		if (sb.length() == 0)
-        Log.d(TAG, "route id=" + id + " has no offending routes.");
-    else
-        Log.d(TAG, "route id=" + id + " has offending routes with ids="
-                + sb.toString()); */
-    return sb.toString()
+        /*		if (sb.length() == 0)
+            Log.d(TAG, "route id=" + id + " has no offending routes.");
+        else
+            Log.d(TAG, "route id=" + id + " has offending routes with ids="
+                    + sb.toString()); */
+        return sb.toString()
 
-}
+    }
 
     companion object {
 
         fun auto() {
             // check for auto reset of routes
-            /* TODO
-        for (rt in routes) {
-            if (System.currentTimeMillis() - rt.timeSet > 30 * 1000L && rt.isActive) {
-                rt.clear()
+            for (rt in routes) {
+                if (System.currentTimeMillis() - rt.timeSet > 30 * 1000L && rt.isActive) {
+                    rt.clear()
+                }
+                // update dependencies
+                if (rt.isActive) rt.updateDependencies()
             }
-            // update dependencies
-            if (rt.isActive) rt.updateDependencies()
-        } */
-
         }
 
-     fun calcOffendingRoutes() {
+        fun calcOffendingRoutes() {
 
-        for (rt in routes) {
-            for (t in rt.rtTurnouts) {
-                // iterate over all turnouts of rt and check, if another route
-                // activates the same turnout to a different position
-                for (rt2 in routes) {
-                    if (rt.id != rt2.id) {
-                        for (t2 in rt2.rtTurnouts) {
-                            if (t.turnout.adr == t2.turnout.adr && t.valueToSetForRoute != t2.valueToSetForRoute) {
-                                rt.addOffending(rt2)
-                                break
+            for (rt in routes) {
+                for (t in rt.rtTurnouts) {
+                    // iterate over all turnouts of rt and check, if another route
+                    // activates the same turnout to a different position
+                    for (rt2 in routes) {
+                        if (rt.id != rt2.id) {
+                            for (t2 in rt2.rtTurnouts) {
+                                if (t.turnout.adr == t2.turnout.adr && t.valueToSetForRoute != t2.valueToSetForRoute) {
+                                    rt.addOffending(rt2)
+                                    break
+                                }
+
                             }
-
                         }
                     }
                 }
+                rt.offendingString = rt.getOffendString()
             }
-            rt.offendingString = rt.getOffendString()
+
         }
 
-    }
+        fun clearAllRoutes() {
+            routes.forEach { it.clear() }
+         }
     }
 }
 

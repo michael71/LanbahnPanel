@@ -210,11 +210,13 @@ class LanbahnPanelApplication : Application() {
                     // only needed for active elements, not for tracks
                     val a = e.adr
                     if (a != INVALID_INT && e.isExpired) {
-                        val success = sendQ.offer("READ $a") // request data for
-                        // all active
-                        // addresses
-                        if (!success)
-                            Log.e(TAG, "sendQ full")
+                        // request data for all active addresses
+                        val cmd = "READ $a"
+                        if (!sendQ.contains(cmd)) {
+                            val success = sendQ.offer(cmd) // ==> send changed data over network turnout interface
+                            if (!success)
+                                Log.e(TAG, "sendQ full")
+                        }
                     }
                 }
             }
