@@ -10,15 +10,13 @@ import android.content.Intent
 import android.os.Build
 import android.os.Handler
 import android.os.Message
-import android.preference.ListPreference
 import android.preference.PreferenceManager
 import android.provider.Settings
 import android.support.v4.app.NotificationCompat
 import android.util.Log
+import com.google.gson.Gson
 import de.blankedv.lanbahnpanel.R
-import de.blankedv.lanbahnpanel.elements.ActivePanelElement
-import de.blankedv.lanbahnpanel.elements.PanelElement
-import de.blankedv.lanbahnpanel.elements.SensorElement
+import de.blankedv.lanbahnpanel.elements.*
 import de.blankedv.lanbahnpanel.util.AndroBitmaps
 import de.blankedv.lanbahnpanel.util.LPaints
 
@@ -97,7 +95,7 @@ class LanbahnPanelApplication : Application() {
 
                 }
 
-             }
+            }
 
         }
 
@@ -124,11 +122,14 @@ class LanbahnPanelApplication : Application() {
         editor.putBoolean(KEY_SAVE_STATES, saveStates)
         editor.putBoolean(KEY_ROUTES, enableRoutes)
         editor.putBoolean(KEY_FLIP, flipUpsideDown)
-        editor.putString(KEY_XOFF, "" + xoff)
-        editor.putString(KEY_YOFF,"" + yoff)
-        editor.putString(KEY_SCALE, "" + scale)
-        editor.putInt(KEY_QUADRANT, quadrant)
 
+        editor.putInt(KEY_QUADRANT, selQuadrant)
+        val serializedObject = Gson().toJson(`qClip`)
+        if (DEBUG) Log.d(TAG,"qClip="+serializedObject)
+        editor.putString(KEY_Q_CLIP, serializedObject)
+        /* for each selQuadrant: editor.putString(KEY_XOFF, "" + xoff)
+        editor.putString(KEY_YOFF, "" + yoff)
+        editor.putString(KEY_SCALE, "" + scale) */
         // Commit the edits!
         editor.apply()
     }
@@ -139,24 +140,29 @@ class LanbahnPanelApplication : Application() {
         //zoomEnabled = prefs.getBoolean(KEY_ENABLE_ZOOM, false)
         //Log.d(TAG, "zoomEnabled=$zoomEnabled")
         selectedStyle = prefs.getString(KEY_STYLE_PREF, "US")
-        LPaints.init(prescale,selectedStyle)
+        LPaints.init(prescale, selectedStyle)
         selectedScale = prefs.getString(KEY_SCALE_PREF, "auto")
         enableEdit = prefs.getBoolean(KEY_ENABLE_EDIT, false)
         saveStates = prefs.getBoolean(KEY_SAVE_STATES, false)
-        if (DEBUG)
-            Log.d(TAG, "saveStates=$saveStates")
         drawAddresses = prefs.getBoolean(KEY_DRAW_ADR, false)
         drawAddresses2 = prefs.getBoolean(KEY_DRAW_ADR2, false)
         enableRoutes = prefs.getBoolean(KEY_ROUTES, false)
         flipUpsideDown = prefs.getBoolean(KEY_FLIP, false)
-        if (DEBUG)
-            Log.d(TAG, "drawAddresses=$drawAddresses")
-        if (DEBUG)
-            Log.d(TAG, "drawAddresses2=$drawAddresses2")
-        xoff = java.lang.Float.parseFloat(prefs.getString(KEY_XOFF, "20"))
-        yoff = java.lang.Float.parseFloat(prefs.getString(KEY_YOFF, "50"))
-        scale = java.lang.Float.parseFloat(prefs.getString(KEY_SCALE, "1.0"))
-        quadrant = prefs.getInt(KEY_QUADRANT, 0)
+        enableFourQuadrantsView = prefs.getBoolean(KEY_FOUR_QUADRANTS_PREF, false)
+        if (enableFourQuadrantsView == true) {
+            selQuadrant = prefs.getInt(KEY_QUADRANT, 0)   // currently display selQuadrant
+        } else {
+            selQuadrant = 0  // must be reset, because we only have one view left
+        }
+
+        if (prefs.contains(KEY_Q_CLIP)) {
+            val gson = Gson()
+            if (DEBUG) Log.d(TAG,"qClip="+prefs.getString(KEY_Q_CLIP,"??"))
+            qClip = gson.fromJson(prefs.getString(KEY_Q_CLIP, ""), qClip.javaClass)
+        } else {
+            // qClip was already initialized in Variables.kt
+        }
+
 
     }
 
@@ -202,24 +208,25 @@ class LanbahnPanelApplication : Application() {
 
         lateinit var appHandler: Handler // used for communication from RRConnection Thread to UI (application)
 
-        fun updatePanelData() {
-            Log.d(TAG, "LanbahnPanelApp - updatePanelData()")
-            for (e in panelElements) {
-                if (e is ActivePanelElement) {
-                    // add its address to list of interesting addresses
-                    // only needed for active elements, not for tracks
-                    val a = e.adr
-                    if (a != INVALID_INT && e.isExpired) {
-                        // request data for all active addresses
-                        val cmd = "READ $a"
-                        if (!sendQ.contains(cmd)) {
-                            val success = sendQ.offer(cmd) // ==> send changed data over network turnout interface
-                            if (!success)
-                                Log.e(TAG, "sendQ full")
-                        }
-                    }
+        /**
+         * set all active panel elements to "expired" to have them updated soon
+         */
+        fun expireAllPanelElements() {
+            if (DEBUG) Log.d(TAG,"expireAllPanelData()")
+            for (pe in panelElements.filter { it is ActivePanelElement }) {
+                pe.setExpired()
+            }
+        }
+
+        fun requestAllPanelData() {
+            if (DEBUG) Log.d(TAG,"requstAllPanelData()")
+            // request state of all active panel elements
+            for (pe in panelElements.filter { it.adr != INVALID_INT && (it.isExpired() == true) }) {
+                if (pe is ActivePanelElement) {
+                    client?.readChannel(pe.adr, pe.javaClass)
                 }
             }
+
         }
 
         /**
@@ -227,12 +234,9 @@ class LanbahnPanelApplication : Application() {
          * no current data at application restart
          */
         fun clearPanelData() {
+            if (DEBUG) Log.d(TAG,"clearAllPanelData()")
             for (e in panelElements) {
-                if (e is ActivePanelElement) {
-                    // add its address to list of interesting addresses
-                    // only needed for active elements, not for tracks
-                    e.state = STATE_UNKNOWN
-                }
+                e.state = STATE_UNKNOWN
             }
         }
 
@@ -252,15 +256,21 @@ class LanbahnPanelApplication : Application() {
          * @param height of surfaceHolder (in pixels)
          * @param qua qudrant to display (0= all, 1=q1, 2=q2 ...)
          *
-         * set global scale values scale, xoff, yoff
+         * set global scale values for this quadrant (variable qClip[qua].scale, .xoff, .yoff )
          */
         fun calcAutoScale(width: Int, height: Int, qua: Int) {
+            if (DEBUG) Log.d(TAG,"calcAutoScale($width, $height, q=$qua)")
+            if ((width == 0) or (height == 0)) return //makes no sense
+
             // nexus7 (surface changed) - format=4 w=1280 h=618
             // samsung SM-T580 (surface changed) - format=4 w=1920 h=1068
             val sc1X = width / ((panelRect.right - panelRect.left) * 1.0f)
             val sc1Y = height / ((panelRect.bottom - panelRect.top) * 1.0f)
             var mult = 1f
             if (qua != 0) mult = 2f
+            var scale = 1f
+            var xoff = 0f
+            var yoff = 0f
 
             if (sc1X < sc1Y) { // x-dimensions of panel elements larger than y-dim
                 // (this is normally the case for layout panels)
@@ -272,35 +282,27 @@ class LanbahnPanelApplication : Application() {
                 val wRect = 1.0f * (panelRect.right - panelRect.left) / mult
 
                 when (qua) {
-                    0,1,3 -> xoff = 0f
-                    2,4   -> xoff = - wRect * scale
+                    0, 1, 3 -> xoff = 0f
+                    2, 4 -> xoff = -wRect * scale
                 }
                 when (qua) {
                     0 -> yoff = (hCalc - hRect) / 2
-                    1,2 -> yoff = 0f + (hCalc - hRect) / 2
-                    3,4 -> yoff = (- hRect * scale) + (hCalc - hRect) / 2
+                    1, 2 -> yoff = 0f + (hCalc - hRect) / 2
+                    3, 4 -> yoff = (-hRect * scale) + (hCalc - hRect) / 2
                 }
 
             } else {
-                // TODO implement
-                scale = sc1Y
-                xoff = 0f // width * 2f * (sc1Y / sc1X) / prescale
-                yoff = 0f
+                Log.e(TAG,"this should never happen, as most layouts are 'longer than high' and display is forced to used landscape mode")
             }
 
-            val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
-            val editor = prefs.edit()
-            Log.d(TAG, "saving modified scale")
-            editor.putString(KEY_XOFF, "" + xoff)
-            editor.putString(KEY_YOFF, "" + yoff)
-            editor.putString(KEY_SCALE, "" + scale)
-            // Commit the edits!
-            editor.apply()
+            qClip[qua].scale = scale
+            qClip[qua].xoff = xoff
+            qClip[qua].yoff = yoff
 
-            Log.d(TAG, "calc" +
-                    "" +
-                    " scale=$scale xoff=$xoff yoff=$yoff")
+
+            if (DEBUG) Log.d(TAG, "autoscale result: scale=$scale xoff=$xoff yoff=$yoff (qua=$qua)")
         }
 
     }
 }
+

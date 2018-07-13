@@ -54,8 +54,6 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
     init {
         mScaleDetector = ScaleGestureDetector(context, ScaleListener())
-
-        LanbahnPanelApplication.updatePanelData()
         holder.addCallback(this)
         mThread = ViewThread(this)
 
@@ -120,9 +118,10 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                         mPosX += dx
                         mPosY += dy
                         if ((selectedScale == "manual") && mX > 300 && mY > 200) {
-                            xoff += dx
-                            yoff += dy
+                            qClip[selQuadrant].xoff += dx
+                            qClip[selQuadrant].yoff += dy
                             scalingTime = System.currentTimeMillis()  // avoid control of SX elements during pan-move
+                            if (DEBUG) Log.d(TAG,"new xoff/yoff (qua=$selQuadrant) - xoff=${qClip[selQuadrant].xoff} + yoff=${qClip[selQuadrant].yoff}")
                         }
                         // invalidate();
                         // if (DEBUG)  Log.d(TAG,"mPosX="+mPosX+" mPosY="+mPosY);
@@ -146,8 +145,8 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                         // assuming control area is always at the top !!
 
                         //Log.d(TAG,"ACTION_UP _Checking panel elements at: mlastTouchX="+mLastTouchX+"  mLastTouchY"+mLastTouchY);
-                        val xs = Math.round((mLastTouchX - xoff) / scale / prescale) // reduced by overall dimension scaling factors
-                        val ys = Math.round((mLastTouchY - yoff) / scale / prescale)
+                        val xs = Math.round((mLastTouchX - qClip[selQuadrant].xoff) / qClip[selQuadrant].scale / prescale) // reduced by overall dimension scaling factors
+                        val ys = Math.round((mLastTouchY - qClip[selQuadrant].yoff) / qClip[selQuadrant].scale / prescale)
 
                         Log.d(TAG, "ACTION_UP _Checking panel elements at: xs=$xs  ys$ys")
                         for (e in panelElements) {
@@ -210,7 +209,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         mHeight = height
 
         if (selectedScale == "auto") {
-            LanbahnPanelApplication.calcAutoScale(mWidth, mHeight, quadrant)
+            LanbahnPanelApplication.calcAutoScale(mWidth, mHeight, selQuadrant)
         }
     }
 
@@ -224,18 +223,13 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         //if (USS == true)
         mBitmap.eraseColor(Color.TRANSPARENT) // Color.DKGRAY);
 
-        // label with panel name and display green "unlock", if zoom enabled
-        // upper left corner of display
-        if (selectedScale == "manual") {
-            canvas.drawBitmap(bitmaps["unlock"], 5f, 5f, null)
-        } else {
-            canvas.drawBitmap(bitmaps["lock"], 5f, 5f, null)
-        }
-
+        var sc = qClip[selQuadrant].scale
+        var xo = qClip[selQuadrant].xoff
+        var yo = qClip[selQuadrant].yoff
 
         if ((DEBUG) and ((System.currentTimeMillis() - time0) > 10000)) {
             Log.d(TAG, "panelRect x=(" + panelRect.left + "," + panelRect.right + ") y=(" + panelRect.top + "," + panelRect.bottom + ")")
-            Log.d(TAG, "mWidth=$mWidth mHeight=$mHeight - actual scale=$scale xoff=$xoff yoff=$yoff hCalc=$hCalc hRect=$hRect")
+            Log.d(TAG, "qua=$selQuadrant mWidth=$mWidth mHeight=$mHeight - actual scale=$sc xoff=$xo yoff=$yo} hCalc=$hCalc hRect=$hRect")
             // Samsung SM-T580  panelRect 2040x960 *prescale (=2)
             // metric 1920x1200 pixel , ratio 1.6
             /* for the 4 quadrants       (full layout  autoscale: 0.94 / 0 0)       (experimental)
@@ -249,8 +243,8 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         }
 
         val matrix = Matrix()
-        matrix.postScale(scale , scale)
-        matrix.postTranslate( xoff , yoff)
+        matrix.postScale(sc , sc)
+        matrix.postTranslate( xo , yo)
         for (e in panelElements) {
             e.doDraw(mCanvas)
         }
@@ -267,11 +261,11 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
             if (selectedScale == "manual") {
                 mScaleFactor *= detector.scaleFactor
-                Log.d(TAG, "mScaleFactor=$mScaleFactor")
+
                 // Don't let the object get too small or too large.
                 mScaleFactor = Math.max(0.5f, Math.min(mScaleFactor, 4.0f))
-                Log.d(TAG, "mScaleFactor (lim)=$mScaleFactor")
-                scale = mScaleFactor
+                Log.d(TAG, "new scale (qua=$selQuadrant): scale=$mScaleFactor (limited)")
+                qClip[selQuadrant].scale = mScaleFactor
                 invalidate()
                 scalingTime = System.currentTimeMillis()
             }

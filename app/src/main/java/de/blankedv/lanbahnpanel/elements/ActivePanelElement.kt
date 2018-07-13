@@ -29,8 +29,7 @@ abstract class ActivePanelElement : PanelElement {
      * @return true, if the state of this element has not been communicated
      * during in the last 20 seconds
      */
-    val isExpired: Boolean
-        get() = System.currentTimeMillis() - lastUpdateTime > 20 * 1000
+
 
     constructor() : super(0, 0) {}
 
@@ -122,16 +121,11 @@ abstract class ActivePanelElement : PanelElement {
 
     }
 
-    fun setExpired() {
+    override fun setExpired() {
         lastUpdateTime = System.currentTimeMillis() - 21 * 1000
     }
-
-    companion object {
-
-        // these constants are defined just for easier understanding of the
-        // methods of the classes derived from this class
-
-
+    override fun isExpired(): Boolean {
+        return System.currentTimeMillis() - lastUpdateTime > 20 * 1000
     }
 
 }

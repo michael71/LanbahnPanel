@@ -38,4 +38,14 @@
     <string name="draw_routebtn_addresses">Display RouteBtn/Sensor Addresses</string>
     <string name="questionmark">-?-</string>
     <string name="usageString">to be used with SX3PC program, see SELECTRIX</string>
+    <string name="display_four_quadrants">Display 5 Views (full view + 4 quadrants)</string>
+    <string name="connect">connect</string>
+    <string name="enable_power_control">Enable Global Power Control</string>
+    <string name="power">Power</string>
+    <string name="notification_title">LanbahnPanel running</string>
+    <string name="notification_text">Switch back to Foreground</string>
+    <string name="get_panel_from_server">Download panel file from server</string>
+    <string name="enableAutoscale">Automatic scaling</string>
+    <string name="sel_scale">Select type of scaling</string>
+    <string name="title_activity_settings">Settings</string>
 </resources>

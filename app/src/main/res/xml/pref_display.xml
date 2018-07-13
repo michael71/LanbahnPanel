@@ -17,6 +17,10 @@
         android:title="@string/sel_scale" />
     <CheckBoxPreference
         android:defaultValue="false"
+        android:key="enableFourQuadrantsPref"
+        android:title="@string/display_four_quadrants" />
+    <CheckBoxPreference
+        android:defaultValue="false"
         android:key="flipPref"
         android:title="@string/flipUpsideDown" />
     <CheckBoxPreference

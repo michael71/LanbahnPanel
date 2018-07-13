@@ -11,7 +11,7 @@
         android:title="@string/server_ip" />
 
     <EditTextPreference
-        android:defaultValue="1234"
+        android:defaultValue="4104"
         android:key="portPref"
         android:digits="0123456789"
         android:inputType="textNoSuggestions"

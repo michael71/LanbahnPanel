@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Message
 import android.util.Log
 import de.blankedv.lanbahnpanel.elements.ActivePanelElement
+import de.blankedv.lanbahnpanel.elements.PanelElement
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.util.Utils.threadSleep
 import org.jetbrains.anko.toast
@@ -37,7 +38,7 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
         if (DEBUG) Log.d(TAG, "SXnetClientThread run.")
         shutdownFlag = false
         connectionActive = false
-        val (result,connResult) = connect(ip, port)
+        val (result, connResult) = connect(ip, port)
 
         if (result) {
             // connected !!
@@ -67,7 +68,7 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
             try {
                 if (`in` != null && `in`!!.ready()) {
                     val in1 = `in`!!.readLine()
-                    if (DEBUG) Log.d(TAG, "msgFromServer: $in1")
+                    if (DEBUG) Log.d(TAG, "read: $in1")
                     myClient?.handleReceive(in1.toUpperCase(), rxHandler)
                     countNoResponse = 0 // reset timeout counter.
                     connectionActive = true
@@ -112,12 +113,12 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
 
         socket?.close()
         Log.e(TAG, "RRConnectionThread - socket closed")
-
     }
 
     fun readChannel(addr: Int, peClass: Class<ActivePanelElement>) {
         if (addr == INVALID_INT) return
-        var cmd = myClient?.readChannel(addr, peClass)
+        var cmd = myClient?.readChannel(addr, peClass) ?: return
+
         val success = sendQ.offer(cmd)
         if (!success && DEBUG) {
             Log.d(TAG, "readChannel failed, queue full")
@@ -126,19 +127,19 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
 
     fun readChannel(addr: Int) {
         if (addr == INVALID_INT) return
-        var cmd = myClient?.readChannel(addr)
+        var cmd = myClient?.readChannel(addr) ?: return
         val success = sendQ.offer(cmd)
         if (!success && DEBUG) {
             Log.d(TAG, "readChannel failed, queue full")
         }
     }
 
-    fun setPower(onoff : Boolean) {
-        var cmd = myClient?.setPowerState(onoff)
+    fun setPower(onoff: Boolean) {
+        var cmd = myClient?.setPowerState(onoff) ?: return
         val success = sendQ.offer(cmd)
         if (!success && DEBUG) {
             Log.d(TAG, "setPower failed, queue full")
-            }
+        }
     }
 
     private fun immediateSend(command: String) {
@@ -157,7 +158,7 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
         }
     }
 
-    private fun connect(ip: String, port: Int): Pair<Boolean,String> {
+    private fun connect(ip: String, port: Int): Pair<Boolean, String> {
         if (DEBUG) Log.d(TAG, "trying conn to - $ip:$port")
         try {
             val socketAddress = InetSocketAddress(ip, port)
@@ -176,13 +177,13 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
 
             if (DEBUG) Log.d(TAG, "connected to: $connString")
 
-            return Pair(true,resString)
+            return Pair(true, resString)
 
         } catch (e: Exception) {
             val err = "ERROR: " + e.message
             Log.e(TAG, "RRConnectionThread.connect " + err)
 
-            return Pair(false,err)
+            return Pair(false, err)
         }
 
     }
@@ -191,7 +192,7 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
     // see
     // http://stackoverflow.com/questions/969866/java-detect-lost-connection
     fun isConnected(): Boolean {
-        if ((socket == null) || (connectionActive == false)){
+        if ((socket == null) || (connectionActive == false)) {
             return false
         } else {
             return socket!!.isConnected && !socket!!.isClosed

@@ -1,5 +1,6 @@
 package de.blankedv.lanbahnpanel.util
 
+import android.content.Context
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -8,6 +9,9 @@ import android.graphics.Matrix
 import android.util.Log
 import de.blankedv.lanbahnpanel.model.INVALID_INT
 import de.blankedv.lanbahnpanel.model.TAG
+import android.content.SharedPreferences
+import com.google.gson.Gson
+
 
 /** Utils - utility functions
  *
@@ -80,5 +84,19 @@ object Utils {
         } catch (e: InterruptedException) {
             Log.e(TAG, e.message)
         }
+    }
+
+    fun saveObjectToSharedPreference(editor : SharedPreferences.Editor, serializedObjectKey: String, `object`: Any) {
+        val gson = Gson()
+
+    }
+
+    fun <GenericClass> getSavedObjectFromPreference(context: Context, preferenceFileName: String, preferenceKey: String, classType: Class<GenericClass>): GenericClass? {
+        val sharedPreferences = context.getSharedPreferences(preferenceFileName, 0)
+        if (sharedPreferences.contains(preferenceKey)) {
+            val gson = Gson()
+            return gson.fromJson(sharedPreferences.getString(preferenceKey, ""), classType)
+        }
+        return null
     }
 }

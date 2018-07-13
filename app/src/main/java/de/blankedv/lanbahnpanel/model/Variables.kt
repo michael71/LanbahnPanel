@@ -38,7 +38,6 @@ var saveStates: Boolean = false
 var enableDiscoverTurnouts = false
 var enableFourQuadrantsView = false
 
-var quadrant = 0  // TODO move away from global scope
 var mWidth: Int = 0  // TODO move away from global scope
 var mHeight: Int = 0  // TODO move away from global scope
 
@@ -68,12 +67,24 @@ var configHasChanged = false // store info whether config
 // has changed
 // if true, then a new config file is written at the end of the Activity
 
+/**
+ * the 4 quadrants can have different scaling, a scale consists of
+ *
+ * @param scale = scaling of panelElements when displayed (both for X and Y)
+ * @param xoff = offset on x axis
+ * @param yoff = offset on y axis
+ */
+data class Scaling (var scale : Float, var xoff :  Float, var yoff:  Float)
+
+@Volatile var selQuadrant = 0  // TODO move away from global scope
+
 //var zoomEnabled: Boolean = false
-var scale = 1.0f // user selectable scaling of panel area
-
-var xoff = (10 * prescale).toFloat()
-var yoff = (50 * prescale).toFloat()
-
+@Volatile var qClip = arrayOf(
+        Scaling(1.0f, (10f * prescale), (10f * prescale)),  // selQuadrant 0 = all
+        Scaling(1.0f, (10f * prescale), (10f * prescale)),  // selQuadrant  1
+        Scaling(1.0f, (10f * prescale), (10f * prescale)),  // ... 2
+        Scaling(1.0f, (10f * prescale), (10f * prescale)),
+        Scaling(1.0f, (10f * prescale), (10f * prescale)))
 
 var enableEdit = false
 var enableRoutes = false

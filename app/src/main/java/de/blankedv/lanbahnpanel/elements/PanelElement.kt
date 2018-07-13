@@ -84,6 +84,14 @@ open class PanelElement {
         return false
     }
 
+    open fun setExpired() {
+        // do nothing for non changing element
+    }
+
+    open fun isExpired() : Boolean {
+        return false // non changing element
+    }
+
     open fun toggle() {
         // do nothing for non changing element
     }

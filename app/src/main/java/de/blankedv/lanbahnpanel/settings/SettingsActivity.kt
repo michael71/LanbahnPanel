@@ -7,11 +7,6 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.preference.ListPreference
-import android.preference.Preference
-import android.preference.PreferenceActivity
-import android.preference.PreferenceFragment
-import android.preference.PreferenceManager
 import android.view.MenuItem
 import android.support.v4.app.NavUtils
 import android.util.Log
@@ -19,6 +14,10 @@ import de.blankedv.lanbahnpanel.R
 import de.blankedv.lanbahnpanel.model.*
 import java.io.File
 import java.util.ArrayList
+import android.R.attr.key
+import android.content.SharedPreferences
+import android.preference.*
+
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On
@@ -35,6 +34,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupActionBar()
+
+
     }
 
     /**
@@ -62,6 +63,9 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         return isLargeTablet(this)
     }
 
+    /*override fun onSharedPreferenceChanged(p0: SharedPreferences?, key: String?) {
+        Log.d(TAG,"pref changed, key="+key)
+    } */
     /**
      * {@inheritDoc}
      */
@@ -130,6 +134,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             bindPreferenceSummaryToValue(findPreference(KEY_STYLE_PREF))
             bindPreferenceSummaryToValue(findPreference(KEY_SCALE_PREF))
             //bindPreferenceSummaryToValue(findPreference(KEY_ENABLE_EDIT))
+            // NOT USED, only result is checked after onResume in LanbahnPanelActivity
+            //    bindPreferenceToBoolValue(findPreference(KEY_FOUR_QUADRANTS_PREF))
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -140,6 +146,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             }
             return super.onOptionsItemSelected(item)
         }
+
+
     }
 
     /**
@@ -213,14 +221,14 @@ class SettingsActivity : AppCompatPreferenceActivity() {
          * to reflect its new value.
          */
         private val sBindPreferenceSummaryToValueListener = Preference.OnPreferenceChangeListener { preference, value ->
-            val stringValue = value.toString()
 
             if (preference is ListPreference) {
                 // For list preferences, look up the correct display value in
                 // the preference's 'entries' list.
                 val listPreference = preference
+                val stringValue = value.toString()
                 val index = listPreference.findIndexOfValue(stringValue)
-
+                Log.d(TAG, "setting summary, key=" + preference.key)
                 // Set the summary to reflect the new value.
                 preference.setSummary(
                         if (index >= 0)
@@ -231,11 +239,27 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             } else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
+                val stringValue = value.toString()
                 preference.summary = stringValue
                 Log.d(TAG, "setting summary, key=" + preference.key)
             }
             true
         }
+        /* NOT USED
+            private val sBindPreferenceToBoolListener = Preference.OnPreferenceChangeListener { preference, value ->
+
+            if (preference is CheckBoxPreference) {
+                val checkBoxPreference = preference
+                Log.d(TAG, "settings, key=" + preference.key + " value="+value)
+
+                if (preference.key == KEY_FOUR_QUADRANTS_PREF) {
+                    if (value == false) {
+                        selQuadrant = 0   // needs to be reset
+                    }
+                }
+            }
+            true
+        } */
 
         /**
          * Helper method to determine if the device has an extra-large screen. For
@@ -265,5 +289,19 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                             .getDefaultSharedPreferences(preference.context)
                             .getString(preference.key, ""))
         }
+
+        /* NOT USED
+           private fun bindPreferenceToBoolValue(preference: Preference) {
+
+            // Set the listener to watch for value changes.
+            preference.onPreferenceChangeListener = sBindPreferenceSummaryToValueListener
+
+            // Trigger the listener immediately with the preference's
+            // current value.
+            sBindPreferenceToBoolListener.onPreferenceChange(preference,
+                    PreferenceManager
+                            .getDefaultSharedPreferences(preference.context)
+                            .getBoolean(preference.key, false))
+        } */
     }
 }

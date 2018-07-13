@@ -47,25 +47,23 @@
     <string name="default_sxnet_port" translatable="false">4104</string>
     <string name="default_server_ip" translatable="false">192.168.2.50</string>
     <string name="questionmark">-?-</string>
-<string name="notification_title" translatable="false">LanbahnPanel running</string>
-    <string name="notification_text" translatable="false">re-open LanbahnPanel</string>
+    <string name="notification_title">LanbahnPanel running</string>
+    <string name="notification_text">re-open LanbahnPanel</string>
     <string name="default_notification_channel_id" translatable="false">lanbahn_default_channel</string>
-    <!--
-        This is the name that users will see when interacting with this channel.
-        It should describe the category of notifications that will be sent through this channel
-     -->
+
     <string name="default_notification_channel_name" translatable="false">Lanbahn</string>
     <string name="check_service" translatable="false">Check Service</string>
     <string name="panel_cfg_files" translatable="false">Panel XML Config File</string>
     <string name="server_ip" translatable="false">Server IP address</string>
     <string name="server_port" translatable="false">Server port</string>
     <string name="not_connected" translatable="false">currently not connected to a server</string>
-<string name="get_panel_from_server" translatable="false">Get panel file from server</string>
+    <string name="get_panel_from_server">Download panel file from server</string>
     <string name="enableAutoscale">Automatic scale</string>
     <string name="sel_scale">Select type of scaling</string>
-    <string name="sel_scale_default">auto</string>
+    <string name="sel_scale_default" translatable="false">auto</string>
     <string name="title_activity_settings">Settings</string>
-    <string name="pref_header_server">Server</string>
-    <string name="pref_header_display">Display</string>
-    <string name="pref_header_control">Control</string>
+    <string name="pref_header_server" translatable="false">Server</string>
+    <string name="pref_header_display" translatable="false">Display</string>
+    <string name="pref_header_control" translatable="false">Control</string>
+    <string name="display_four_quadrants">Display 5 views (full + 4 quadrants)</string>
 </resources>

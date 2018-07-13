@@ -35,11 +35,13 @@ import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import de.blankedv.lanbahnpanel.elements.Route
 import de.blankedv.lanbahnpanel.elements.RouteButtonElement
 import de.blankedv.lanbahnpanel.model.*
-import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.calcAutoScale
 import de.blankedv.lanbahnpanel.railroad.RRConnectionThread
 import de.blankedv.lanbahnpanel.settings.SettingsActivity
 import de.blankedv.lanbahnpanel.util.Utils.threadSleep
 import org.jetbrains.anko.*
+import android.content.SharedPreferences
+
+
 
 /**
  * LanbahnPanelActivity is the MAIN activity of the lanbahn panel
@@ -124,7 +126,10 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
         openCommunication()
 
+
     }
+
+
 
     override fun onBackPressed() {
         super.onBackPressed()
@@ -189,14 +194,13 @@ class LanbahnPanelActivity : AppCompatActivity() {
         (application as LanbahnPanelApplication).loadZoomEtc()   // get preferences
 
         var newPanel = reloadConfigIfPanelFileChanged()
-        if (newPanel) quadrant = 0  // reset view
+        if (newPanel) selQuadrant = 0  // reset view
         Route.clearAllRoutes()
 
-        // set quadrants mode only for large panels and auto-scale mode
-        enableFourQuadrantsView = ((selectedScale == "auto") && ( panelElements.size >= N_PANEL_FOR_4Q))
+        // set quadrants mode and display selected selQuadrant
         enableForQuadrantButtons(enableFourQuadrantsView)
-        displayQuadrant(quadrant);
-
+        displayQuadrant(selQuadrant);
+        displayLockState()
 
         if (DEBUG) debugLogDisplayMetrics()
 
@@ -208,40 +212,23 @@ class LanbahnPanelActivity : AppCompatActivity() {
             loadStates()
         }
 
-        refreshAllData()
-        LanbahnPanelApplication.updatePanelData()
+        LanbahnPanelApplication.expireAllPanelElements()
+        LanbahnPanelApplication.requestAllPanelData()
 
-
-
+        mHandler.postDelayed({ updateUI() }, 500)
 
         (application as LanbahnPanelApplication).removeNotification()
         title = "Lanbahn Panel \"$panelName\""
 
     }
 
-    /**
-     * set all active panel elements to "expired" to have them updated soon
-     */
-    private fun refreshAllData() {
-        for (e in panelElements) {
-            if (e is ActivePanelElement) {
-                // add its address to list of interesting addresses
-                // only needed for active elements, not for tracks
-                val a = e.adr
-                if (a != INVALID_INT) {
-                    e.setExpired()
-                }
-            }
-        }
-
-        mHandler.postDelayed({ updateUI() }, 500)
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
         mOptionsMenu = menu
         setConnectionIcon()
         enableForQuadrantButtons(enableFourQuadrantsView)
+        displayLockState()
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -293,12 +280,12 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 return true
             }
 
-            R.id.menu_check_service -> {
+            /* R.id.menu_check_service -> {
                 //TODO int num = mService.getRandomNumber();
                 toast("not implemented")
                 // "number: " + num, Toast.LENGTH_SHORT).show();
                 return true
-            }
+            } */
             R.id.menu_quit -> {
                 val alert = builder.create()
                 alert.show()
@@ -337,7 +324,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         }, 100, 100)
 
         // request updates for all channels used in Panel
-        LanbahnPanelApplication.updatePanelData()
+        // is now done in OnResume LanbahnPanelApplication.updateAllPanelData()
     }
 
     private fun updateUI() {
@@ -351,6 +338,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         // https://stackoverflow.com/questions/38660735/how-bind-android-databinding-to-menu
         setConnectionIcon()
         setPowerStateIcon()
+        //displayLockState()
         Route.auto()
         mHandler.postDelayed({ updateUI() }, 500)
     }
@@ -373,10 +361,21 @@ class LanbahnPanelActivity : AppCompatActivity() {
         }
     }
 
+    private fun displayLockState() {
+        if (DEBUG) Log.d(TAG,"selectedScale = $selectedScale")
+        when (selectedScale) {
+            "auto" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_letter_a)
+            "manual" ->  mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_lock_open_white_48dp)
+            "locked" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_lock_white_48dp)
+        }
+     }
+
     private fun displayQuadrant(q: Int) {
         // 0 means "ALL"
-          quadrant = q
-          calcAutoScale(mWidth, mHeight, quadrant)
+        selQuadrant = q
+        if (selectedScale == "auto") {
+            LanbahnPanelApplication.calcAutoScale(mWidth, mHeight, selQuadrant)
+        }
     }
 
 
@@ -489,9 +488,9 @@ class LanbahnPanelActivity : AppCompatActivity() {
         Thread.sleep(300)
 
         if (connectionIsAlive()) {
-            requestAllRailroadData()
+            LanbahnPanelApplication.requestAllPanelData()
         } else {
-            val msg = " NO CONNECTION TO $ip ! Check WiFi/SSID and IP"
+            val msg = " NO CONNECTION TO $ip:$port! Check WiFi/SSID and server settings "
             longToast(msg)
             conn_state_string = "NOT CONNECTED"
         }
@@ -621,15 +620,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         lateinit var popUp: PopupWindow
         lateinit var layout: LinearLayout
 
-        // request state of all active panel elements
-        private fun requestAllRailroadData() {
-            for (pe in panelElements) {
-                if (pe is ActivePanelElement) {
-                    // TODO val type = 0  // TODO - no types for SX, but for loconet (sensor/acc/lissy)
-                    client?.readChannel(pe.adr, pe.javaClass)
-                }
-            }
-        }
+
     }
 
 
