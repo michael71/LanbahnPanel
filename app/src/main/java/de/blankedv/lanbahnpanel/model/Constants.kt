@@ -29,7 +29,7 @@ const val KEY_IP = "ipPref"
 const val KEY_PORT = "portPref"
 const val KEY_CONFIG_FILE = "configFilenamePref"
 const val KEY_QUADRANT = "lastQuadrant"
-const val KEY_FOUR_QUADRANTS_PREF = "enableFourQuadrantsPref"
+const val KEY_FIVE_VIEWS_PREF = "enableFiveViewsPref"
 const val KEY_Q_CLIP = "qClipPref"
 
 /** {@value #N_PANEL_FOR_4Q} = minimum number of panel elements to display the 4 quadrants */

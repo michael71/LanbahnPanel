@@ -36,7 +36,7 @@ var drawAddresses2 = false
 var flipUpsideDown = false  //display all panel element from "other side"
 var saveStates: Boolean = false
 var enableDiscoverTurnouts = false
-var enableFourQuadrantsView = false
+var enableFiveViews = false
 
 var mWidth: Int = 0  // TODO move away from global scope
 var mHeight: Int = 0  // TODO move away from global scope

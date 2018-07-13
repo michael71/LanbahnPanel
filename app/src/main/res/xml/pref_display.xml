@@ -17,8 +17,8 @@
         android:title="@string/sel_scale" />
     <CheckBoxPreference
         android:defaultValue="false"
-        android:key="enableFourQuadrantsPref"
-        android:title="@string/display_four_quadrants" />
+        android:key="enableFiveViewsPref"
+        android:title="@string/display_five_views" />
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="flipPref"

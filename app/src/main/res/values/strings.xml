@@ -65,5 +65,5 @@
     <string name="pref_header_server" translatable="false">Server</string>
     <string name="pref_header_display" translatable="false">Display</string>
     <string name="pref_header_control" translatable="false">Control</string>
-    <string name="display_four_quadrants">Display 5 views (full + 4 quadrants)</string>
+    <string name="display_five_views">Display 5 views (full + 4 quadrants)</string>
 </resources>

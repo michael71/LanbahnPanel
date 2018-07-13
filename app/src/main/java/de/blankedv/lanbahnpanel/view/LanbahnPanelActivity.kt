@@ -39,8 +39,6 @@ import de.blankedv.lanbahnpanel.railroad.RRConnectionThread
 import de.blankedv.lanbahnpanel.settings.SettingsActivity
 import de.blankedv.lanbahnpanel.util.Utils.threadSleep
 import org.jetbrains.anko.*
-import android.content.SharedPreferences
-
 
 
 /**
@@ -198,7 +196,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         Route.clearAllRoutes()
 
         // set quadrants mode and display selected selQuadrant
-        enableForQuadrantButtons(enableFourQuadrantsView)
+        enableForQuadrantButtons(enableFiveViews)
         displayQuadrant(selQuadrant);
         displayLockState()
 
@@ -227,7 +225,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu, menu)
         mOptionsMenu = menu
         setConnectionIcon()
-        enableForQuadrantButtons(enableFourQuadrantsView)
+        enableForQuadrantButtons(enableFiveViews)
         displayLockState()
         return super.onCreateOptionsMenu(menu)
     }
@@ -247,23 +245,23 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 return true
             }
             R.id.action_q1 -> {
-                if (enableFourQuadrantsView) displayQuadrant(1)
+                if (enableFiveViews) displayQuadrant(1)
                 return true
             }
             R.id.action_q2 -> {
-                if (enableFourQuadrantsView) displayQuadrant(2)
+                if (enableFiveViews) displayQuadrant(2)
                 return true
             }
             R.id.action_q3 -> {
-                if (enableFourQuadrantsView) displayQuadrant(3)
+                if (enableFiveViews) displayQuadrant(3)
                 return true
             }
             R.id.action_q4 -> {
-                if (enableFourQuadrantsView) displayQuadrant(4)
+                if (enableFiveViews) displayQuadrant(4)
                 return true
             }
             R.id.action_qall -> {
-                if (enableFourQuadrantsView) displayQuadrant(0)
+                if (enableFiveViews) displayQuadrant(0)
                 return true
             }
             R.id.action_power -> {

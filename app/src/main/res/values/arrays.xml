@@ -14,9 +14,9 @@
         <item>UK</item>  
    </string-array>
     <string-array name="scaling">
-        <item>Automatic scale</item>
-        <item>Manual (Zoom/Pan)</item>
-        <item>Lock manual</item>
+        <item>Automatische Skalierung</item>
+        <item>Manuell (Zoom/Pan)</item>
+        <item>Skala fest</item>
     </string-array>
     <string-array name="scaling_values">
         <item>auto</item>

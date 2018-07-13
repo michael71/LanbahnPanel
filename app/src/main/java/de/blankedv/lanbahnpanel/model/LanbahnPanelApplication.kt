@@ -148,8 +148,8 @@ class LanbahnPanelApplication : Application() {
         drawAddresses2 = prefs.getBoolean(KEY_DRAW_ADR2, false)
         enableRoutes = prefs.getBoolean(KEY_ROUTES, false)
         flipUpsideDown = prefs.getBoolean(KEY_FLIP, false)
-        enableFourQuadrantsView = prefs.getBoolean(KEY_FOUR_QUADRANTS_PREF, false)
-        if (enableFourQuadrantsView == true) {
+        enableFiveViews = prefs.getBoolean(KEY_FIVE_VIEWS_PREF, false)
+        if (enableFiveViews == true) {
             selQuadrant = prefs.getInt(KEY_QUADRANT, 0)   // currently display selQuadrant
         } else {
             selQuadrant = 0  // must be reset, because we only have one view left

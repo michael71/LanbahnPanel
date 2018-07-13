@@ -38,13 +38,13 @@
     <string name="unknown">-?-</string>
     <string name="wifi_disconnected">Kein WLAN !</string>
     <string name="questionmark">-?-</string>
-    <string name="display_four_quadrants">Anzeige von 4 Views (Quadranten)</string>
+    <string name="display_five_views">Anzeige von 5 Ansichten (Voll + 4 Quadranten)</string>
     <string name="connect">Verbinden</string>
     <string name="enable_power_control">Gleisspannung durch Tablet ein/aus-schaltbar</string>
     <string name="power">Gleisspannung</string>
     <string name="notification_title">LanbahnPanel Programm läuft noch im Hintergrund</string>
     <string name="notification_text">Wieder in den Vordergrund bringen</string>
-    <string name="get_panel_from_server">Den Panel-File vom Server laden</string>
+    <string name="get_panel_from_server">Panel-File vom Server laden</string>
     <string name="enableAutoscale">Automatische Skalierung</string>
     <string name="sel_scale">Art der Skalierung auswählen</string>
     <string name="title_activity_settings">Einstellungen</string>

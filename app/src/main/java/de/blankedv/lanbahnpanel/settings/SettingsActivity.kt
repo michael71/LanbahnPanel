@@ -135,7 +135,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             bindPreferenceSummaryToValue(findPreference(KEY_SCALE_PREF))
             //bindPreferenceSummaryToValue(findPreference(KEY_ENABLE_EDIT))
             // NOT USED, only result is checked after onResume in LanbahnPanelActivity
-            //    bindPreferenceToBoolValue(findPreference(KEY_FOUR_QUADRANTS_PREF))
+            //    bindPreferenceToBoolValue(findPreference(KEY_VIEW_VIEWS_PREF))
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -252,7 +252,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 val checkBoxPreference = preference
                 Log.d(TAG, "settings, key=" + preference.key + " value="+value)
 
-                if (preference.key == KEY_FOUR_QUADRANTS_PREF) {
+                if (preference.key == KEY_VIEW_VIEWS_PREF) {
                     if (value == false) {
                         selQuadrant = 0   // needs to be reset
                     }
