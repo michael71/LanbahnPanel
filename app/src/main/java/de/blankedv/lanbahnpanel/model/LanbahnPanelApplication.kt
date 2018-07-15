@@ -7,6 +7,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Handler
 import android.os.Message
@@ -98,7 +99,6 @@ class LanbahnPanelApplication : Application() {
             }
 
         }
-
     }
 
 
@@ -125,8 +125,9 @@ class LanbahnPanelApplication : Application() {
 
         editor.putInt(KEY_QUADRANT, selQuadrant)
         val serializedObject = Gson().toJson(`qClip`)
-        if (DEBUG) Log.d(TAG,"qClip="+serializedObject)
-        editor.putString(KEY_Q_CLIP, serializedObject)
+        if (DEBUG) Log.d(TAG, "panel=$panelName qClip=" + serializedObject)
+        panelName
+        editor.putString(KEY_Q_CLIP+"_"+panelName, serializedObject)
         /* for each selQuadrant: editor.putString(KEY_XOFF, "" + xoff)
         editor.putString(KEY_YOFF, "" + yoff)
         editor.putString(KEY_SCALE, "" + scale) */
@@ -140,7 +141,7 @@ class LanbahnPanelApplication : Application() {
         //zoomEnabled = prefs.getBoolean(KEY_ENABLE_ZOOM, false)
         //Log.d(TAG, "zoomEnabled=$zoomEnabled")
         selectedStyle = prefs.getString(KEY_STYLE_PREF, "US")
-        LPaints.init(prescale, selectedStyle)
+        LPaints.init(prescale, selectedStyle, applicationContext)
         selectedScale = prefs.getString(KEY_SCALE_PREF, "auto")
         enableEdit = prefs.getBoolean(KEY_ENABLE_EDIT, false)
         saveStates = prefs.getBoolean(KEY_SAVE_STATES, false)
@@ -155,12 +156,17 @@ class LanbahnPanelApplication : Application() {
             selQuadrant = 0  // must be reset, because we only have one view left
         }
 
-        if (prefs.contains(KEY_Q_CLIP)) {
+        if (prefs.contains(KEY_Q_CLIP+"_"+panelName)) {
             val gson = Gson()
-            if (DEBUG) Log.d(TAG,"qClip="+prefs.getString(KEY_Q_CLIP,"??"))
-            qClip = gson.fromJson(prefs.getString(KEY_Q_CLIP, ""), qClip.javaClass)
+            if (DEBUG) Log.d(TAG, "panel=$panelName qClip=" + prefs.getString(KEY_Q_CLIP, "??"))
+            qClip = gson.fromJson(prefs.getString(KEY_Q_CLIP+"_"+panelName, ""), qClip.javaClass)
         } else {
-            // qClip was already initialized in Variables.kt
+            qClip = arrayOf(
+                    Scaling(1.0f, (10f * prescale), (10f * prescale)),  // selQuadrant 0 = all
+                    Scaling(1.0f, (10f * prescale), (10f * prescale)),  // selQuadrant  1
+                    Scaling(1.0f, (10f * prescale), (10f * prescale)),  // ... 2
+                    Scaling(1.0f, (10f * prescale), (10f * prescale)),
+                    Scaling(1.0f, (10f * prescale), (10f * prescale)))
         }
 
 
@@ -212,14 +218,14 @@ class LanbahnPanelApplication : Application() {
          * set all active panel elements to "expired" to have them updated soon
          */
         fun expireAllPanelElements() {
-            if (DEBUG) Log.d(TAG,"expireAllPanelData()")
+            if (DEBUG) Log.d(TAG, "expireAllPanelData()")
             for (pe in panelElements.filter { it is ActivePanelElement }) {
                 pe.setExpired()
             }
         }
 
         fun requestAllPanelData() {
-            if (DEBUG) Log.d(TAG,"requstAllPanelData()")
+            if (DEBUG) Log.d(TAG, "requstAllPanelData()")
             // request state of all active panel elements
             for (pe in panelElements.filter { it.adr != INVALID_INT && (it.isExpired() == true) }) {
                 if (pe is ActivePanelElement) {
@@ -234,7 +240,7 @@ class LanbahnPanelApplication : Application() {
          * no current data at application restart
          */
         fun clearPanelData() {
-            if (DEBUG) Log.d(TAG,"clearAllPanelData()")
+            if (DEBUG) Log.d(TAG, "clearAllPanelData()")
             for (e in panelElements) {
                 e.state = STATE_UNKNOWN
             }
@@ -259,7 +265,7 @@ class LanbahnPanelApplication : Application() {
          * set global scale values for this quadrant (variable qClip[qua].scale, .xoff, .yoff )
          */
         fun calcAutoScale(width: Int, height: Int, qua: Int) {
-            if (DEBUG) Log.d(TAG,"calcAutoScale($width, $height, q=$qua)")
+            if (DEBUG) Log.d(TAG, "calcAutoScale($width, $height, q=$qua)")
             if ((width == 0) or (height == 0)) return //makes no sense
 
             // nexus7 (surface changed) - format=4 w=1280 h=618
@@ -272,27 +278,41 @@ class LanbahnPanelApplication : Application() {
             var xoff = 0f
             var yoff = 0f
 
+            val hRect = 1.0f * (panelRect.bottom - panelRect.top) / mult
+            val wRect = 1.0f * (panelRect.right - panelRect.left) / mult
+
             if (sc1X < sc1Y) { // x-dimensions of panel elements larger than y-dim
                 // (this is normally the case for layout panels)
 
                 scale = sc1X * mult
                 val hCalc = height / scale
-                val hRect = 1.0f * (panelRect.bottom - panelRect.top) / mult
-                val wCalc = height / scale
-                val wRect = 1.0f * (panelRect.right - panelRect.left) / mult
 
                 when (qua) {
-                    0, 1, 3 -> xoff = 0f
+                    0    -> xoff = 0f
+                    1, 3 -> xoff = 0f
                     2, 4 -> xoff = -wRect * scale
                 }
                 when (qua) {
-                    0 -> yoff = (hCalc - hRect) / 2
-                    1, 2 -> yoff = 0f + (hCalc - hRect) / 2
-                    3, 4 -> yoff = (-hRect * scale) + (hCalc - hRect) / 2
+                    0    -> yoff = scale * (hCalc - hRect) / 2
+                    1, 2 -> yoff = scale * (hCalc - hRect) / 2
+                    3, 4 -> yoff = - scale * (hCalc - hRect) / 2
                 }
 
             } else {
-                Log.e(TAG,"this should never happen, as most layouts are 'longer than high' and display is forced to used landscape mode")
+
+                scale = sc1Y * mult
+                val wCalc = width / scale
+
+                when (qua) {
+                    0    -> xoff = scale * (wCalc - wRect) / 2
+                    1, 3 -> xoff = scale * (wCalc - wRect) / 2
+                    2, 4 -> xoff = - scale * (wCalc + wRect) / 2
+                }
+                when (qua) {
+                    0    -> yoff = 0f
+                    1, 2 -> yoff = 0f
+                    3, 4 -> yoff = (-hRect * scale)
+                }
             }
 
             qClip[qua].scale = scale

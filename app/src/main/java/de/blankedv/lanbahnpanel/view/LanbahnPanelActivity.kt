@@ -5,12 +5,15 @@ import android.app.AlertDialog
 import android.app.AlertDialog.Builder
 import android.content.*
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 
 import android.os.*
 import android.preference.PreferenceManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.app.ActionBar
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Menu
@@ -124,9 +127,11 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
         openCommunication()
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getSupportActionBar()?.setBackgroundDrawable(ColorDrawable(-0xcf77d0))
+        }
 
     }
-
 
 
     override fun onBackPressed() {
@@ -158,11 +163,11 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
         (application as LanbahnPanelApplication).saveZoomEtc()
         //if (configHasChanged) {
-            if (checkStorageWritePermission()) {
-                WriteConfig.toXMLFile()
-            } else {
-                toast("ERROR: App has NO PERMISSION to write files !")
-            }
+        if (checkStorageWritePermission()) {
+            WriteConfig.toXMLFile()
+        } else {
+            toast("ERROR: App has NO PERMISSION to write files !")
+        }
         //}
         if (saveStates)
             saveStates()
@@ -190,6 +195,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         sendQ.clear()
 
         (application as LanbahnPanelApplication).loadZoomEtc()   // get preferences
+        setActionBarBackground()  // matching to panel style
 
         var newPanel = reloadConfigIfPanelFileChanged()
         if (newPanel) selQuadrant = 0  // reset view
@@ -217,6 +223,17 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
         (application as LanbahnPanelApplication).removeNotification()
         title = "Lanbahn Panel \"$panelName\""
+
+    }
+
+    private fun setActionBarBackground() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return // does not work for old android versions
+
+        when (selectedStyle) {
+           "US" -> getSupportActionBar()?.setBackgroundDrawable(ColorDrawable(-0xff990f)) //Color.BLUE))  // TODO color ??
+           "UK" -> getSupportActionBar()?.setBackgroundDrawable(ColorDrawable(-0xdfAAdd))  // kotlin: 0xffff0000.toInt()
+           "DE" -> getSupportActionBar()?.setBackgroundDrawable(ColorDrawable(Color.BLUE))
+        }
 
     }
 

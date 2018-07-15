@@ -4,8 +4,8 @@
 
 package de.blankedv.lanbahnpanel.model
 
-const val DEBUG = true
-const val TAG = "LanbahnPanelActivity"
+const val DEBUG = true   // false for release-apk
+const val TAG = "LanbahnPanel"
 
 const val INVALID_INT = -1
 

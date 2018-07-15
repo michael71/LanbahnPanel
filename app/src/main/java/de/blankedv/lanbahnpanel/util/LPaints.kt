@@ -1,10 +1,15 @@
 package de.blankedv.lanbahnpanel.util
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.graphics.Paint.Style
+import android.graphics.drawable.ColorDrawable
+import android.os.Build
+import android.support.v4.content.ContextCompat.getDrawable
 import android.text.TextPaint
+import de.blankedv.lanbahnpanel.R
 
 /**
  * initialize all paints for later use in onDraw() methods (depending on diplay style/theme)
@@ -40,7 +45,7 @@ object LPaints {
     var addressPaint = TextPaint()
     var panelNamePaint = TextPaint()
 
-    fun init(prescale: Int, selectedStyle : String) {
+    fun init(prescale: Int, selectedStyle : String, ctx : Context) {
 
         BG_COLOR = Color.DKGRAY // panel background color
 
@@ -207,7 +212,7 @@ object LPaints {
                 addressBGPaint.color = Color.DKGRAY
                 panelNamePaint.color = Color.BLACK
 
-            }
+                }
         }
 
     }
