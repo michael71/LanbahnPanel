@@ -7,6 +7,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Handler
@@ -127,7 +128,7 @@ class LanbahnPanelApplication : Application() {
         val serializedObject = Gson().toJson(`qClip`)
         if (DEBUG) Log.d(TAG, "panel=$panelName qClip=" + serializedObject)
         panelName
-        editor.putString(KEY_Q_CLIP+"_"+panelName, serializedObject)
+        editor.putString(KEY_Q_CLIP + "_" + panelName, serializedObject)
         /* for each selQuadrant: editor.putString(KEY_XOFF, "" + xoff)
         editor.putString(KEY_YOFF, "" + yoff)
         editor.putString(KEY_SCALE, "" + scale) */
@@ -156,10 +157,10 @@ class LanbahnPanelApplication : Application() {
             selQuadrant = 0  // must be reset, because we only have one view left
         }
 
-        if (prefs.contains(KEY_Q_CLIP+"_"+panelName)) {
+        if (prefs.contains(KEY_Q_CLIP + "_" + panelName)) {
             val gson = Gson()
             if (DEBUG) Log.d(TAG, "panel=$panelName qClip=" + prefs.getString(KEY_Q_CLIP, "??"))
-            qClip = gson.fromJson(prefs.getString(KEY_Q_CLIP+"_"+panelName, ""), qClip.javaClass)
+            qClip = gson.fromJson(prefs.getString(KEY_Q_CLIP + "_" + panelName, ""), qClip.javaClass)
         } else {
             qClip = arrayOf(
                     Scaling(1.0f, (10f * prescale), (10f * prescale)),  // selQuadrant 0 = all
@@ -255,6 +256,14 @@ class LanbahnPanelApplication : Application() {
             }
         }
 
+        fun calcAllAutoscales(w: Int, h: Int) {
+            calcAutoScale(w, h, 0)
+            calcAutoScale(w, h, 1)
+            calcAutoScale(w, h, 2)
+            calcAutoScale(w, h, 3)
+            calcAutoScale(w, h, 4)
+        }
+
         /**
          * calculate optimum scale from surfaceHolder width and height
          *
@@ -268,53 +277,93 @@ class LanbahnPanelApplication : Application() {
             if (DEBUG) Log.d(TAG, "calcAutoScale($width, $height, q=$qua)")
             if ((width == 0) or (height == 0)) return //makes no sense
 
-            // nexus7 (surface changed) - format=4 w=1280 h=618
-            // samsung SM-T580 (surface changed) - format=4 w=1920 h=1068
-            val sc1X = width / ((panelRect.right - panelRect.left) * 1.0f)
-            val sc1Y = height / ((panelRect.bottom - panelRect.top) * 1.0f)
-            var mult = 1f
-            if (qua != 0) mult = 2f
+            // Rect(int left, int top, int right, int bottom)
+            val re = Rect(panelRect)
             var scale = 1f
             var xoff = 0f
             var yoff = 0f
 
-            val hRect = 1.0f * (panelRect.bottom - panelRect.top) / mult
-            val wRect = 1.0f * (panelRect.right - panelRect.left) / mult
-
-            if (sc1X < sc1Y) { // x-dimensions of panel elements larger than y-dim
-                // (this is normally the case for layout panels)
-
-                scale = sc1X * mult
-                val hCalc = height / scale
-
-                when (qua) {
-                    0    -> xoff = 0f
-                    1, 3 -> xoff = 0f
-                    2, 4 -> xoff = -wRect * scale
+            when (qua) {
+                1 -> {
+                    re.right = re.left + (re.right - re.left) / 2
+                    re.bottom = re.top + (re.bottom - re.top) / 2
                 }
-                when (qua) {
-                    0    -> yoff = scale * (hCalc - hRect) / 2
-                    1, 2 -> yoff = scale * (hCalc - hRect) / 2
-                    3, 4 -> yoff = - scale * (hCalc - hRect) / 2
+                2 -> {
+                    re.left = re.left + (re.right - re.left) / 2
+                    re.bottom = re.top + (re.bottom - re.top) / 2
                 }
-
-            } else {
-
-                scale = sc1Y * mult
-                val wCalc = width / scale
-
-                when (qua) {
-                    0    -> xoff = scale * (wCalc - wRect) / 2
-                    1, 3 -> xoff = scale * (wCalc - wRect) / 2
-                    2, 4 -> xoff = - scale * (wCalc + wRect) / 2
+                3 -> {
+                    re.right = re.left + (re.right - re.left) / 2
+                    re.top = re.top + (re.bottom - re.top) / 2
                 }
-                when (qua) {
-                    0    -> yoff = 0f
-                    1, 2 -> yoff = 0f
-                    3, 4 -> yoff = (-hRect * scale)
+                4 -> {
+                    re.left = re.left + (re.right - re.left) / 2
+                    re.top = re.top + (re.bottom - re.top) / 2
                 }
             }
+            // nexus7 (surface changed) - format=4 w=1280 h=618
+            // samsung SM-T580 (surface changed) - format=4 w=1920 h=1068
+            val sc1X = width / ((re.right - re.left) * 1.0f)
+            val sc1Y = height / ((re.bottom - re.top) * 1.0f)
 
+            scale = Math.min(sc1X,sc1Y)
+            val fact = sc1X / sc1Y
+
+            val hRect = 1.0f * (re.bottom - re.top)
+            val wRect = 1.0f * (re.right - re.left)
+
+            if (sc1X < sc1Y) {
+                if (DEBUG) Log.d(TAG,"autoscale sc1X < sc1Y fact=$fact")
+                val hCalc = height / scale
+                when (qua) {
+                    0 -> { xoff = 0f   //correct
+                        yoff = scale * (hCalc - hRect) / 2 //correct
+                    }
+                    1 -> {
+                        xoff = 0f  //correct
+                        yoff = 0f   //correct
+                    }
+                    2 -> {
+                        xoff = - ( panelRect.left + (panelRect.right - panelRect.left) / 2.0f) * scale  // CORRECT
+                        yoff = 0f    //correct
+                    }
+                    3 -> {
+                        xoff = 0f   //correct
+                        yoff = - ( re.top + (re.bottom - re.top) / 2f )   //correct
+                    }
+                    4 -> {
+                        xoff = - ( panelRect.left + (panelRect.right - panelRect.left) / 2.0f) * scale  // CORRECT
+                        yoff = - (re.top + (re.bottom - re.top) / 2f )    //correct
+                    }
+                }
+            } else {
+                // TODO !!!! scaling for SC1X > SC1Y !!
+                if (DEBUG) Log.d(TAG,"autoscale sc1X > sc1Y fact=$fact")
+                val wCalc = width / scale
+                when (qua) {
+                    0 -> {
+                        xoff  = scale * (wCalc - wRect) / 2    //correct
+                        yoff = 0f   //correct
+                    }
+                    1 -> {
+                        xoff = 0f    //correct
+                        yoff = 0f     //correct
+                    }
+                    2 -> {
+                        xoff = - ( panelRect.left + (panelRect.right - panelRect.left) / 2.0f) * scale  //  CORRECT
+                        yoff = 0f // correct
+                    }
+                    3 -> {
+                        xoff = 0f   // correct
+                        yoff = - (panelRect.top + (panelRect.bottom - panelRect.top) / 2f )  * scale // CORRECT
+                    }
+                    4 -> {
+                        xoff = - ( panelRect.left + (panelRect.right - panelRect.left) / 2.0f) * scale  // CORRECT
+                        //yoff = -(re.top + (re.bottom - re.top) / 2f)  // not correct
+                        yoff = - (panelRect.top + (panelRect.bottom - panelRect.top) / 2f )  * scale // CORRECT
+                    }
+                }
+            }
             qClip[qua].scale = scale
             qClip[qua].xoff = xoff
             qClip[qua].yoff = yoff
