@@ -35,7 +35,7 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
     private var myClient: GenericClient? = null
 
     override fun run() {
-        if (DEBUG) Log.d(TAG, "SXnetClientThread run.")
+        if (DEBUG) Log.d(TAG, "RRConnectionThread run.")
         shutdownFlag = false
         connectionActive = false
         val (result, connResult) = connect(ip, port)
@@ -47,8 +47,7 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
             if (connResult.toUpperCase().contains("SXNET")) {
                 myClient = SXnetClient()
             } else if (connResult.toUpperCase().contains("LBSERVER")) {
-                // myClient = LbServerClient()  // TODO
-                context?.toast("ERROR connection to Fremo LbServer not yet implemented")
+                myClient = LbServerClient()
             } else {
                 context?.toast("ERROR - unknown type of RR server (neither SXNET nor LBSERVER)")
                 return
@@ -97,12 +96,13 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
                         readChannel(POWER_CHANNEL) //read power channel
                     } else {
                         // TODO implement similar "lifecheck" for loconet
+                        countNoResponse = 0 //TODO
                     }
                     countNoResponse++
                 }
                 timeElapsed = System.currentTimeMillis()  // reset
                 if (countNoResponse > 2) {
-                    Log.e(TAG, "SXnetClientThread - connection lost?")
+                    Log.e(TAG, "RRConnectionThread - connection lost?")
                     countNoResponse = 0
                     connectionActive = false
 
