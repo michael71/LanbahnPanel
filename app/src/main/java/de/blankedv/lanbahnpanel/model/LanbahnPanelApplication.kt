@@ -19,6 +19,8 @@ import android.util.Log
 import com.google.gson.Gson
 import de.blankedv.lanbahnpanel.R
 import de.blankedv.lanbahnpanel.elements.*
+import de.blankedv.lanbahnpanel.settings.PanelSettings
+import de.blankedv.lanbahnpanel.settings.Scaling
 import de.blankedv.lanbahnpanel.util.AndroBitmaps
 import de.blankedv.lanbahnpanel.util.LPaints
 
@@ -32,6 +34,7 @@ import de.blankedv.lanbahnpanel.util.LPaints
 class LanbahnPanelApplication : Application() {
 
     var timeOfLastReceivedMessage = 0L
+
 
     //@SuppressLint("HandlerLeak")
     @SuppressLint("HandlerLeak")
@@ -109,45 +112,64 @@ class LanbahnPanelApplication : Application() {
 
     }
 
-    fun saveZoomEtc() {
+    fun saveGenericSettings() {
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
         val editor = prefs.edit()
-        Log.d(TAG, "saving Zoom etc")
+        Log.d(TAG, "saveGenericSettings")
+        // generic
         editor.putBoolean(KEY_DRAW_ADR, drawAddresses)
         editor.putBoolean(KEY_DRAW_ADR2, drawAddresses2)
-        editor.putString(KEY_STYLE_PREF, selectedStyle)
-        editor.putString(KEY_SCALE_PREF, selectedScale)
-        //editor.putBoolean(KEY_ENABLE_ZOOM, zoomEnabled)
         editor.putBoolean(KEY_ENABLE_EDIT, enableEdit)
         editor.putBoolean(KEY_SAVE_STATES, saveStates)
+
+        // currently used - but these will be stored also for the panel
+        editor.putString(KEY_STYLE_PREF, selectedStyle)
+        editor.putString(KEY_SCALE_PREF, selectedScale)
         editor.putBoolean(KEY_ROUTES, enableRoutes)
         editor.putBoolean(KEY_FLIP, flipUpsideDown)
-
+        editor.putBoolean(KEY_FIVE_VIEWS_PREF, enableFiveViews)
         editor.putInt(KEY_QUADRANT, selQuadrant)
-        val serializedObject = Gson().toJson(`qClip`)
-        if (DEBUG) Log.d(TAG, "panel=$panelName qClip=" + serializedObject)
-        panelName
-        editor.putString(KEY_Q_CLIP + "_" + panelName, serializedObject)
-        /* for each selQuadrant: editor.putString(KEY_XOFF, "" + xoff)
-        editor.putString(KEY_YOFF, "" + yoff)
-        editor.putString(KEY_SCALE, "" + scale) */
+
         // Commit the edits!
         editor.apply()
     }
 
-    fun loadZoomEtc() {
+    fun savePanelSettings() {
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
-        //zoomEnabled = prefs.getBoolean(KEY_ENABLE_ZOOM, false)
-        //Log.d(TAG, "zoomEnabled=$zoomEnabled")
-        selectedStyle = prefs.getString(KEY_STYLE_PREF, "US")
-        LPaints.init(prescale, selectedStyle, applicationContext)
-        selectedScale = prefs.getString(KEY_SCALE_PREF, "auto")
+        val editor = prefs.edit()
+        Log.d(TAG, "savePanelSettings")
+        // currently used - but these will be stored also for the panel
+        pSett.selStyle = selectedStyle
+        pSett.selScale = selectedScale
+        pSett.enRoutes = enableRoutes
+        pSett.flip = flipUpsideDown
+        pSett.fiveViews = enableFiveViews
+        pSett.selQua = selQuadrant
+
+        // save all panel specific settings
+        val serializedObject = Gson().toJson(`pSett`)
+        if (DEBUG) Log.d(TAG, "save panel=$panelName panel-settings=" + serializedObject)
+        editor.putString(KEY_PANEL_SETTINGS + "_" + panelName, serializedObject)
+
+        // Commit the edits!
+        editor.apply()
+    }
+
+    fun loadGenericSettings() {
+        Log.d(TAG, "loadGenericSettings")
+        val prefs = PreferenceManager
+                .getDefaultSharedPreferences(this)
+        // generic
         enableEdit = prefs.getBoolean(KEY_ENABLE_EDIT, false)
         saveStates = prefs.getBoolean(KEY_SAVE_STATES, false)
         drawAddresses = prefs.getBoolean(KEY_DRAW_ADR, false)
         drawAddresses2 = prefs.getBoolean(KEY_DRAW_ADR2, false)
+
+        // read generic settings (which might be overwritten by panel settings)
+        selectedStyle = prefs.getString(KEY_STYLE_PREF, "US")
+        selectedScale = prefs.getString(KEY_SCALE_PREF, "auto")
         enableRoutes = prefs.getBoolean(KEY_ROUTES, false)
         flipUpsideDown = prefs.getBoolean(KEY_FLIP, false)
         enableFiveViews = prefs.getBoolean(KEY_FIVE_VIEWS_PREF, false)
@@ -156,22 +178,52 @@ class LanbahnPanelApplication : Application() {
         } else {
             selQuadrant = 0  // must be reset, because we only have one view left
         }
+        LPaints.init(prescale, selectedStyle, applicationContext)
+    }
 
-        if (prefs.contains(KEY_Q_CLIP + "_" + panelName)) {
+    fun loadPanelSettings() {
+        val prefs = PreferenceManager
+                .getDefaultSharedPreferences(this)
+        Log.d(TAG, "loadPanelSettings panel=$panelName")
+        // init from generic settings
+        pSett = PanelSettings(selectedScale, selectedScale, enableRoutes, flipUpsideDown, enableFiveViews, selQuadrant)
+
+        if (prefs.contains(KEY_PANEL_SETTINGS + "_" + panelName)) {
             val gson = Gson()
-            if (DEBUG) Log.d(TAG, "panel=$panelName qClip=" + prefs.getString(KEY_Q_CLIP, "??"))
-            qClip = gson.fromJson(prefs.getString(KEY_Q_CLIP + "_" + panelName, ""), qClip.javaClass)
-        } else {
-            qClip = arrayOf(
-                    Scaling(1.0f, (10f * prescale), (10f * prescale)),  // selQuadrant 0 = all
-                    Scaling(1.0f, (10f * prescale), (10f * prescale)),  // selQuadrant  1
-                    Scaling(1.0f, (10f * prescale), (10f * prescale)),  // ... 2
-                    Scaling(1.0f, (10f * prescale), (10f * prescale)),
-                    Scaling(1.0f, (10f * prescale), (10f * prescale)))
+            if (DEBUG) Log.d(TAG, "panel-settings=" +
+                    prefs.getString(KEY_PANEL_SETTINGS+ "_" + panelName, "??"))
+            pSett = gson.fromJson(prefs.getString(KEY_PANEL_SETTINGS + "_" + panelName, ""), pSett.javaClass)
+            // overwrite generic settings and store as current values
+            selectedStyle = pSett.selStyle
+            selectedScale = pSett.selScale
+            enableRoutes = pSett.enRoutes
+            flipUpsideDown = pSett.flip
+            enableFiveViews = pSett.fiveViews
+            if (enableFiveViews == true) {
+                selQuadrant = pSett.selQua
+            } else {
+                selQuadrant = 0  // must be reset, because we only have one view left
+            }
+
+            // save panel specific settings for later use in SettingsActivity
+            val editor = prefs.edit()
+            editor.putString(KEY_STYLE_PREF, selectedStyle)
+            editor.putString(KEY_SCALE_PREF, selectedScale)
+            editor.putBoolean(KEY_ROUTES, enableRoutes)
+            editor.putBoolean(KEY_FLIP, flipUpsideDown)
+            editor.putBoolean(KEY_FIVE_VIEWS_PREF, enableFiveViews)
+            editor.putInt(KEY_QUADRANT, selQuadrant)
+            // Commit the edits!
+            editor.apply()
+
         }
 
-
+        LPaints.init(prescale, selectedStyle, applicationContext)
+        if (!enableFiveViews) {
+            selQuadrant = 0  // must be reset, because we only have one view left
+        }
     }
+
 
     /**
      * Display OnGoing Notification that indicates Network Thread is still Running.
@@ -214,6 +266,7 @@ class LanbahnPanelApplication : Application() {
     companion object {
 
         lateinit var appHandler: Handler // used for communication from RRConnection Thread to UI (application)
+        lateinit var pSett : PanelSettings
 
         /**
          * set all active panel elements to "expired" to have them updated soon
@@ -364,9 +417,9 @@ class LanbahnPanelApplication : Application() {
                     }
                 }
             }
-            qClip[qua].scale = scale
-            qClip[qua].xoff = xoff
-            qClip[qua].yoff = yoff
+            pSett.qClip[qua].scale = scale
+            pSett.qClip[qua].xoff = xoff
+            pSett.qClip[qua].yoff = yoff
 
 
             if (DEBUG) Log.d(TAG, "autoscale result: scale=$scale xoff=$xoff yoff=$yoff (qua=$qua)")

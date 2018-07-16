@@ -34,7 +34,7 @@ import de.blankedv.lanbahnpanel.util.LinearMath
  */
 object ReadConfig {
 
-    internal val DEBUG_PARSING = true
+    internal val DEBUG_PARSING = false
 
 
     /**

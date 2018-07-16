@@ -38,7 +38,9 @@ import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import de.blankedv.lanbahnpanel.elements.Route
 import de.blankedv.lanbahnpanel.elements.RouteButtonElement
 import de.blankedv.lanbahnpanel.model.*
+import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.pSett
 import de.blankedv.lanbahnpanel.railroad.RRConnectionThread
+import de.blankedv.lanbahnpanel.settings.PanelSettings
 import de.blankedv.lanbahnpanel.settings.SettingsActivity
 import de.blankedv.lanbahnpanel.util.Utils.threadSleep
 import org.jetbrains.anko.*
@@ -52,6 +54,8 @@ import org.jetbrains.anko.*
 class LanbahnPanelActivity : AppCompatActivity() {
 
     lateinit internal var builder: Builder
+
+
 
     internal var mBound = false
     lateinit internal var tv: TextView
@@ -161,14 +165,15 @@ class LanbahnPanelActivity : AppCompatActivity() {
         if (DEBUG)
             Log.d(TAG, "onPause - LanbahnPanelActivity")
 
-        (application as LanbahnPanelApplication).saveZoomEtc()
+        (application as LanbahnPanelApplication).saveGenericSettings()
+        (application as LanbahnPanelApplication).savePanelSettings()
         //if (configHasChanged) {
         if (checkStorageWritePermission()) {
             WriteConfig.toXMLFile()
         } else {
-            toast("ERROR: App has NO PERMISSION to write files !")
+            toast("ERROR: App has NO WRITE PERMISSION to write a new config file !")
         }
-        //}
+
         if (saveStates)
             saveStates()
         sendQ.clear()
@@ -192,15 +197,19 @@ class LanbahnPanelActivity : AppCompatActivity() {
         super.onResume()
         if (DEBUG)
             Log.d(TAG, "onResume - LanbahnPanelActivity")
+
         sendQ.clear()
 
-        (application as LanbahnPanelApplication).loadZoomEtc()   // get preferences
+        (application as LanbahnPanelApplication).loadGenericSettings()   // get preferences
         setActionBarBackground()  // matching to panel style
 
         var newPanel = reloadConfigIfPanelFileChanged()
-        if (newPanel) selQuadrant = 0  // reset view
+        if (newPanel) {
+            (application as LanbahnPanelApplication).loadPanelSettings()   // get panel preferences
+        }  // reset view
         Route.clearAllRoutes()
 
+        if (DEBUG) Log.d(TAG,"panelN=$panelName en5V=$enableFiveViews selQua=$selQuadrant")
         // set quadrants mode and display selected selQuadrant
         enableForQuadrantButtons(enableFiveViews)
         displayQuadrant(selQuadrant);
@@ -361,11 +370,19 @@ class LanbahnPanelActivity : AppCompatActivity() {
     private fun enableForQuadrantButtons(yes: Boolean) {
         if (DEBUG) Log.d(TAG, "enableForQuadrantButtons($yes)")
         if (yes) {
-            mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.q1_v2_48) ?: Log.e(TAG,"mOptionsMenu is not set")
-            mOptionsMenu?.findItem(R.id.action_q2)?.setIcon(R.drawable.q2_v2_48)
-            mOptionsMenu?.findItem(R.id.action_q3)?.setIcon(R.drawable.q3_v2_48)
-            mOptionsMenu?.findItem(R.id.action_q4)?.setIcon(R.drawable.q4_v2_48)
-            mOptionsMenu?.findItem(R.id.action_qall)?.setIcon(R.drawable.qa_v2_48)
+            mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.q1_v2_48_gray) ?: Log.e(TAG,"mOptionsMenu is not set")
+            mOptionsMenu?.findItem(R.id.action_q2)?.setIcon(R.drawable.q2_v2_48_gray)
+            mOptionsMenu?.findItem(R.id.action_q3)?.setIcon(R.drawable.q3_v2_48_gray)
+            mOptionsMenu?.findItem(R.id.action_q4)?.setIcon(R.drawable.q4_v2_48_gray)
+            mOptionsMenu?.findItem(R.id.action_qall)?.setIcon(R.drawable.qa_v2_48_gray)
+            when (selQuadrant) {  // mark selected quadrant "white"
+                0 -> mOptionsMenu?.findItem(R.id.action_qall)?.setIcon(R.drawable.qa_v2_48)
+                1 -> mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.q1_v2_48)
+                2 -> mOptionsMenu?.findItem(R.id.action_q2)?.setIcon(R.drawable.q2_v2_48)
+                3 -> mOptionsMenu?.findItem(R.id.action_q3)?.setIcon(R.drawable.q3_v2_48)
+                4 -> mOptionsMenu?.findItem(R.id.action_q4)?.setIcon(R.drawable.q4_v2_48)
+            }
+
 
         } else {
             mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.trans_48) ?: Log.e(TAG,"mOptionsMenu is not set")
@@ -388,9 +405,12 @@ class LanbahnPanelActivity : AppCompatActivity() {
     private fun displayQuadrant(q: Int) {
         // 0 means "ALL"
         selQuadrant = q
+        pSett.selQua = q
         if (selectedScale == "auto") {
             LanbahnPanelApplication.calcAutoScale(mWidth, mHeight, selQuadrant)
         }
+        enableForQuadrantButtons(enableFiveViews)
+
     }
 
 

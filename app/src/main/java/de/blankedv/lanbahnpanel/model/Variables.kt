@@ -10,6 +10,7 @@ import de.blankedv.lanbahnpanel.elements.CompRoute
 import de.blankedv.lanbahnpanel.elements.PanelElement
 import de.blankedv.lanbahnpanel.elements.Route
 import de.blankedv.lanbahnpanel.railroad.RRConnectionThread
+import de.blankedv.lanbahnpanel.settings.PanelSettings
 import java.util.ArrayList
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingQueue
@@ -67,24 +68,7 @@ var configHasChanged = false // store info whether config
 // has changed
 // if true, then a new config file is written at the end of the Activity
 
-/**
- * the 4 quadrants can have different scaling, a scale consists of
- *
- * @param scale = scaling of panelElements when displayed (both for X and Y)
- * @param xoff = offset on x axis
- * @param yoff = offset on y axis
- */
-data class Scaling (var scale : Float, var xoff :  Float, var yoff:  Float)
-
 @Volatile var selQuadrant = 0  // TODO move away from global scope
-
-//var zoomEnabled: Boolean = false
-@Volatile var qClip = arrayOf(
-        Scaling(1.0f, (10f * prescale), (10f * prescale)),  // selQuadrant 0 = all
-        Scaling(1.0f, (10f * prescale), (10f * prescale)),  // selQuadrant  1
-        Scaling(1.0f, (10f * prescale), (10f * prescale)),  // ... 2
-        Scaling(1.0f, (10f * prescale), (10f * prescale)),
-        Scaling(1.0f, (10f * prescale), (10f * prescale)))
 
 var enableEdit = false
 var enableRoutes = false

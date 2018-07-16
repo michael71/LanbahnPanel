@@ -4,9 +4,6 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
 import android.view.MenuItem
 import android.support.v4.app.NavUtils
 import android.util.Log
@@ -16,7 +13,9 @@ import java.io.File
 import java.util.ArrayList
 import android.R.attr.key
 import android.content.SharedPreferences
+import android.os.*
 import android.preference.*
+import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.pSett
 
 
 /**
@@ -37,6 +36,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
 
 
     }
+
 
     /**
      * Set up the [android.app.ActionBar], if the API is available.
@@ -63,9 +63,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         return isLargeTablet(this)
     }
 
-    /*override fun onSharedPreferenceChanged(p0: SharedPreferences?, key: String?) {
-        Log.d(TAG,"pref changed, key="+key)
-    } */
+
     /**
      * {@inheritDoc}
      */
@@ -121,7 +119,9 @@ class SettingsActivity : AppCompatPreferenceActivity() {
      * activity is showing a two-pane settings UI.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    class DisplayPreferenceFragment : PreferenceFragment() {
+    class DisplayPreferenceFragment() : PreferenceFragment(),
+            SharedPreferences.OnSharedPreferenceChangeListener  {
+
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             addPreferencesFromResource(R.xml.pref_display)
@@ -147,7 +147,44 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             return super.onOptionsItemSelected(item)
         }
 
+        override fun onResume() {
+            super.onResume()
+            preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+        }
 
+        override fun onPause() {
+            super.onPause()
+            preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+        }
+
+        override fun onSharedPreferenceChanged(prefs: SharedPreferences?, key: String?) {
+            Log.d(TAG,"CHANGED: pref=$prefs, key=$key")
+            // stored panel specific preferences ALSO for the panel
+            when (key) {
+                KEY_STYLE_PREF -> {
+                    selectedStyle = prefs!!.getString(KEY_STYLE_PREF,"US")
+                    pSett.selStyle = selectedStyle
+                    Log.d(TAG,"CHANGE: style=${pSett.selStyle} $selectedStyle")
+                }
+                KEY_SCALE_PREF -> {
+                    selectedScale = prefs!!.getString(KEY_SCALE_PREF,"auto")
+                    pSett.selScale = selectedScale
+                }
+                KEY_FIVE_VIEWS_PREF -> {
+                    enableFiveViews = prefs!!.getBoolean(KEY_FIVE_VIEWS_PREF, false)
+                    pSett.fiveViews = enableFiveViews
+                }
+                KEY_ROUTES -> {
+                    enableRoutes = prefs!!.getBoolean(KEY_ROUTES, false)
+                    pSett.enRoutes = enableRoutes
+                }
+                KEY_FLIP -> {
+                    flipUpsideDown = prefs!!.getBoolean(KEY_FLIP, false)
+                    pSett.flip = flipUpsideDown
+                }
+                // quadrant cannot be changed in the SettingsActivity
+            }
+        }
     }
 
     /**

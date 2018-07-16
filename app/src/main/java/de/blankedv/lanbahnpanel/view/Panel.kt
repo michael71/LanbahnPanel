@@ -14,6 +14,7 @@ import de.blankedv.lanbahnpanel.util.LPaints
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication
 import de.blankedv.lanbahnpanel.elements.RouteButtonElement
 import de.blankedv.lanbahnpanel.model.*
+import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.pSett
 
 
 /**
@@ -118,10 +119,10 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                         mPosX += dx
                         mPosY += dy
                         if ((selectedScale == "manual") && mX > 300 && mY > 200) {
-                            qClip[selQuadrant].xoff += dx
-                            qClip[selQuadrant].yoff += dy
+                            pSett.qClip[selQuadrant].xoff += dx
+                            pSett.qClip[selQuadrant].yoff += dy
                             scalingTime = System.currentTimeMillis()  // avoid control of SX elements during pan-move
-                            if (DEBUG) Log.d(TAG,"new xoff/yoff (qua=$selQuadrant) - xoff=${qClip[selQuadrant].xoff} + yoff=${qClip[selQuadrant].yoff}")
+                            if (DEBUG) Log.d(TAG,"new xoff/yoff (qua=$selQuadrant) - xoff=${pSett.qClip[selQuadrant].xoff} + yoff=${pSett.qClip[selQuadrant].yoff}")
                         }
                         // invalidate();
                         // if (DEBUG)  Log.d(TAG,"mPosX="+mPosX+" mPosY="+mPosY);
@@ -145,8 +146,8 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                         // assuming control area is always at the top !!
 
                         //Log.d(TAG,"ACTION_UP _Checking panel elements at: mlastTouchX="+mLastTouchX+"  mLastTouchY"+mLastTouchY);
-                        val xs = Math.round((mLastTouchX - qClip[selQuadrant].xoff) / qClip[selQuadrant].scale / prescale) // reduced by overall dimension scaling factors
-                        val ys = Math.round((mLastTouchY - qClip[selQuadrant].yoff) / qClip[selQuadrant].scale / prescale)
+                        val xs = Math.round((mLastTouchX - pSett.qClip[selQuadrant].xoff) / pSett.qClip[selQuadrant].scale / prescale) // reduced by overall dimension scaling factors
+                        val ys = Math.round((mLastTouchY - pSett.qClip[selQuadrant].yoff) / pSett.qClip[selQuadrant].scale / prescale)
 
                         Log.d(TAG, "ACTION_UP _Checking panel elements at: xs=$xs  ys$ys")
                         for (e in panelElements) {
@@ -223,9 +224,9 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         //if (USS == true)
         mBitmap.eraseColor(Color.TRANSPARENT) // Color.DKGRAY);
 
-        var sc = qClip[selQuadrant].scale
-        var xo = qClip[selQuadrant].xoff
-        var yo = qClip[selQuadrant].yoff
+        var sc = pSett.qClip[selQuadrant].scale
+        var xo = pSett.qClip[selQuadrant].xoff
+        var yo = pSett.qClip[selQuadrant].yoff
 
         if ((DEBUG) and ((System.currentTimeMillis() - time0) > 10000)) {
             Log.d(TAG, "panelRect x=(" + panelRect.left + "," + panelRect.right + ") y=(" + panelRect.top + "," + panelRect.bottom + ")")
@@ -265,7 +266,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                 // Don't let the object get too small or too large.
                 mScaleFactor = Math.max(0.5f, Math.min(mScaleFactor, 4.0f))
                 Log.d(TAG, "new scale (qua=$selQuadrant): scale=$mScaleFactor (limited)")
-                qClip[selQuadrant].scale = mScaleFactor
+                pSett.qClip[selQuadrant].scale = mScaleFactor
                 invalidate()
                 scalingTime = System.currentTimeMillis()
             }

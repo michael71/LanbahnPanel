@@ -4,7 +4,7 @@
 
 package de.blankedv.lanbahnpanel.model
 
-const val DEBUG = true   // false for release-apk
+const val DEBUG = false   // false for release-apk
 const val TAG = "LanbahnPanel"
 
 const val INVALID_INT = -1
@@ -22,15 +22,12 @@ const val KEY_ENABLE_POWER_CONTROL = "powerControlPref"
 const val KEY_SAVE_STATES = "saveStatesPref"
 const val KEY_ROUTES = "routesPref"
 const val KEY_FLIP = "flipPref"
-const val KEY_XOFF = "xoffPref"
-const val KEY_YOFF = "yoffPref"
-const val KEY_SCALE = "scalePref"
 const val KEY_IP = "ipPref"
 const val KEY_PORT = "portPref"
 const val KEY_CONFIG_FILE = "configFilenamePref"
 const val KEY_QUADRANT = "lastQuadrant"
 const val KEY_FIVE_VIEWS_PREF = "enableFiveViewsPref"
-const val KEY_Q_CLIP = "qClipPref"
+const val KEY_PANEL_SETTINGS = "panelSettingsPref"
 
 /** {@value #N_PANEL_FOR_4Q} = minimum number of panel elements to display the 4 quadrants */
 const val N_PANEL_FOR_4Q = 75
