@@ -4,6 +4,8 @@ import android.os.Handler
 import android.os.Message
 import android.util.Log
 import de.blankedv.lanbahnpanel.elements.ActivePanelElement
+import de.blankedv.lanbahnpanel.elements.SignalElement
+import de.blankedv.lanbahnpanel.elements.TurnoutElement
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.railroad.loconet.Accessory
 import de.blankedv.lanbahnpanel.railroad.loconet.LNMessage
@@ -24,9 +26,7 @@ class LbServerClient() : GenericClient() {
         if (DEBUG) Log.d(TAG, "LbServerClient constructor.")
     }
 
-    override fun readChannel(addr: Int, peClass : Class<ActivePanelElement>) : String {
-        // class can be ignored for selectrix
-
+    override fun readChannel(addr: Int, peClass : Class<*>) : String {
       return ""
     }
 
@@ -35,7 +35,16 @@ class LbServerClient() : GenericClient() {
         return ""
     }
 
-    override fun setChannel(addr: Int, data: Int, peClass : Class<ActivePanelElement>) :String {
+    override fun setChannel(addr: Int, data: Int, peClass : Class<*>) :String {
+
+        when (peClass) {
+            TurnoutElement::class.java, SignalElement::class.java -> {
+                // TODO extend for multi-aspect signals (= more than 1bit-info 0/1
+                var d = 1
+                if (data != 0) d = 0   // invert data info for loconet 1 = straight, 0 = closed
+                return createSwitchReq(addr, d)
+            }
+        }
         return ""
     }
 
@@ -153,5 +162,25 @@ class LbServerClient() : GenericClient() {
                 or (a in minAccAddress..maxAccAddress)
                 or (a in MainActivity.buttonsDCCAddresses) )  // DCC Addresses switch by the Buttons */
 
+    }
+
+    private fun createSwitchReq(a : Int, d : Int) :String {
+        /* <0xB0>,<SW1>,<SW2>,<CHK> REQ SWITCH function
+ <SW1> =<0,A6,A5,A4- A3,A2,A1,A0>, 7 ls adr bits. A1,A0 select 1 of 4 input pairs in a DS54
+ <SW2> =<0,0,DIR,ON- A10,A9,A8,A7> Control bits and 4 MS adr bits.
+ ,DIR=1 for Closed,/GREEN, =0 for Thrown/RED
+ ,ON=1 for Output ON, =0 FOR output OFF */
+        val intA = IntArray(3)
+        intA[0] = 0xb0  // opcode
+        var adr = a -1
+        intA[1] = (adr and 0x7f)
+        var dir = 0x10
+        if (d != 0) dir += 0x20
+        intA[2] = dir + (adr.shr(7) and 0x0f)
+        val lnmsg = LNMessage(intA)
+        return lnmsg.toXString()
+        /* example for turnout #107
+        RECEIVE B0 6A 10 35     LN: switch addr=107 0/thrown/red ON
+        RECEIVE B0 6A 00 25                         closed ON  */
     }
 }

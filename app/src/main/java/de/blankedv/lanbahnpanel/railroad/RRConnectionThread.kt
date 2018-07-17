@@ -134,6 +134,26 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
         }
     }
 
+    fun setChannel(addr: Int, data: Int, peClass: Class<*>) {
+        if (addr == INVALID_INT) return
+        var cmd = myClient?.setChannel(addr, data, peClass) ?: return
+        if (cmd.length == 0) return
+
+        val success = sendQ.offer("SEND "+cmd)
+        if (!success && DEBUG) {
+            Log.d(TAG, "readChannel failed, queue full")
+        }
+    }
+
+    /* fun setChannel(addr: Int,data: Int) {
+        if (addr == INVALID_INT) return
+        var cmd = myClient?.setChannel(addr, data) ?: return
+        val success = sendQ.offer(cmd)
+        if (!success && DEBUG) {
+            Log.d(TAG, "readChannel failed, queue full")
+        }
+    } */
+
     fun setPower(onoff: Boolean) {
         var cmd = myClient?.setPowerState(onoff) ?: return
         val success = sendQ.offer(cmd)

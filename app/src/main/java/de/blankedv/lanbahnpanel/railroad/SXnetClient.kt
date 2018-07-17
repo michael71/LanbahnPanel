@@ -20,18 +20,18 @@ class SXnetClient() : GenericClient() {
         if (DEBUG) Log.d(TAG, "SXnetClient constructor.")
     }
 
-    override fun readChannel(addr: Int, peClass : Class<ActivePanelElement>) : String {
-        // class can be ignored for selectrix
-
+    override fun readChannel(addr: Int, peClass : Class<*>) : String {
+        // class can be ignored for selectrix (sxnet)
       return "READ $addr"
     }
 
     override fun readChannel(addr: Int) : String {
-        // class can be ignored for selectrix
+
         return "READ $addr"
     }
 
-    override fun setChannel(addr: Int, data: Int, peClass : Class<ActivePanelElement>) :String {
+    override fun setChannel(addr: Int, data: Int, peClass : Class<*>) :String {
+        // class can be ignored for selectrix (sxnet)
         return "SET $addr $data"
     }
 
@@ -41,9 +41,9 @@ class SXnetClient() : GenericClient() {
 
     override fun setPowerState (switchOn : Boolean) : String {
         if (switchOn) {
-            return "SET "+ POWER_CHANNEL + " 1"
+            return "SET $POWER_CHANNEL 1"
         } else {
-            return "SET "+ POWER_CHANNEL + " 0"
+            return "SET $POWER_CHANNEL 0"
         }
     }
 
