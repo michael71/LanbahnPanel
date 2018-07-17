@@ -3,7 +3,7 @@ package de.blankedv.lanbahnpanel.railroad.loconet
 
 class Sensor (address : Int, data : Int ) : DCC_Data ( address, data ) {
     override fun toString(): String {
-        var s = "sensor addr=$address"
+        var s = "Sensor addr=$address"
         if (data == 0) {
             s +=  " free"
         } else {

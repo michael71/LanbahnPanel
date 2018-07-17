@@ -1,14 +1,9 @@
 package de.blankedv.lanbahnpanel.model
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
 /**
  * is used for mapping of lanbahn addresses to SX addresses
+ *
+ * NEEDED for "SX Style" panels with selectrix addresses in xml-config
  *
  * @author mblank
  */
@@ -65,18 +60,18 @@ class LanbahnSXPair {
      * @param d
      * @return
      */
- /*   fun getLBValueFromSXByte(d: Int): Int {
-        var v = 0
-        for (i in sxBit until sxBit + nBit) {
-            if (SXUtils.isSet(d, i) !== 0) {
-                v = v + (1 shl i - sxBit)
-            }
-        }
-        //if (sxAddr == 70) {
-        //System.out.println("lbaddr="+lbAddr+ " sxaddr="+sxAddr+ " sxBit="+sxBit+" nBit="+nBit+" v="+v);
-        //}
-        return v
-    } */
+    /*   fun getLBValueFromSXByte(d: Int): Int {
+           var v = 0
+           for (i in sxBit until sxBit + nBit) {
+               if (SXUtils.isSet(d, i) !== 0) {
+                   v = v + (1 shl i - sxBit)
+               }
+           }
+           //if (sxAddr == 70) {
+           //System.out.println("lbaddr="+lbAddr+ " sxaddr="+sxAddr+ " sxBit="+sxBit+" nBit="+nBit+" v="+v);
+           //}
+           return v
+       } */
 
     override fun toString(): String {
         val sb = StringBuilder()

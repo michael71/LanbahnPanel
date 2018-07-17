@@ -240,7 +240,10 @@ object ReadConfig {
         }
         if ((pe.adr == INVALID_INT) and (sxadr != INVALID_INT) and (sxbit != INVALID_INT)) {
             // calc from sx add a LanbahnSXPair for later storage
-            val lbSxPair = LanbahnSXPair(INVALID_INT, sxadr, sxbit)
+            var lbSxPair = LanbahnSXPair(INVALID_INT, sxadr, sxbit)
+            if (nbit != INVALID_INT) {
+                lbSxPair = LanbahnSXPair(INVALID_INT, sxadr, sxbit, nbit)
+            }
             pe.adr = lbSxPair.lbAddr
             sxMappings.add(lbSxPair)
         }

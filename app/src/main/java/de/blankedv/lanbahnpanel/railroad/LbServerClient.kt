@@ -67,13 +67,6 @@ class LbServerClient() : GenericClient() {
 
         interpretLoconetMessage(msg)   // calls "storeDCC_Data()"
 
-        if (!msg.isEmpty()) {
-            val m = Message.obtain()
-            m.what = TYPE_LN_ACC_MSG
-            m.obj = msg
-              recHandler.sendMessage(m)  // send route data to UI Thread via Message
-        }
-
         return true
     }
     private fun sendToUI(msgType: Int, a1: Int, a2: Int, msg: String ="") {
@@ -102,8 +95,10 @@ class LbServerClient() : GenericClient() {
             }
             "B0" -> {
                 val a = ln.toAccessory()  // switch or signal
-                if (isValidAccessoryAddress(a.address))
+                if (isValidAccessoryAddress(a.address)) {
                     Accessory.addOrReplaceAccessoryData(a)
+                    sendToUI(TYPE_LN_ACC_MSG, a.address, a.data)
+                }
                 return a.toString()
             }
             "BC" -> return ln.saveSwitchRequest()  // isRequestSwitchState
@@ -111,8 +106,10 @@ class LbServerClient() : GenericClient() {
             "B4" -> {
                 val a = ln.evalLackToAccessory() // LackResponeToSwitchStateRequest
                 if (a == null) return "?"
-                if (isValidAccessoryAddress(a.address))
+                if (isValidAccessoryAddress(a.address)) {
                     Accessory.addOrReplaceAccessoryData(a)
+                    sendToUI(TYPE_LN_ACC_MSG, a.address, a.data)
+                }
 
                 return a.toString()
             }
@@ -120,6 +117,7 @@ class LbServerClient() : GenericClient() {
             "B2" -> {
                 val sens = ln.toSensor()  // SensorCmd
                 Sensor.addOrReplaceSensorData(sens)
+                sendToUI(TYPE_LN_SENSOR_MSG, sens.address, sens.data)
                 return sens.toString()
             }
 

@@ -72,7 +72,7 @@ class LanbahnPanelApplication : Application() {
                     }
                     TYPE_GENERIC_MSG -> PanelElement.update(chan, data)
 
-                    TYPE_LN_ACC_MSG -> PanelElement.updateAcc(chan, data)
+                    TYPE_LN_ACC_MSG -> PanelElement.updateAcc(chan, (1-data))
 
                     TYPE_LN_SENSOR_MSG -> PanelElement.updateSensor(chan, data)
 
