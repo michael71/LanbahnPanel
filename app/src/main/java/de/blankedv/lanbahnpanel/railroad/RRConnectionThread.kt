@@ -108,18 +108,18 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
 
                 }
             }
-            threadSleep(10)
+            threadSleep(20)
         }
 
         socket?.close()
         Log.e(TAG, "RRConnectionThread - socket closed")
     }
 
-    fun readChannel(addr: Int, peClass: Class<ActivePanelElement>) {
+    fun readChannel(addr: Int, peClass: Class<*>) {
         if (addr == INVALID_INT) return
         var cmd = myClient?.readChannel(addr, peClass) ?: return
-
         val success = sendQ.offer(cmd)
+
         if (!success && DEBUG) {
             Log.d(TAG, "readChannel failed, queue full")
         }
@@ -139,20 +139,20 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
         var cmd = myClient?.setChannel(addr, data, peClass) ?: return
         if (cmd.length == 0) return
 
-        val success = sendQ.offer("SEND "+cmd)
+        val success = sendQ.offer(cmd)
         if (!success && DEBUG) {
             Log.d(TAG, "readChannel failed, queue full")
         }
     }
 
-    /* fun setChannel(addr: Int,data: Int) {
+    fun setChannel(addr: Int,data: Int) {
         if (addr == INVALID_INT) return
         var cmd = myClient?.setChannel(addr, data) ?: return
         val success = sendQ.offer(cmd)
         if (!success && DEBUG) {
             Log.d(TAG, "readChannel failed, queue full")
         }
-    } */
+    }
 
     fun setPower(onoff: Boolean) {
         var cmd = myClient?.setPowerState(onoff) ?: return

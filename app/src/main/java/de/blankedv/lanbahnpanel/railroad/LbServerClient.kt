@@ -27,12 +27,18 @@ class LbServerClient() : GenericClient() {
     }
 
     override fun readChannel(addr: Int, peClass : Class<*>) : String {
-      return ""
+        when (peClass) {
+            TurnoutElement::class.java, SignalElement::class.java -> {
+                // TODO extend for multi-aspect signals (= more than 1bit-info 0/1
+                return createReqState(addr)
+            }
+            else -> return ""
+        }
     }
 
     override fun readChannel(addr: Int) : String {
         // class can be ignored for selectrix
-        return ""
+        return "ERROR"
     }
 
     override fun setChannel(addr: Int, data: Int, peClass : Class<*>) :String {
@@ -178,9 +184,24 @@ class LbServerClient() : GenericClient() {
         if (d != 0) dir += 0x20
         intA[2] = dir + (adr.shr(7) and 0x0f)
         val lnmsg = LNMessage(intA)
-        return lnmsg.toXString()
+        return "SEND "+lnmsg.toXString()
         /* example for turnout #107
         RECEIVE B0 6A 10 35     LN: switch addr=107 0/thrown/red ON
         RECEIVE B0 6A 00 25                         closed ON  */
+    }
+
+    private fun createReqState(a : Int) :String {
+        // example BC 4F 0F 03  => LACK B4 3C 50 27
+        /* 0xBC ;REQ state of SWITCH
+          ;<0xBC>,<SW1>,<SW2>,<CHK>  */
+        val intA = IntArray(3)
+        intA[0] = 0xbc  // opcode
+        var adr = a -1
+        intA[1] = (adr and 0x7f)
+        intA[2] = (adr.shr(7) and 0x0f)
+        val lnmsg = LNMessage(intA)
+        return "SEND "+lnmsg.toXString()
+        /* example for turnout #107
+        BC 4F 0F 03    switch state req, a=2000  */
     }
 }

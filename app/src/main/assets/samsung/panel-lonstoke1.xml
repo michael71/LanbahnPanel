@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
-<layout-config>
+<layout-config filename="panel-lonstoke1.xml">
 <panel name="Lonstoke West">
 <track x="3" y="20" x2="320" y2="20" />
 <track x="3" y="40" x2="320" y2="40" />
