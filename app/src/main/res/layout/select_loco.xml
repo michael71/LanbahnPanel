@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+	<TextView 
+		android:id="@+id/sel_loco_title"
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content" 
+	    android:text="@string/selectloco"
+	    android:textSize="22sp"
+	    />
+<ListView
+		android:id="@id/android:list"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="3px"
+		android:layout_marginBottom="3px"
+		android:layout_below="@id/sel_loco_title"
+		android:layout_above="@id/cancel_button"/>
+	<TextView
+		android:id="@id/android:empty"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/no_locos"
+		android:gravity="center"
+		android:layout_below="@id/sel_loco_title"
+		android:layout_above="@id/cancel_button" />
+ 	<Button
+		android:id="@+id/cancel_button"
+ 		android:layout_width="fill_parent"
+ 		android:layout_height="wrap_content"
+ 		android:layout_alignParentBottom="true"
+ 		android:text="@string/cancel"/>
+	
+</RelativeLayout>

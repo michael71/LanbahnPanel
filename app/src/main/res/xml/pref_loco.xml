@@ -1,0 +1,20 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="enableLocoControlPref"
+        android:title="Loco Control aktivieren" />
+    <ListPreference
+        android:defaultValue="System SX oder DCC"
+        android:entries="@array/system"
+        android:entryValues="@array/system_values"
+        android:key="locoSystemPref"
+        android:summary="-"
+        android:title="@string/sel_system_type" />
+    <ListPreference
+        android:entries="@array/listEmpty"
+        android:entryValues="@array/listEmpty"
+        android:key="locosConfigFilenamePref"
+        android:summary="Bitte auswählen"
+        android:title="@string/loco_cfg_files" />
+ </PreferenceScreen>

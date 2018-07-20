@@ -18,11 +18,8 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Button
-import android.widget.LinearLayout
+import android.widget.*
 import android.widget.LinearLayout.LayoutParams
-import android.widget.PopupWindow
-import android.widget.TextView
 import de.blankedv.lanbahnpanel.*
 
 import java.util.Timer
@@ -37,6 +34,8 @@ import de.blankedv.lanbahnpanel.config.WriteConfig
 import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import de.blankedv.lanbahnpanel.elements.Route
 import de.blankedv.lanbahnpanel.elements.RouteButtonElement
+import de.blankedv.lanbahnpanel.loco.Loco
+import de.blankedv.lanbahnpanel.loco.ParseLocos
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.pSett
 import de.blankedv.lanbahnpanel.railroad.RRConnectionThread
@@ -176,6 +175,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
         if (saveStates)
             saveStates()
+
         sendQ.clear()
         if (!shuttingDown) {
             (application as LanbahnPanelApplication).addNotification(this.intent)
@@ -224,6 +224,8 @@ class LanbahnPanelActivity : AppCompatActivity() {
         if (saveStates) {
             loadStates()
         }
+
+        if (enableLocoControl) loadLocos()
 
         LanbahnPanelApplication.expireAllPanelElements()
         LanbahnPanelApplication.requestAllPanelData()
@@ -336,6 +338,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
         Timer().scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
+                selectedLoco?.timer()
                 if (restartCommFlag) {
                     restartCommFlag = false
                     runOnUiThread {
@@ -393,27 +396,6 @@ class LanbahnPanelActivity : AppCompatActivity() {
         }
     }
 
-    private fun displayLockState() {
-        if (DEBUG) Log.d(TAG,"selectedScale = $selectedScale")
-        when (selectedScale) {
-            "auto" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_letter_a)
-            "manual" ->  mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_lock_open_white_48dp)
-            "locked" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_lock_white_48dp)
-        }
-     }
-
-    private fun displayQuadrant(q: Int) {
-        // 0 means "ALL"
-        selQuadrant = q
-        pSett.selQua = q
-        if (selectedScale == "auto") {
-            LanbahnPanelApplication.calcAutoScale(mWidth, mHeight, selQuadrant)
-        }
-        enableForQuadrantButtons(enableFiveViews)
-
-    }
-
-
     private fun togglePower() {
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
@@ -428,6 +410,66 @@ class LanbahnPanelActivity : AppCompatActivity() {
             }
         } else {
             toast("not allowed to set global power state, check settings")
+        }
+    }
+
+
+    private fun displayLockState() {
+        if (DEBUG) Log.d(TAG,"selectedScale = $selectedScale")
+        when (selectedScale) {
+            "auto" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_letter_a)
+            "manual" ->  mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_lock_open_white_48dp)
+            "locked" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_lock_white_48dp)
+        }
+     }
+
+    private fun displayQuadrant(q: Int) {
+        // 0 means "ALL"
+        selQuadrant = q
+        pSett.selQua = q
+
+        if (selectedScale == "auto") {
+            LanbahnPanelApplication.calcAutoScale(mWidth, mHeight, selQuadrant)
+        }
+        enableForQuadrantButtons(enableFiveViews)
+
+    }
+
+    private fun loadLocos() {
+        val prefs = PreferenceManager
+                .getDefaultSharedPreferences(this)
+
+
+        locoConfigFilename = prefs.getString(KEY_LOCOS_CONFIG_FILE, DEMO_LOCOS_FILE)
+                ParseLocos.readLocosFromFile(this, locoConfigFilename)
+
+        val lastLocoAddress = prefs.getInt(KEY_LOCO_ADR, 3)
+
+        if (locolist == null) {
+            Toast.makeText(this, "could not read loco list xml file or errors in file", Toast.LENGTH_LONG).show()
+            Log.e(TAG, "could not read loco list xml file or errors in file: $locoConfigFilename")
+        } else {
+            // if last loco (from stored loco_address) is in list then use this loco
+            for (loco in locolist) {
+                if (loco.adr === lastLocoAddress) {
+                    selectedLoco = loco // update from file
+                    selectedLoco?.initFromSX()
+                }
+            }
+
+        }
+
+        if (selectedLoco == null) { // use first loco in list or use default
+            if (locolist?.size >= 1) {
+                selectedLoco = locolist[0]  // first loco in xml file
+            } else {
+                // as a default use a "dummy loco"
+                val locoMass = Integer
+                        .parseInt(prefs.getString(KEY_LOCO_MASS, "3")!!)
+                val locoName = prefs.getString(KEY_LOCO_NAME, "default loco 22")
+                selectedLoco = Loco(locoName, lastLocoAddress, locoMass)
+                selectedLoco?.initFromSX()
+            }
         }
     }
 

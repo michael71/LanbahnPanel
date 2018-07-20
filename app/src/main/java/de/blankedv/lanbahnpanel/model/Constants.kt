@@ -10,7 +10,6 @@ const val TAG = "LanbahnPanel"
 const val INVALID_INT = -1
 
 // preferences
-// public static final String KEY_LOCO_ADR = "locoAdrPref";
 const val KEY_DRAW_ADR = "drawAddressesPref"
 const val KEY_DRAW_ADR2 = "drawAddressesPref2"
 const val KEY_STYLE_PREF = "selectStylePref"
@@ -28,11 +27,19 @@ const val KEY_CONFIG_FILE = "configFilenamePref"
 const val KEY_QUADRANT = "lastQuadrant"
 const val KEY_FIVE_VIEWS_PREF = "enableFiveViewsPref"
 const val KEY_PANEL_SETTINGS = "panelSettingsPref"
+const val KEY_LOCO_ADR = "locoAdrPref"
+const val KEY_LOCO_MASS = "locoMassPref"
+const val KEY_LOCO_NAME = "locoNamePref"
+const val KEY_LOCOS_CONFIG_FILE = "locosConfigFilenamePref"
+const val KEY_ENABLE_LOCO_CONTROL = "enableLocoControlPref"
+const val KEY_LOCO_SYSTEM = "locoSystemPref"
 
 /** {@value #N_PANEL_FOR_4Q} = minimum number of panel elements to display the 4 quadrants */
 const val N_PANEL_FOR_4Q = 75
 
 const val FNAME_PANEL_FROM_SERVER = "panel_from_server.xml"
+
+const val DEMO_LOCOS_FILE = "locos-demo.xml"
 
 const val LBP_NOTIFICATION_ID = 201 //arbitrary id for notification
 

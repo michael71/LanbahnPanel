@@ -15,6 +15,8 @@ import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication
 import de.blankedv.lanbahnpanel.elements.RouteButtonElement
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.pSett
+import de.blankedv.lanbahnpanel.loco.LocoControlArea
+import android.text.TextPaint
 
 
 /**
@@ -40,11 +42,12 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
     private var scalingTime = 0L
 
 
+    private val paintControlAreaBG = Paint()
+    var locoControlArea: LocoControlArea? = null
 
     private val toneG = ToneGenerator(AudioManager.STREAM_ALARM, 70)
 
-    private var time0 = System.currentTimeMillis()
-
+    private var time0 = System.currentTimeMillis() - 10001
 
 
     // public static Bitmap myBitmap = Bitmap.createBitmap(4000,1600,
@@ -56,6 +59,10 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
     init {
         mScaleDetector = ScaleGestureDetector(context, ScaleListener())
         holder.addCallback(this)
+
+        paintControlAreaBG.setColor(-0xddbbde)
+
+        locoControlArea = LocoControlArea(context)
         mThread = ViewThread(this)
 
     }
@@ -122,19 +129,20 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                             pSett.qClip[selQuadrant].xoff += dx
                             pSett.qClip[selQuadrant].yoff += dy
                             scalingTime = System.currentTimeMillis()  // avoid control of SX elements during pan-move
-                            if (DEBUG) Log.d(TAG,"new xoff/yoff (qua=$selQuadrant) - xoff=${pSett.qClip[selQuadrant].xoff} + yoff=${pSett.qClip[selQuadrant].yoff}")
+                            if (DEBUG) Log.d(TAG, "new xoff/yoff (qua=$selQuadrant) - xoff=${pSett.qClip[selQuadrant].xoff} + yoff=${pSett.qClip[selQuadrant].yoff}")
                         }
                         // invalidate();
                         // if (DEBUG)  Log.d(TAG,"mPosX="+mPosX+" mPosY="+mPosY);
-                        // no loco control
-                        //controlArea.checkSpeedMove(x, y);
+
+                        locoControlArea?.checkSpeedMove(x, y);
                     }
 
                     mLastTouchX = x
                     mLastTouchY = y
-                }/*if (enableEdit) {
-            	selSxAddress.dismiss();
-            } */
+                    if (enableEdit) {
+                        //selSxAddress.dismiss();
+                    }
+                }
 
                 MotionEvent.ACTION_UP -> {
                     if (DEBUG) Log.d(TAG, "ACTION_UP")
@@ -144,40 +152,50 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                     val deltaT = System.currentTimeMillis() - scalingTime
                     if (!mScaleDetector.isInProgress) { //&& (deltaT > SCALING_WAIT)) {
                         // assuming control area is always at the top !!
+                        var controlAreaBottom = 0
+                        if (enableLocoControl) {
+                            controlAreaBottom = controlAreaRect?.bottom ?: 0
+                        }
 
-                        //Log.d(TAG,"ACTION_UP _Checking panel elements at: mlastTouchX="+mLastTouchX+"  mLastTouchY"+mLastTouchY);
-                        val xs = Math.round((mLastTouchX - pSett.qClip[selQuadrant].xoff) / pSett.qClip[selQuadrant].scale / prescale) // reduced by overall dimension scaling factors
-                        val ys = Math.round((mLastTouchY - pSett.qClip[selQuadrant].yoff) / pSett.qClip[selQuadrant].scale / prescale)
+                        if (mLastTouchY < controlAreaBottom) {
+                            Log.d(TAG,
+                                    "ACTION_UP _Checking Loco Control  at: mlastTouchX="
+                                            + mLastTouchX + "  mLastTouchY"
+                                            + mLastTouchY)
+                            locoControlArea?.checkTouch(mLastTouchX, mLastTouchY)
+                        } else {
 
-                        Log.d(TAG, "ACTION_UP _Checking panel elements at: xs=$xs  ys$ys")
-                        for (e in panelElements) {
-                            var sel = false
-                            if (enableRoutes) {
-                                // check only!! route buttons when routing is enabled
-                                if (e is RouteButtonElement) {
+                            //Log.d(TAG,"ACTION_UP _Checking panel elements at: mlastTouchX="+mLastTouchX+"  mLastTouchY"+mLastTouchY);
+                            val xs = Math.round((mLastTouchX - pSett.qClip[selQuadrant].xoff) / pSett.qClip[selQuadrant].scale / prescale) // reduced by overall dimension scaling factors
+                            val ys = Math.round((mLastTouchY - pSett.qClip[selQuadrant].yoff) / pSett.qClip[selQuadrant].scale / prescale)
+
+                            Log.d(TAG, "ACTION_UP _Checking panel elements at: xs=$xs  ys$ys")
+                            for (e in panelElements) {
+                                var sel = false
+                                if (enableRoutes) {
+                                    // check only!! route buttons when routing is enabled
+                                    if (e is RouteButtonElement) {
+                                        sel = e.isSelected(xs, ys)
+                                    }
+                                } else {
                                     sel = e.isSelected(xs, ys)
                                 }
-                            } else {
-                                sel = e.isSelected(xs, ys)
-                            }
-                            if (sel) { //mLastTouchX, mLastTouchY)) {
-                                if (enableEdit) {
-                                    Dialogs.selectAddressDialog(e) //
-                                } else {
-                                    e.toggle()
-                                    // vibrate(500L)
+                                if (sel) { //mLastTouchX, mLastTouchY)) {
+                                    if (enableEdit) {
+                                        Dialogs.selectAddressDialog(e) //
+                                    } else {
+                                        e.toggle()
+                                        // vibrate(500L)
 
-                                    toneG.startTone(ToneGenerator.TONE_CDMA_ABBR_INTERCEPT, 100) //TONE_CDMA_PIP) //TONE_CDMA_KEYPAD_VOLUME_KEY_LITE)
+                                        toneG.startTone(ToneGenerator.TONE_CDMA_ABBR_INTERCEPT, 100) //TONE_CDMA_PIP) //TONE_CDMA_KEYPAD_VOLUME_KEY_LITE)
+                                    }
+                                    break // only 1 can be selected with one touch
                                 }
-                                break // only 1 can be selected with one touch
                             }
                         }
 
-
-                    } else {
-                        if (DEBUG) Log.d(TAG, "scaling wait - delta-t=$deltaT")
                     }
-                }
+                 }
 
                 MotionEvent.ACTION_CANCEL -> {
                     if (DEBUG) Log.d(TAG, "ACTION_CANCEL - mPosX=$mPosX mPosY=$mPosY")
@@ -209,11 +227,13 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         mWidth = width
         mHeight = height
 
+        controlAreaRect = Rect(0, 0, mWidth, mHeight / 8)
+        locoControlArea?.recalcGeometry()
+
         if (selectedScale == "auto") {
             LanbahnPanelApplication.calcAutoScale(mWidth, mHeight, selQuadrant)
         }
     }
-
 
 
     fun doDraw(canvas: Canvas) {
@@ -231,6 +251,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         if ((DEBUG) and ((System.currentTimeMillis() - time0) > 10000)) {
             Log.d(TAG, "panelRect x=(" + panelRect.left + "," + panelRect.right + ") y=(" + panelRect.top + "," + panelRect.bottom + ")")
             Log.d(TAG, "qua=$selQuadrant mWidth=$mWidth mHeight=$mHeight - actual scale=$sc xoff=$xo yoff=$yo} hCalc=$hCalc hRect=$hRect")
+            Log.d(TAG, "controlAreaRect =(${controlAreaRect?.left},${controlAreaRect?.right}),(${controlAreaRect?.top},${controlAreaRect?.bottom})")
             // Samsung SM-T580  panelRect 2040x960 *prescale (=2)
             // metric 1920x1200 pixel , ratio 1.6
             /* for the 4 quadrants       (full layout  autoscale: 0.94 / 0 0)       (experimental)
@@ -244,8 +265,8 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         }
 
         val matrix = Matrix()
-        matrix.postScale(sc , sc)
-        matrix.postTranslate( xo , yo)
+        matrix.postScale(sc, sc)
+        matrix.postTranslate(xo, yo)
         for (e in panelElements) {
             e.doDraw(mCanvas)
         }
@@ -254,6 +275,12 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         drawRaster(mCanvas, RASTER)
 
         canvas.drawBitmap(mBitmap, matrix, null)
+
+        if (enableLocoControl) {
+            canvas.drawRect(controlAreaRect, paintControlAreaBG);
+
+            locoControlArea?.draw(canvas); // not scaled with zoom
+        }
 
     }
 

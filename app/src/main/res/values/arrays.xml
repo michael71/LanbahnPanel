@@ -23,4 +23,12 @@
         <item>manual</item>
         <item>locked</item>
     </string-array>
+    <string-array name="system">
+        <item>Selectrix</item>
+        <item>Loconet/DCC</item>
+    </string-array>
+    <string-array name="system_values">
+        <item>sx</item>
+        <item>dcc</item>
+    </string-array>
 </resources>

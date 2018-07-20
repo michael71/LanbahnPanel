@@ -9,6 +9,7 @@ import android.graphics.Rect
 import de.blankedv.lanbahnpanel.elements.CompRoute
 import de.blankedv.lanbahnpanel.elements.PanelElement
 import de.blankedv.lanbahnpanel.elements.Route
+import de.blankedv.lanbahnpanel.loco.Loco
 import de.blankedv.lanbahnpanel.railroad.RRConnectionThread
 import de.blankedv.lanbahnpanel.settings.PanelSettings
 import java.util.ArrayList
@@ -26,7 +27,7 @@ var panelElements = ArrayList<PanelElement>()
 var routes = ArrayList<Route>()
 var compRoutes = ArrayList<CompRoute>()
 var sxMappings = ArrayList<LanbahnSXPair>();  // maps lanbahn addresses to SX addresses
-
+var locolist = ArrayList<Loco>()
 
 var panelName = ""
 var panelProtocol = ""
@@ -56,17 +57,20 @@ val sendQ: BlockingQueue<String> = ArrayBlockingQueue(400)
 @Volatile
 var connString = ""
 
-val DIRECTORY = "/lanbahnpanel/"
+public const val DIRECTORY = "/lanbahnpanel/"
 // with leading and trailing slash !!
 
 var configFilename = "lb-panel1.xml"
+var locoConfigFilename = "locos.xml"
+var enableLocoControl = false
 
-val DEMO_FILE = "demo-panel.xml" // demo data in raw
+const val DEMO_FILE = "demo-panel.xml" // demo data in raw
 // assets dir.
 
 var configHasChanged = false // store info whether config
 // has changed
 // if true, then a new config file is written at the end of the Activity
+var locoConfigHasChanged = false
 
 @Volatile var selQuadrant = 0  // TODO move away from global scope
 
@@ -83,3 +87,7 @@ var appContext: Context? = null
 var globalPower = POWER_UNKNOWN
 
 var panelRect : Rect = Rect(0,0,100,100)
+
+var controlAreaRect: Rect? = null   // public needed for java
+var selectedLoco : Loco? = null
+var locoListName = "?"

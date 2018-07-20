@@ -19,5 +19,6 @@ data class PanelSettings (var selScale : String, var selStyle : String, var enRo
                 Scaling(1.0f, (10f * prescale), (10f * prescale)),  // selQuadrant  1
                 Scaling(1.0f, (10f * prescale), (10f * prescale)),  // ... 2
                 Scaling(1.0f, (10f * prescale), (10f * prescale)),
-                Scaling(1.0f, (10f * prescale), (10f * prescale))))
+                Scaling(1.0f, (10f * prescale), (10f * prescale)))
+)
 

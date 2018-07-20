@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/scroll" android:layout_width="fill_parent"
+	android:layout_height="wrap_content">
+
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical" android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+		<TextView android:id="@+id/loco_title" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="@string/add_loco_title"
+			android:textSize="22sp" />
+		<TextView android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="@string/name"
+			android:textSize="16sp" />
+		<EditText android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:id="@+id/add_loco_name" />
+		<TextView android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="@string/address"
+			android:textSize="16sp" />
+		<EditText android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:id="@+id/add_loco_adr"
+			android:numeric="integer" android:maxLength="4" />
+
+		<TextView android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="Icon"
+			android:textSize="16sp" />
+		<LinearLayout android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:orientation="horizontal"
+			xmlns:android="http://schemas.android.com/apk/res/android">
+			<ImageView android:id="@+id/loco_icon" android:src="@drawable/genloco"
+				android:layout_width="0px" android:layout_weight="50"
+				android:layout_height="wrap_content" android:padding="5dp" />
+			<Button android:id="@+id/selIcon_button" android:text="@string/different_icon"
+				android:textSize="12sp" android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical" android:layout_width="0px"
+				android:layout_weight="50" />
+		</LinearLayout>
+
+
+
+		<Button android:id="@+id/add_button" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="@string/add_loco_to_xml_file" />
+		<Button android:id="@+id/cancel_button" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="@string/back" />
+	</LinearLayout>
+</ScrollView>

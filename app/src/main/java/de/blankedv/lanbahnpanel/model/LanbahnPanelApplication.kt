@@ -8,7 +8,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Handler
 import android.os.Message
@@ -20,7 +19,6 @@ import com.google.gson.Gson
 import de.blankedv.lanbahnpanel.R
 import de.blankedv.lanbahnpanel.elements.*
 import de.blankedv.lanbahnpanel.settings.PanelSettings
-import de.blankedv.lanbahnpanel.settings.Scaling
 import de.blankedv.lanbahnpanel.util.AndroBitmaps
 import de.blankedv.lanbahnpanel.util.LPaints
 
@@ -131,6 +129,12 @@ class LanbahnPanelApplication : Application() {
         editor.putBoolean(KEY_FIVE_VIEWS_PREF, enableFiveViews)
         editor.putInt(KEY_QUADRANT, selQuadrant)
 
+        editor.putBoolean(KEY_ENABLE_LOCO_CONTROL, enableLocoControl)
+        if (enableLocoControl) {
+            val adr = selectedLoco?.adr ?: 3
+            editor.putInt(KEY_LOCO_ADR, adr)  // last used loco address
+        }
+
         // Commit the edits!
         editor.apply()
     }
@@ -178,6 +182,8 @@ class LanbahnPanelApplication : Application() {
         } else {
             selQuadrant = 0  // must be reset, because we only have one view left
         }
+        enableLocoControl = prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)
+        // selectedLoc.adr gets loaded when a locos-config.xml file is read
         LPaints.init(prescale, selectedStyle, applicationContext)
     }
 
@@ -204,7 +210,6 @@ class LanbahnPanelApplication : Application() {
             } else {
                 selQuadrant = 0  // must be reset, because we only have one view left
             }
-
             // save panel specific settings for later use in SettingsActivity
             val editor = prefs.edit()
             editor.putString(KEY_STYLE_PREF, selectedStyle)
@@ -289,6 +294,16 @@ class LanbahnPanelApplication : Application() {
 
         }
 
+        /** needed for sx loco control */
+        fun getSxData(a : Int) : Int {
+            return 0
+        }
+
+        /** needed for sx loco control */
+        fun sendSpeed(speed : Int) {
+
+        }
+
         /**
          * needs to be executed aPreferenceManagerlways at shutdown to have a state of "UNKNOWN" when
          * no current data at application restart
@@ -326,10 +341,13 @@ class LanbahnPanelApplication : Application() {
          *
          * set global scale values for this quadrant (variable qClip[qua].scale, .xoff, .yoff )
          */
-        fun calcAutoScale(width: Int, height: Int, qua: Int) {
-            if (DEBUG) Log.d(TAG, "calcAutoScale($width, $height, q=$qua)")
-            if ((width == 0) or (height == 0)) return //makes no sense
-
+        fun calcAutoScale(width: Int, heightIn: Int, qua: Int) {
+            if (DEBUG) Log.d(TAG, "calcAutoScale($width, $heightIn, q=$qua)")
+            if ((width == 0) or (heightIn == 0)) return //makes no sense
+            var remainingHeight = heightIn
+            //if (enableLocoControl) {
+                remainingHeight = 7 * heightIn / 8  // can only use 7/8 of height because of locoControlArea
+            //}
             // Rect(int left, int top, int right, int bottom)
             val re = Rect(panelRect)
             var scale = 1f
@@ -357,7 +375,7 @@ class LanbahnPanelApplication : Application() {
             // nexus7 (surface changed) - format=4 w=1280 h=618
             // samsung SM-T580 (surface changed) - format=4 w=1920 h=1068
             val sc1X = width / ((re.right - re.left) * 1.0f)
-            val sc1Y = height / ((re.bottom - re.top) * 1.0f)
+            val sc1Y = remainingHeight / ((re.bottom - re.top) * 1.0f)
 
             scale = Math.min(sc1X,sc1Y)
             val fact = sc1X / sc1Y
@@ -367,7 +385,7 @@ class LanbahnPanelApplication : Application() {
 
             if (sc1X < sc1Y) {
                 if (DEBUG) Log.d(TAG,"autoscale sc1X < sc1Y fact=$fact")
-                val hCalc = height / scale
+                val hCalc = remainingHeight / scale
                 when (qua) {
                     0 -> { xoff = 0f   //correct
                         yoff = scale * (hCalc - hRect) / 2 //correct
@@ -390,7 +408,6 @@ class LanbahnPanelApplication : Application() {
                     }
                 }
             } else {
-                // TODO !!!! scaling for SC1X > SC1Y !!
                 if (DEBUG) Log.d(TAG,"autoscale sc1X > sc1Y fact=$fact")
                 val wCalc = width / scale
                 when (qua) {
@@ -420,11 +437,17 @@ class LanbahnPanelApplication : Application() {
             pSett.qClip[qua].scale = scale
             pSett.qClip[qua].xoff = xoff
             pSett.qClip[qua].yoff = yoff
+            /* if ((qua == 0) and enableLocoControl) {
+                pSett.qClip[qua].yoff += heightIn / 8f   // additional displacement because of loco control area.
+            } else if (enableLocoControl){
+                pSett.qClip[qua].yoff += yoff + heightIn / 8f / 2  // additional displacement because of loco control area.
+            } */
 
 
             if (DEBUG) Log.d(TAG, "autoscale result: scale=$scale xoff=$xoff yoff=$yoff (qua=$qua)")
         }
 
     }
+
 }
 

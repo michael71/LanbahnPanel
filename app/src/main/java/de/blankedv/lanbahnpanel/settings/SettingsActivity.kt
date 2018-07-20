@@ -34,7 +34,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         super.onCreate(savedInstanceState)
         setupActionBar()
 
-
     }
 
 
@@ -81,6 +80,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 || GeneralPreferenceFragment::class.java.name == fragmentName
                 || DisplayPreferenceFragment::class.java.name == fragmentName
                 || ControlPreferenceFragment::class.java.name == fragmentName
+                || LocoPreferenceFragment::class.java.name == fragmentName
     }
 
     /**
@@ -224,6 +224,71 @@ class SettingsActivity : AppCompatPreferenceActivity() {
         }
 
         private fun matchingXMLFiles(): Array<String?>? {
+
+            if ((Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED)
+                    and (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED_READ_ONLY)) {
+                // Something  is wrong
+                Log.d(TAG, "cannot read ExternalStorage Directory ")
+                return null
+            }
+
+            val dir = File(Environment.getExternalStorageDirectory().toString() + "/" + DIRECTORY)
+            Log.d(TAG, "reading directory " + dir.absolutePath)
+
+            val files = ArrayList<String>()
+            for (filename in dir.list()) {
+                if (filename.endsWith(".xml")) {
+                    files.add(filename)
+                }
+            }
+            if (files.size > 0) {
+                val array = arrayOfNulls<String>(files.size)
+                return files.toArray(array)
+            } else {
+                return null
+            }
+        }
+
+
+    }
+
+    /**
+     * This fragment shows Control preferences only. It is used when the
+     * activity is showing a two-pane settings UI.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    class LocoPreferenceFragment : PreferenceFragment() {
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            addPreferencesFromResource(R.xml.pref_loco)
+            setHasOptionsMenu(true)
+
+            val locoConfigFilenamePref = preferenceScreen.findPreference(KEY_LOCOS_CONFIG_FILE) as ListPreference
+            val entries = matchingLocoXMLFiles()
+            if (entries != null) locoConfigFilenamePref!!.entries = entries
+            if (entries != null) locoConfigFilenamePref!!.entryValues = entries
+            bindPreferenceSummaryToValue(findPreference(KEY_LOCOS_CONFIG_FILE))
+
+            //configFilenamePref!!.summary = "config loaded from " + prefs.getString(KEY_CONFIG_FILE, "-")!!
+
+            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
+            // to their values. When their values change, their summaries are
+            // updated to reflect the new value, per the Android Design
+            // guidelines.
+
+            bindPreferenceSummaryToValue(findPreference(KEY_LOCO_SYSTEM))
+        }
+
+        override fun onOptionsItemSelected(item: MenuItem): Boolean {
+            val id = item.itemId
+            if (id == android.R.id.home) {
+                startActivity(Intent(activity, SettingsActivity::class.java))
+                return true
+            }
+            return super.onOptionsItemSelected(item)
+        }
+
+        private fun matchingLocoXMLFiles(): Array<String?>? {
 
             if ((Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED)
                     and (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED_READ_ONLY)) {

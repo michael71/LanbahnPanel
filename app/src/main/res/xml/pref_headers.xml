@@ -17,5 +17,10 @@
         android:icon="@drawable/control"
         android:title="@string/pref_header_control" />
 
+    <header
+        android:fragment="de.blankedv.lanbahnpanel.settings.SettingsActivity$LocoPreferenceFragment"
+        android:icon="@drawable/train_48dp"
+        android:title="@string/pref_header_loco" />
+
 
 </preference-headers>
