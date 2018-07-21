@@ -8,7 +8,7 @@ import android.util.Log
 
 import java.util.Hashtable
 
-object AndroBitmaps {
+object LanbahnBitmaps {
 
 
     val bitmaps = Hashtable<String, Bitmap>()
@@ -24,10 +24,6 @@ object AndroBitmaps {
 
         bitmaps["sensor_on"] = BitmapFactory.decodeResource(resources, R.drawable.led_red_2)
         bitmaps["sensor_off"] = BitmapFactory.decodeResource(resources, R.drawable.led_off_2)
-
-        bitmaps["lamp_on"] = BitmapFactory.decodeResource(resources, R.drawable.lamp1)
-        bitmaps["lamp_off"] = BitmapFactory.decodeResource(resources, R.drawable.lamp0)
-
 
         bitmaps["incr"] = BitmapFactory.decodeResource(resources, R.drawable.incr)
         bitmaps["decr"] = BitmapFactory.decodeResource(resources, R.drawable.decr)
@@ -49,20 +45,18 @@ object AndroBitmaps {
 
         bitmaps["genloco_s"] = BitmapFactory.decodeResource(resources, R.drawable.genloco_s)
 
-        bitmaps["button120"] = BitmapFactory.decodeResource(resources, R.drawable.button120)
-        bitmaps["button100"] = BitmapFactory.decodeResource(resources, R.drawable.button100)
-
         bitmaps["stop_s_on"] = BitmapFactory.decodeResource(resources, R.drawable.stop_s_on)
         bitmaps["stop_s_off"] = BitmapFactory.decodeResource(resources, R.drawable.stop_s_off)
 
 
-        bitmaps["lamp1"] = BitmapFactory.decodeResource(resources, R.drawable.lamp1btn)
-        bitmaps["lamp0"] = BitmapFactory.decodeResource(resources, R.drawable.lamp0btn)
+        bitmaps["lamp1"] = BitmapFactory.decodeResource(resources, R.drawable.light_on_24dp)
+        bitmaps["lamp0"] = BitmapFactory.decodeResource(resources, R.drawable.light_off_24dp)
 
-        bitmaps["func1"] = BitmapFactory.decodeResource(resources, R.drawable.func1)
-        bitmaps["func0"] = BitmapFactory.decodeResource(resources, R.drawable.func0)
-        bitmaps["slider"] = BitmapFactory.decodeResource(resources, R.drawable.slider)
-        bitmaps["slider_grey"] = BitmapFactory.decodeResource(resources, R.drawable.slider_grey)
+        bitmaps["func1"] = BitmapFactory.decodeResource(resources, R.drawable.bell_on_24dp)
+        bitmaps["func0"] = BitmapFactory.decodeResource(resources, R.drawable.bell_off_24dp)
+
+        bitmaps["slider"] = BitmapFactory.decodeResource(resources, R.drawable.slider_white_24dp)
+        bitmaps["slider_grey"] = BitmapFactory.decodeResource(resources, R.drawable.slider_grey_24dp)
     }
 
 

@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.util.Log
-import de.blankedv.lanbahnpanel.util.AndroBitmaps.bitmaps
+import de.blankedv.lanbahnpanel.util.LanbahnBitmaps.bitmaps
 import de.blankedv.lanbahnpanel.util.LPaints.linePaintDarkYellowDash
 import de.blankedv.lanbahnpanel.util.LPaints.linePaintGrayDash
 import de.blankedv.lanbahnpanel.util.LPaints.linePaintRedDash

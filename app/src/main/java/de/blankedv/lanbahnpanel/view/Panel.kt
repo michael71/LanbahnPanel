@@ -9,14 +9,13 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import de.blankedv.lanbahnpanel.util.AndroBitmaps.bitmaps
 import de.blankedv.lanbahnpanel.util.LPaints
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication
 import de.blankedv.lanbahnpanel.elements.RouteButtonElement
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.pSett
 import de.blankedv.lanbahnpanel.loco.LocoControlArea
-import android.text.TextPaint
+import de.blankedv.lanbahnpanel.util.LPaints.paintControlAreaBG
 
 
 /**
@@ -42,7 +41,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
     private var scalingTime = 0L
 
 
-    private val paintControlAreaBG = Paint()
+
     var locoControlArea: LocoControlArea? = null
 
     private val toneG = ToneGenerator(AudioManager.STREAM_ALARM, 70)
@@ -59,8 +58,6 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
     init {
         mScaleDetector = ScaleGestureDetector(context, ScaleListener())
         holder.addCallback(this)
-
-        paintControlAreaBG.setColor(-0xddbbde)
 
         locoControlArea = LocoControlArea(context)
         mThread = ViewThread(this)
@@ -278,7 +275,6 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
         if (enableLocoControl) {
             canvas.drawRect(controlAreaRect, paintControlAreaBG);
-
             locoControlArea?.draw(canvas); // not scaled with zoom
         }
 

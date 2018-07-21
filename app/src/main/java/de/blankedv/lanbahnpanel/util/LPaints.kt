@@ -41,6 +41,8 @@ object LPaints {
     var yellowPaint = Paint()
     var yellowSignal = Paint()
 
+    val paintControlAreaBG = Paint()
+
     // used for displaying addresses on panel and for panel Name
     var addressPaint = TextPaint()
     var panelNamePaint = TextPaint()
@@ -176,6 +178,8 @@ object LPaints {
         panelNamePaint.textSize = (12 * prescale).toFloat()
         panelNamePaint.style = Style.FILL
 
+        paintControlAreaBG.color = -0xddbbde
+
         when (selectedStyle) {
             "DE" -> {
 
@@ -194,6 +198,8 @@ object LPaints {
                 addressBGPaint.color = Color.DKGRAY
                 panelNamePaint.color = Color.BLACK
 
+                paintControlAreaBG.color = -0xddbb00
+
             }
             "UK" -> {
 
@@ -211,6 +217,8 @@ object LPaints {
                 addressPaint.color = Color.YELLOW
                 addressBGPaint.color = Color.DKGRAY
                 panelNamePaint.color = Color.BLACK
+
+                paintControlAreaBG.color = -0xddbb00
 
                 }
         }

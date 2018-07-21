@@ -19,7 +19,7 @@ import com.google.gson.Gson
 import de.blankedv.lanbahnpanel.R
 import de.blankedv.lanbahnpanel.elements.*
 import de.blankedv.lanbahnpanel.settings.PanelSettings
-import de.blankedv.lanbahnpanel.util.AndroBitmaps
+import de.blankedv.lanbahnpanel.util.LanbahnBitmaps
 import de.blankedv.lanbahnpanel.util.LPaints
 
 /** Lanbahn Panel
@@ -43,7 +43,7 @@ class LanbahnPanelApplication : Application() {
 
         // do some initializations
         // for (int i=0; i<MAX_LANBAHN_ADDR; i++) lanbahnData[i]=0;
-        AndroBitmaps.init(resources)
+        LanbahnBitmaps.init(resources)
 
         val myAndroidDeviceId = Settings.Secure.getString(applicationContext.contentResolver, Settings.Secure.ANDROID_ID)
 

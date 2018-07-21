@@ -2,37 +2,32 @@ package de.blankedv.lanbahnpanel.loco
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
+import android.graphics.Color.*
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
-import android.util.DisplayMetrics
 import android.util.Log
-import de.blankedv.lanbahnpanel.loco.LocoControlArea.Companion.X_LOCO_MID
-import de.blankedv.lanbahnpanel.loco.LocoControlArea.Companion.X_LOCO_RANGE
 import de.blankedv.lanbahnpanel.model.*
-import de.blankedv.lanbahnpanel.util.AndroBitmaps.bitmaps
+import de.blankedv.lanbahnpanel.util.LanbahnBitmaps.bitmaps
 import de.blankedv.lanbahnpanel.view.Dialogs
 
 /**
  * handles the display of the top 20% of the display, the "LOCO CONTROL AREA"
- * one loco can be controlled (out of the ones defined in "locos-xyz.xml" Files
+ * one loco can be controlled (out of the ones defined in "locos-xyz.xml" File)
  *
  * @author mblank
  */
 class LocoControlArea(internal var ctx: Context) {
 
     private val stopBtn: LocoButton
-    private val lampBtn: LocoButton
-    private val adrBtn: LocoButton
+    private val lampBtn: LocoButton    // F0
+    private val addressBtn: LocoButton
+    private val functionBtn: LocoButton  //F1
 
-    private val functionBtn: LocoButton
-    private val nameBtn: LocoButton? = null
+    private var paintText = Paint()
+    private var paintLargeTxt = Paint()
+    private var paintTextDisabled = Paint()
 
-    private var paintLocoAdrTxt = Paint()
-    private var paintLocoSpeedTxt = Paint()
-    private var paintLocoSpeed = Paint()
-    private var paintStopText = Paint()
     private var green = Paint()
     private var white = Paint()
     private var editPaint = Paint()
@@ -46,46 +41,50 @@ class LocoControlArea(internal var ctx: Context) {
         val height = metrics.heightPixels
 
         // define some paints for the loco controls and texts
-         paintLocoSpeed.color = -0xdd00de
-        paintLocoAdrTxt.color = Color.BLACK
-        paintLocoAdrTxt.textSize = calcTextSize(width)
-        paintStopText.color = Color.WHITE
-        paintStopText.textSize = paintLocoAdrTxt.textSize * 0.7f
-        editPaint.color = Color.RED
+
+        paintLargeTxt.color = WHITE
+        paintLargeTxt.textSize = calcTextSize(width)
+
+        paintText.color = WHITE
+        paintText.textSize = paintLargeTxt.textSize * 0.7f
+
+        paintTextDisabled.color = LTGRAY
+        paintTextDisabled.textSize = paintLargeTxt.textSize * 0.7f
+
+
+        editPaint.color = RED
         editPaint.textSize = calcTextSize(width)
         editPaint.typeface = Typeface.DEFAULT_BOLD
-        paintLocoSpeedTxt.color = Color.WHITE
-        paintLocoSpeedTxt.textSize = calcTextSize(width) * 0.66f
-        green.color = Color.GREEN
-        white.color = Color.WHITE
+        green.color = GREEN
+        white.color = WHITE
 
+        addressBtn = LocoButton(0.91f, 0.5f)  // only text.
         stopBtn = LocoButton(0.20f, 0.5f)  // only text
         lampBtn = LocoButton(0.848f, 0.5f,
-                bitmaps?.get("lamp1")!!,
-                bitmaps?.get("lamp0")!!)
+                bitmaps?.get("lamp1")!!,     // bitmap for "on" state
+                bitmaps?.get("lamp0")!!)     // bitmap for "off" state
         functionBtn = LocoButton(0.796f, 0.5f,
                 bitmaps?.get("func1")!!,
                 bitmaps?.get("func0")!!)
-        adrBtn = LocoButton(0.91f, 0.5f)  // only text.
-        //adrBtn = new LocoButton(0.91f,0.5f,bitmaps.get("genloco_s"));
 
-        //commBtn = LocoButton(0.09f, 0.5f, bitmaps.get("commok"), bitmaps.get("nocomm"))
-        //powerBtn = LocoButton(0.13f, 0.5f, bitmaps.get("greendot"), bitmaps.get("reddot"), bitmaps.get("greydot"))
+      }
+
+    private fun drawSlider(canvas : Canvas) {
+
     }
-
     fun draw(canvas: Canvas) {
 
         selectedLoco?.updateLocoFromSX()  // to be able to display actual states of this loco
 
         // draw "buttons" and states
 
-        adrBtn.doDraw(canvas, selectedLoco?.adr!!, paintLocoAdrTxt)
+        addressBtn.doDraw(canvas, selectedLoco?.adr!!.toString(), paintLargeTxt)
         lampBtn.doDraw(canvas, selectedLoco?.lamp_to_be!!)
         functionBtn.doDraw(canvas, selectedLoco?.function_to_be!!)
         if (selectedLoco?.speed_act !== 0) {
-            stopBtn.doDraw(canvas, "Stop", paintStopText)
+            stopBtn.doDraw(canvas, "Stop", paintText)
         } else {
-            stopBtn.doDraw(canvas, " * ", paintStopText)
+            stopBtn.doDraw(canvas, "Stop", paintTextDisabled)
         }
         // draw slider for speed selection
         sxmin = (canvas.width * (X_LOCO_MID - X_LOCO_RANGE)).toInt()
@@ -107,13 +106,11 @@ class LocoControlArea(internal var ctx: Context) {
         canvas.drawBitmap(bitmaps.get("slider"), xSpeedToBe - sliderXoff, ySpeed - sliderYoff, null)
 
         var xtext = (canvasWidth * (X_LOCO_MID + X_LOCO_RANGE * 0.9f)).toInt()
-        canvas.drawText(locoSpeed(), xtext.toFloat(), ySpeed + 32, paintLocoSpeedTxt)
+        canvas.drawText(locoSpeed(), xtext.toFloat(), ySpeed + 32, paintText)
         xtext = (canvasWidth * (X_LOCO_MID - X_LOCO_RANGE * 0.9f)).toInt()
-        canvas.drawText(selectedLoco?.longString(), xtext.toFloat(), ySpeed + 32, paintLocoSpeedTxt)
+        canvas.drawText(selectedLoco?.longString(), xtext.toFloat(), ySpeed + 32, paintText)
 
-        //if (enableEdit) canvas.drawText("Edit", (canvas.width * 0.36f).toInt().toFloat(), ySpeed * 0.8f, editPaint)
-        //if (demoFlag) canvas.drawText("Demo", (canvas.width * 0.28f).toInt().toFloat(), ySpeed * 0.8f, demoPaint)
-        //canvas.drawText(""+counter, xtext, ySpeed-20, paintLocoSpeedTxt);
+
 
     }
 
@@ -164,7 +161,7 @@ class LocoControlArea(internal var ctx: Context) {
             selectedLoco?.toggleLocoLamp()
         } else if (functionBtn.isTouched(x, y)) {
             selectedLoco?.toggleFunc()
-        } else if (adrBtn.isTouched(x, y)) {
+        } else if (addressBtn.isTouched(x, y)) {
             Dialogs.selectLocoDialog()
 
         }
@@ -174,7 +171,7 @@ class LocoControlArea(internal var ctx: Context) {
     fun recalcGeometry() {
         stopBtn.recalcXY()
         lampBtn.recalcXY()
-        adrBtn.recalcXY()
+        addressBtn.recalcXY()
         functionBtn.recalcXY()
         ySpeed = (controlAreaRect?.bottom!!.toFloat() - controlAreaRect?.top!!) / 2  // mid of control area range.
     }
