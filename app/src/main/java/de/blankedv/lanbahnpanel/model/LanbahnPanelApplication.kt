@@ -18,6 +18,7 @@ import android.util.Log
 import com.google.gson.Gson
 import de.blankedv.lanbahnpanel.R
 import de.blankedv.lanbahnpanel.elements.*
+import de.blankedv.lanbahnpanel.loco.Loco
 import de.blankedv.lanbahnpanel.settings.PanelSettings
 import de.blankedv.lanbahnpanel.util.LanbahnBitmaps
 import de.blankedv.lanbahnpanel.util.LPaints
@@ -93,6 +94,13 @@ class LanbahnPanelApplication : Application() {
                             if (pe.adr == chan) {
                                 pe.updateData(STATE_UNKNOWN)
                             }
+                        }
+                    }
+
+                    TYPE_SX_MSG -> {
+                        // only for locos
+                        for (l in locolist) {
+                            if (l.adr == chan) l.setSXData(data)
                         }
                     }
 
@@ -294,14 +302,24 @@ class LanbahnPanelApplication : Application() {
 
         }
 
-        /** needed for sx loco control */
-        fun getSxData(a : Int) : Int {
-            return 0
+        /** needed for sx loco control  TODO works only for SX */
+        fun requestAllSxLocoData() {
+            for (l in locolist) {
+                client?.readSXChannel(l.adr)  // TODO works only for SX
+            }
+
         }
 
-        /** needed for sx loco control */
-        fun sendSpeed(speed : Int) {
+        /** needed for sx loco control  TODO works only for SX*/
+        fun requestSxLocoData(a : Int) {
+            if (a != INVALID_INT) {
+                client?.readSXChannel(a)  // TODO works only for SX
+            }
+          }
 
+        /** needed for sx loco control  TODO works only for SX */
+        fun setSxLocoData(addr : Int, sx: Int) {
+            client?.setSXChannel(addr, sx)  // TODO works only for SX
         }
 
         /**

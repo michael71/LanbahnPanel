@@ -58,7 +58,7 @@ class LocoControlArea(internal var ctx: Context) {
         green.color = GREEN
         white.color = WHITE
 
-        addressBtn = LocoButton(0.91f, 0.5f)  // only text.
+        addressBtn = LocoButton(0.11f, 0.5f)  // only text.
         stopBtn = LocoButton(0.20f, 0.5f)  // only text
         lampBtn = LocoButton(0.848f, 0.5f,
                 bitmaps?.get("lamp1")!!,     // bitmap for "on" state
@@ -74,7 +74,8 @@ class LocoControlArea(internal var ctx: Context) {
     }
     fun draw(canvas: Canvas) {
 
-        selectedLoco?.updateLocoFromSX()  // to be able to display actual states of this loco
+        // Done in activity regularly
+        //        selectedLoco?.updateLocoFromSX()  // to be able to display actual states of this loco
 
         // draw "buttons" and states
 
@@ -84,7 +85,7 @@ class LocoControlArea(internal var ctx: Context) {
         if (selectedLoco?.speed_act !== 0) {
             stopBtn.doDraw(canvas, "Stop", paintText)
         } else {
-            stopBtn.doDraw(canvas, "Stop", paintTextDisabled)
+            stopBtn.doDraw(canvas, "(Stop)", paintTextDisabled)
         }
         // draw slider for speed selection
         sxmin = (canvas.width * (X_LOCO_MID - X_LOCO_RANGE)).toInt()

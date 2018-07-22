@@ -134,6 +134,30 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
         }
     }
 
+    // TODO move somewhere else or better make generic with "LOCO" command
+    fun readSXChannel(addr: Int) {
+        if (addr == INVALID_INT) return
+        if (myClient is SXnetClient) {
+            var cmd = "R $addr"  // TODO move somewhere else or better make generic with "LOCO" command
+            val success = sendQ.offer(cmd)
+            if (!success && DEBUG) {
+                Log.d(TAG, "readChannel failed, queue full")
+            }
+        }
+    }
+
+    // TODO move somewhere else or better make generic with "LOCO" command
+    fun setSXChannel(addr: Int, data : Int) {
+        if ((addr == INVALID_INT) || (data == INVALID_INT) ) return
+        if (myClient is SXnetClient) {
+            var cmd = "S $addr $data"
+            val success = sendQ.offer(cmd)
+            if (!success && DEBUG) {
+                Log.d(TAG, "readChannel failed, queue full")
+            }
+        }
+    }
+
     fun setChannel(addr: Int, data: Int, peClass: Class<*>) {
         if (addr == INVALID_INT) return
         var cmd = myClient?.setChannel(addr, data, peClass) ?: return

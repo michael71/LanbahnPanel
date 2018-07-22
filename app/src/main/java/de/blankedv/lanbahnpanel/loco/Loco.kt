@@ -19,6 +19,8 @@ class Loco {
     var mass: Int = 0    // 1...5 (never == 0 !)
     var vmax = 100   // maximum speed in km/h
 
+    private var sxData = 0   // SX Data byte (if SX is used)
+
     // speed vars used for setting loco speed
     var speed_act: Int = 0        // -31 ... +31, speed currently sent via SXnet
     var speed_to_be: Int = 0   // -31 ... +31,  speed after Mass Simulation
@@ -92,7 +94,7 @@ class Loco {
 
 
     fun initFromSX() {
-        updateLocoFromSX()
+        LanbahnPanelApplication.requestSxLocoData(this.adr)
         resetToBe()
     }
 
@@ -103,8 +105,8 @@ class Loco {
         lamp_to_be = lamp
     }
 
-    fun updateLocoFromSX() {
-        val d = LanbahnPanelApplication.getSxData(adr)
+    fun setSXData(d : Int) {
+
         var s = d and 0x1f
         if (d and 0x20 != 0) s = -s
         speed_from_sx = s
@@ -147,10 +149,8 @@ class Loco {
                     handler.sendMessage(m);  // send SX data to UI Thread via Message
                     return;
                 } */
+                LanbahnPanelApplication.setSxLocoData(adr, sx)
 
-                val command = "SX $adr $sx"
-                val success = sendQ.offer(command)
-                if (!success && DEBUG) Log.d(TAG, "loco sendCommand failed, queue full")
 
             }
         }

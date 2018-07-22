@@ -178,7 +178,7 @@ object LPaints {
         panelNamePaint.textSize = (12 * prescale).toFloat()
         panelNamePaint.style = Style.FILL
 
-        paintControlAreaBG.color = -0xddbbde
+        paintControlAreaBG.color = (0x00FF4F46F6).toInt()
 
         when (selectedStyle) {
             "DE" -> {
@@ -198,7 +198,7 @@ object LPaints {
                 addressBGPaint.color = Color.DKGRAY
                 panelNamePaint.color = Color.BLACK
 
-                paintControlAreaBG.color = -0xddbb00
+                paintControlAreaBG.color = (0x00FF00A6F6).toInt()
 
             }
             "UK" -> {

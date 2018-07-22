@@ -26,8 +26,12 @@ class SXnetClient() : GenericClient() {
     }
 
     override fun readChannel(addr: Int) : String {
+        return "READ $addr"   // general lanbahn address range
+    }
 
-        return "READ $addr"
+    // NOT USED HERE
+    fun readSXChannel(addr: Int) : String {
+        return "R $addr"   // specific sx message
     }
 
     override fun setChannel(addr: Int, data: Int, peClass : Class<*>) :String {
@@ -88,6 +92,18 @@ class SXnetClient() : GenericClient() {
                         } else {
                             m.what = TYPE_GENERIC_MSG
                         }
+                        m.arg1 = adr
+                        m.arg2 = data
+                        recHandler.sendMessage(m)  // send SX data to UI Thread via Message
+                    } else {
+                        Log.e(TAG, "range error in rec. msg, cmd=$cmd adr=$adr data=$data")
+                    }
+                } else if (info.size >= 3 && info[0] == "X") {
+                    adr = extractChannelFromString(info[1])
+                    data = extractDataFromString(info[2])
+                    if (adr != INVALID_INT && data != INVALID_INT) {
+                        val m = Message.obtain()
+                        m.what = TYPE_SX_MSG
                         m.arg1 = adr
                         m.arg2 = data
                         recHandler.sendMessage(m)  // send SX data to UI Thread via Message

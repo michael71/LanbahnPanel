@@ -367,6 +367,14 @@ class LanbahnPanelActivity : AppCompatActivity() {
         setPowerStateIcon()
         //displayLockState()
         Route.auto()
+
+       /* TODO check necessity
+        if ((counter.rem(2) == 0) and (selectedLoco != null)) {
+
+            val adr = selectedLoco?.adr   ?: INVALID_INT
+            //LanbahnPanelApplication.requestSxLocoData(adr)
+        } */
+
         mHandler.postDelayed({ updateUI() }, 500)
     }
 
