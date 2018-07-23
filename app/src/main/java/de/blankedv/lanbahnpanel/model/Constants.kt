@@ -46,6 +46,8 @@ const val LBP_NOTIFICATION_ID = 201 //arbitrary id for notification
 // turnouts
 const val STATE_CLOSED = 0
 const val STATE_THROWN = 1
+const val DISP_STANDARD = 0
+const val DISP_INVERTED = 1
 
 // signals
 const val STATE_RED = 0

@@ -18,6 +18,7 @@ class TurnoutElement : ActivePanelElement {
     constructor() {
         adr = INVALID_INT
         state = STATE_UNKNOWN
+
     }
 
     constructor(turnout: PanelElement) {
@@ -29,9 +30,10 @@ class TurnoutElement : ActivePanelElement {
         yt = turnout.yt
         adr = turnout.adr
         state = STATE_UNKNOWN
+        invert = DISP_STANDARD
     }
 
-    override fun getSensitiveRect() : Rect {
+    override fun getSensitiveRect(): Rect {
         val minx = Utils.min(x, xt, x2) - RASTER / 11
         val maxx = Utils.max(x, xt, x2) + RASTER / 11
         val miny = Utils.min(y, yt, y2) - RASTER / 11
@@ -41,28 +43,43 @@ class TurnoutElement : ActivePanelElement {
 
     override fun doDraw(canvas: Canvas) {
 
+
         // read data from SX bus and paint position of turnout accordingly
         // draw a line and not a bitmap
         if (enableEdit) {
-            canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), greenPaint)
-            canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), redPaint)
+            if (invert == DISP_STANDARD) {
+                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), greenPaint)
+                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), redPaint)
+            } else {
+                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), redPaint)
+                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), greenPaint)
+            }
         } else if (adr == INVALID_INT) {
             canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaint2)
             canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), linePaint2)
         } else {
 
             if (state == STATE_CLOSED) {
-                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), bgPaint)
-                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaint2)
+                if (invert == DISP_STANDARD) {
+                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), bgPaint)
+                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaint2)
+                } else {
+                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), linePaint2)
+                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), bgPaint)
+                }
             } else if (state == STATE_THROWN) {
-                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), bgPaint)
-                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), linePaint2)
+                if (invert == DISP_STANDARD) {
+                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), bgPaint)
+                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), linePaint2)
+                } else {
+                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaint2)
+                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), bgPaint)
+                }
             } else if (state == STATE_UNKNOWN) {
                 canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), bgPaint)
                 canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), bgPaint)
             }
         }
-
         if (drawAddresses) doDrawAddresses(canvas)
     }
 
@@ -87,7 +104,7 @@ class TurnoutElement : ActivePanelElement {
         /** was:
         val cmd = "SET $adr $state"
         if (!sendQ.contains(cmd)) {
-            sendQ.add(cmd) // ==> send changed data over network turnout interface
+        sendQ.add(cmd) // ==> send changed data over network turnout interface
         } */
         client?.setChannel(adr, state, TurnoutElement::class.java)
 

@@ -26,6 +26,7 @@ open class PanelElement {
     var adr = INVALID_INT
     var state = STATE_UNKNOWN
     var route = ""
+    var invert = DISP_STANDARD     // not inverted
 
     /** get the type-name which is used in the XML panel definition file
      *

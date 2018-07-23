@@ -220,6 +220,8 @@ object ReadConfig {
                 pe.yt = getPositionNode(theAttribute)
             } else if (theAttribute.nodeName == "adr") {
                 pe.adr = getPositionNode(theAttribute)
+            } else if (theAttribute.nodeName == "inv")  {
+                pe.invert = getPositionNode(theAttribute)
 
                 // turnout have either an lanbahn/dcc address ("adr") or a combination of
                 // sxadr and sxbit (for ex. sxadr="98" sxbit="7") which will be compiled to
