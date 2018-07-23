@@ -34,10 +34,10 @@ class TurnoutElement : ActivePanelElement {
     }
 
     override fun getSensitiveRect(): Rect {
-        val minx = Utils.min(x, xt, x2) - RASTER / 11
-        val maxx = Utils.max(x, xt, x2) + RASTER / 11
-        val miny = Utils.min(y, yt, y2) - RASTER / 11
-        val maxy = Utils.max(y, yt, y2) + RASTER / 11
+        val minx = Utils.min(x, xt, x2) - RASTER / 7
+        val maxx = Utils.max(x, xt, x2) + RASTER / 7
+        val miny = Utils.min(y, yt, y2) - RASTER / 7
+        val maxy = Utils.max(y, yt, y2) + RASTER / 7
         return Rect(minx, miny, maxx, maxy)
     }
 

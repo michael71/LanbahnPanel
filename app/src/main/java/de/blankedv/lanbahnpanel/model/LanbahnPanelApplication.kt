@@ -19,6 +19,7 @@ import com.google.gson.Gson
 import de.blankedv.lanbahnpanel.R
 import de.blankedv.lanbahnpanel.elements.*
 import de.blankedv.lanbahnpanel.loco.Loco
+import de.blankedv.lanbahnpanel.railroad.SXnetClient
 import de.blankedv.lanbahnpanel.settings.PanelSettings
 import de.blankedv.lanbahnpanel.util.LanbahnBitmaps
 import de.blankedv.lanbahnpanel.util.LPaints
@@ -98,10 +99,7 @@ class LanbahnPanelApplication : Application() {
                     }
 
                     TYPE_SX_MSG -> {
-                        // only for locos
-                        for (l in locolist) {
-                            if (l.adr == chan) l.setSXData(data)
-                        }
+                        evaluateSxMessage(chan, data)
                     }
 
                 }
@@ -111,6 +109,27 @@ class LanbahnPanelApplication : Application() {
         }
     }
 
+    private fun evaluateSxMessage(ch : Int, data: Int) {
+        if (ch <= SXMAX) {
+            val d = data.and(0xFF)
+            sxData[ch] = d
+            // update locos (if a loco has the "ch" address)
+            for (l in locolist) {
+                if (l.adr == ch) {
+                    l.setSXData(d)
+                }
+            }
+            // update all panel elements which have ch*10+1 ... ch*10+8 address range
+            for (i in 1..8) {
+                val fullAddr = ch * 10 + i
+                for (pe in panelElements.filter{it is ActivePanelElement}) {
+                    if (pe.adr == fullAddr) {
+                        pe.updateData(SXnetClient.getSXBitValueFromByte(d,i))
+                    }
+                }
+            }
+        }
+    }
 
     override fun onTerminate() {
         super.onTerminate()
@@ -292,11 +311,23 @@ class LanbahnPanelApplication : Application() {
         }
 
         fun requestAllPanelData() {
-            if (DEBUG) Log.d(TAG, "requstAllPanelData()")
+            if (DEBUG) Log.d(TAG, "requstAllPanelData() proto=$panelProtocol")
             // request state of all active panel elements
-            for (pe in panelElements.filter { it.adr != INVALID_INT && (it.isExpired() == true) }) {
-                if (pe is ActivePanelElement) {
-                    client?.readChannel(pe.adr, pe.javaClass)
+            if (panelProtocol == PROTOCOL_SX) {  // cluster by sx-address
+                var addrList = mutableListOf<Int>()
+                for (pe in panelElements.filter { it.adr != INVALID_INT && (it.isExpired() == true) }) {
+                    addrList.add(pe.adr / 10)
+                }
+                for (addr in addrList.distinct()) {
+                    if (DEBUG) Log.d(TAG,"requesting: $addr")
+                    client?.readSXChannel(addr)
+                }
+
+            } else {  // one message per panel element
+                for (pe in panelElements.filter { it.adr != INVALID_INT && (it.isExpired() == true) }) {
+                    if (pe is ActivePanelElement) {
+                        client?.readChannel(pe.adr, pe.javaClass)
+                    }
                 }
             }
 

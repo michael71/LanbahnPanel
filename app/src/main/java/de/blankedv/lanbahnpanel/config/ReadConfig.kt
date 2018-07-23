@@ -143,6 +143,8 @@ object ReadConfig {
         panelProtocol = parsePanelDescription(items.item(0), "protocol")
         panelVersion = parsePanelDescription(items.item(0), "version")
 
+        if (panelProtocol.isEmpty()) panelProtocol = "sx"  // make default
+
         // NamedNodeMap attributes = item.getAttributes();
         // Node theAttribute = attributes.items.item(i);
 
@@ -299,7 +301,7 @@ object ReadConfig {
         }
         if ((pe.adr == INVALID_INT) and (sxadr != INVALID_INT) and (sxbit != INVALID_INT)) {
             // calc from sx add a LanbahnSXPair for later storage
-            val lbSxPair = LanbahnSXPair(INVALID_INT, sxadr, sxbit)
+            val lbSxPair = LanbahnSXPair(INVALID_INT, sxadr, sxbit)   // lbaddr gets calculated
             pe.adr = lbSxPair.lbAddr
             sxMappings.add(lbSxPair)
         }

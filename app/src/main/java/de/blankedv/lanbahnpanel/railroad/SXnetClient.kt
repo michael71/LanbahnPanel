@@ -3,7 +3,6 @@ package de.blankedv.lanbahnpanel.railroad
 import android.os.Handler
 import android.os.Message
 import android.util.Log
-import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import de.blankedv.lanbahnpanel.model.*
 
 /**
@@ -14,19 +13,28 @@ import de.blankedv.lanbahnpanel.model.*
 
 class SXnetClient() : GenericClient() {
 
-
-
     init {
         if (DEBUG) Log.d(TAG, "SXnetClient constructor.")
     }
 
     override fun readChannel(addr: Int, peClass : Class<*>) : String {
         // class can be ignored for selectrix (sxnet)
-      return "READ $addr"
+        // lanbahn address 701 => sxAddress 70.1  (bit 1)
+        // bit is ignored here
+        if (isValidSXAddress(addr/10)) {
+            return "R ${addr / 10}"
+        } else {
+            return ""
+        }
     }
 
     override fun readChannel(addr: Int) : String {
-        return "READ $addr"   // general lanbahn address range
+        // lanbahn address 701 => sxAddress 70.1  (bit 1)
+        if (isValidSXAddress(addr/10)) {
+            return "R ${addr / 10}"
+        } else {
+            return ""
+        }
     }
 
     // NOT USED HERE
@@ -36,20 +44,25 @@ class SXnetClient() : GenericClient() {
 
     override fun setChannel(addr: Int, data: Int, peClass : Class<*>) :String {
         // class can be ignored for selectrix (sxnet)
-        return "SET $addr $data"
+        return setChannel(addr, data)
     }
 
     override fun setChannel(addr: Int, data: Int) :String {
-        return "SET $addr $data"
+        // for sx, we need to calculate the bit from the address=chan.bit
+        val chan = addr / 10
+        val bit = addr.rem(10)
+        return "S $chan.$bit $data"
     }
 
     override fun setPowerState (switchOn : Boolean) : String {
         if (switchOn) {
-            return "SET $POWER_CHANNEL 1"
+            return "S $SX_POWER_CHANNEL 127"
         } else {
-            return "SET $POWER_CHANNEL 0"
+            return "S $SX_POWER_CHANNEL 0"
         }
     }
+
+
 
     /**
      * SX Net Protocol rev3 (all msg terminated with CR)
@@ -68,8 +81,8 @@ class SXnetClient() : GenericClient() {
         var info: Array<String>? = null
         msg = msg.toUpperCase()
 
-        var adr = INVALID_INT
-        var data: Int
+        var sxAddr : Int
+        var sxData: Int
 
         // new code: multiple commands in a single message, separated by ';'
         // example: String msg = "S 780 2 ;; S 800 3  ;  S 720 1";
@@ -78,46 +91,33 @@ class SXnetClient() : GenericClient() {
             //Log.d(TAG,"single cmd="+cmd);
             if (!cmd.contains("ERROR")) {
                 info = cmd.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                // all lanbahn feedback message have the Format "XL <adr> <data>"
-                //                          pure SX (=andropanel) has "X" message
-                // adr range 1 ... 9999, data range 0 ..255
-                // adr=1000 is the sxnet/lanbahn "Power" channel
-                if (info.size >= 3 && info[0] == "XL") {
-                    adr = extractChannelFromString(info[1])
-                    data = extractDataFromString(info[2])
-                    if (adr != INVALID_INT && data != INVALID_INT) {
+                // all SX feedback message have the Format "X <adr> <data>"
+                // adr range 1 ... 111 or 127, data range 0 ..255
+                // adr=127 is the sxnet "Power" channel
+                if (info.size >= 3 && info[0] == "X") {
+                    sxAddr = extractSxChannelFromString(info[1])
+                    sxData = extractDataByteFromString(info[2])
+                    if (sxAddr != INVALID_INT && sxData != INVALID_INT) {
                         val m = Message.obtain()
-                        if (adr == POWER_CHANNEL) {
+                        if (sxAddr == SX_POWER_CHANNEL) {
                             m.what = TYPE_POWER_MSG
                         } else {
-                            m.what = TYPE_GENERIC_MSG
+                            m.what = TYPE_SX_MSG
                         }
-                        m.arg1 = adr
-                        m.arg2 = data
+                        m.arg1 = sxAddr
+                        m.arg2 = sxData
                         recHandler.sendMessage(m)  // send SX data to UI Thread via Message
                     } else {
-                        Log.e(TAG, "range error in rec. msg, cmd=$cmd adr=$adr data=$data")
-                    }
-                } else if (info.size >= 3 && info[0] == "X") {
-                    adr = extractChannelFromString(info[1])
-                    data = extractDataFromString(info[2])
-                    if (adr != INVALID_INT && data != INVALID_INT) {
-                        val m = Message.obtain()
-                        m.what = TYPE_SX_MSG
-                        m.arg1 = adr
-                        m.arg2 = data
-                        recHandler.sendMessage(m)  // send SX data to UI Thread via Message
-                    } else {
-                        Log.e(TAG, "range error in rec. msg, cmd=$cmd adr=$adr data=$data")
+                        Log.e(TAG, "range error in rec. msg, cmd=$cmd adr=$sxAddr data=$sxData")
                     }
                 } else if (info.size >= 3 && info[0] == "RT") {
-                    adr = extractChannelFromString(info[1])
-                    data = extractDataFromString(info[2])
-                    if (adr != INVALID_INT && data != INVALID_INT) {
+                    sxAddr = extractSxChannelFromString(info[1])
+                    sxData = extractDataByteFromString(info[2])
+                    if (sxAddr != INVALID_INT && sxData != INVALID_INT) {
                         val m = Message.obtain()
                         m.what = TYPE_ROUTE_MSG
-                        m.arg1 = adr
-                        m.arg2 = data
+                        m.arg1 = sxAddr
+                        m.arg2 = sxData
                         recHandler.sendMessage(m)  // send route data to UI Thread via Message
                     }
                 }
@@ -129,7 +129,7 @@ class SXnetClient() : GenericClient() {
     /** convert data string to integer and
      *  check if data is in valid range for selectrix (8 bit, 0..255)
      */
-    private fun extractDataFromString(s: String): Int {
+    private fun extractDataByteFromString(s: String): Int {
         // converts String to integer between 0 and 255 (maximum data range)
         var data: Int? = INVALID_INT
         try {
@@ -145,23 +145,39 @@ class SXnetClient() : GenericClient() {
     }
 
     /** convert address string to integer and
-     * check if address (=channel) is in valid range for selectrix
+     *  check if address (=channel) is in valid range for selectrix
      */
-    private fun extractChannelFromString(s: String): Int {
+    private fun extractSxChannelFromString(s: String): Int {
 
         try {
-            var channel = Integer.parseInt(s)
-            if ((channel in LBMIN..LBMAX) or (channel == POWER_CHANNEL)) {
-                return channel
-            } else {
-                return INVALID_INT
+            var sxAddr = Integer.parseInt(s)
+            if (isValidSXAddress(sxAddr) or (sxAddr == SX_POWER_CHANNEL)) {
+                return sxAddr
             }
-        } catch (e: Exception) {
-            return INVALID_INT
+        } catch (e: NumberFormatException) {
         }
-
+        return INVALID_INT
 
     }
 
+    companion object {
 
+        // check if address is in Selectrix Range 0..111
+        fun isValidSXAddress(addr : Int) : Boolean {
+            return ((addr >= SXMIN) and (addr <= SXMAX))
+
+        }
+
+        fun getSXBitValueFromByte(value : Int, bit : Int) : Int {
+            if (bit in 1..8) {
+                val mask = 1.shl(bit-1)
+                if ((value and mask) != 0) {
+                    return 1
+                } else {
+                    return 0
+                }
+            }
+            return INVALID_INT
+        }
+    }
 }

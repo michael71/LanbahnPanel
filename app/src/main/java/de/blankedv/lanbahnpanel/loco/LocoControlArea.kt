@@ -79,7 +79,7 @@ class LocoControlArea(internal var ctx: Context) {
 
         // draw "buttons" and states
 
-        addressBtn.doDraw(canvas, selectedLoco?.adr!!.toString(), paintLargeTxt)
+        addressBtn.doDraw(canvas, "A:"+selectedLoco?.adr!!.toString(), paintLargeTxt)
         lampBtn.doDraw(canvas, selectedLoco?.lamp_to_be!!)
         functionBtn.doDraw(canvas, selectedLoco?.function_to_be!!)
         if (selectedLoco?.speed_act !== 0) {

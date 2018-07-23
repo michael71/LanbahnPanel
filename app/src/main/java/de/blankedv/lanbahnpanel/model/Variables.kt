@@ -19,6 +19,7 @@ import java.util.concurrent.BlockingQueue
 // with file
 var noWifiFlag = false
 
+var sxData = IntArray(SXMAX+1, { i -> 0 })
 
 var selectedStyle: String = "UK" // German style or USS style
 var selectedScale: String = "auto" // automatic scaling

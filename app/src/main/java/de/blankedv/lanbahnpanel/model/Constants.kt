@@ -4,7 +4,7 @@
 
 package de.blankedv.lanbahnpanel.model
 
-const val DEBUG = false   // false for release-apk
+const val DEBUG = true   // false for release-apk
 const val TAG = "LanbahnPanel"
 
 const val INVALID_INT = -1
@@ -70,7 +70,9 @@ const val STATE_UNKNOWN = -1
 const val POWER_UNKNOWN = INVALID_INT
 const val POWER_ON = 1
 const val POWER_OFF = 0
-const val POWER_CHANNEL = 1278   // global power state is requested using  this address
+const val SX_POWER_CHANNEL = 127      // SX global power state is requested using  this address
+const val SXMIN = 0
+const val SXMAX = 111   // highest channel number for selectrix (lowest is 0)
 const val LIFECHECK_SECONDS = 10  // every 10 seconds check if server connection is alive
 
 const val DEFAULT_SXNET_PORT = "4104"  // string
@@ -96,6 +98,8 @@ const val TYPE_POWER_MSG = 8
 const val TYPE_ROUTE_MSG = 9
 const val TYPE_SX_MSG = 10
 
+const val PROTOCOL_SX = "sx"
+const val PROTOCOL_LN = "ln"
 
 const val MAX_LAMP_BUTTONS = 4
 

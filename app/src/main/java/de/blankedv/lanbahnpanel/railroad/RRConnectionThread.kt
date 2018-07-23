@@ -93,7 +93,7 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
             if (System.currentTimeMillis() - timeElapsed > LIFECHECK_SECONDS * 1000) {
                 if (isConnected()) {
                     if (myClient is SXnetClient) {
-                        readChannel(POWER_CHANNEL) //read power channel
+                        readSXChannel(SX_POWER_CHANNEL) //read power channel
                     } else {
                         // TODO implement similar "lifecheck" for loconet
                         countNoResponse = 0 //TODO
@@ -108,7 +108,7 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
 
                 }
             }
-            threadSleep(20)
+            threadSleep(10)
         }
 
         socket?.close()
@@ -150,7 +150,7 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
     fun setSXChannel(addr: Int, data : Int) {
         if ((addr == INVALID_INT) || (data == INVALID_INT) ) return
         if (myClient is SXnetClient) {
-            var cmd = "S $addr $data"
+            var cmd = "SX $addr $data"
             val success = sendQ.offer(cmd)
             if (!success && DEBUG) {
                 Log.d(TAG, "readChannel failed, queue full")

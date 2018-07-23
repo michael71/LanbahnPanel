@@ -350,8 +350,8 @@ class LanbahnPanelActivity : AppCompatActivity() {
             }
         }, 100, 100)
 
-        // request updates for all channels used in Panel
-        // is now done in OnResume LanbahnPanelApplication.updateAllPanelData()
+        // request updates for all channels used in Panel is now done in "OnResume"
+
     }
 
     private fun updateUI() {
