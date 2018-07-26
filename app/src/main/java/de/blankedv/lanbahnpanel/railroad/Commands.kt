@@ -32,6 +32,7 @@ class Commands {
             when (state) {
                 POWER_ON -> cmd += "1"
                 POWER_OFF -> cmd += "0"
+                POWER_UNKNOWN -> cmd += "1"  // switch on in this case
             }
 
             val success = sendQ.offer(cmd)
@@ -50,6 +51,8 @@ class Commands {
 
 
         fun setLocoData(addr : Int, data : Int) {
+            if ((addr == INVALID_INT) or (data == INVALID_INT)) return
+
             var cmd = "SETLOCO $addr $data"
 
             val success = sendQ.offer(cmd)

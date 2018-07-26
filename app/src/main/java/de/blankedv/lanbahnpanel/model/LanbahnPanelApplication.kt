@@ -53,7 +53,7 @@ class LanbahnPanelApplication : Application() {
             override fun handleMessage(msg: Message) {
                 val what = msg.what
                 val chan = msg.arg1
-                if (DEBUG) Log.d(TAG,"received msg for chan= "+chan);
+                //if (DEBUG) Log.d(TAG,"received msg for chan= "+chan);
                 val data = msg.arg2
                 timeOfLastReceivedMessage = System.currentTimeMillis()
                 when (what) {
@@ -69,7 +69,7 @@ class LanbahnPanelApplication : Application() {
                     }
 
                     TYPE_LOCO_MSG -> {
-                        if (DEBUG) Log.d(TAG,"xloco message chan=$chan d=$data")
+                        //if (DEBUG) Log.d(TAG,"xloco message chan=$chan d=$data")
                         if (selectedLoco == null) Log.e(TAG,"no loco selected")
                         if (selectedLoco?.adr == chan) {
                             selectedLoco?.updateLocoFromSX(data)

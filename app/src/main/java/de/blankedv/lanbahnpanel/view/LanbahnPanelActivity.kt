@@ -393,7 +393,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         Route.auto()
 
         /* TODO check necessity */
-         if ((counter.rem(2) == 0) and (selectedLoco != null)) {
+         if ((counter.rem(4) == 0) and (selectedLoco != null)) {
 
              val adr = selectedLoco?.adr   ?: INVALID_INT
              Commands.readLocoData(adr)

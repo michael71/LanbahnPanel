@@ -14,7 +14,7 @@
 
     <header
         android:fragment="de.blankedv.lanbahnpanel.settings.SettingsActivity$ControlPreferenceFragment"
-        android:icon="@drawable/control"
+        android:icon="@drawable/split_18dp"
         android:title="@string/pref_header_control" />
 
     <header
