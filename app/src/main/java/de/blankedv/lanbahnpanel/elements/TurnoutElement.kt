@@ -8,6 +8,7 @@ import de.blankedv.lanbahnpanel.util.LPaints.greenPaint
 import de.blankedv.lanbahnpanel.util.LPaints.linePaint2
 import de.blankedv.lanbahnpanel.util.LPaints.redPaint
 import de.blankedv.lanbahnpanel.model.*
+import de.blankedv.lanbahnpanel.railroad.Commands
 import de.blankedv.lanbahnpanel.util.Utils
 
 
@@ -106,7 +107,7 @@ class TurnoutElement : ActivePanelElement {
         if (!sendQ.contains(cmd)) {
         sendQ.add(cmd) // ==> send changed data over network turnout interface
         } */
-        client?.setChannel(adr, state, TurnoutElement::class.java)
+        Commands.setChannel(adr, state, TurnoutElement::class.java)
 
         if (DEBUG) Log.d(TAG, "toggle(adr=$adr) new state=$state")
     }

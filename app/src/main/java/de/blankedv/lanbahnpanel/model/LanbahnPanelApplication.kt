@@ -18,6 +18,7 @@ import android.util.Log
 import com.google.gson.Gson
 import de.blankedv.lanbahnpanel.R
 import de.blankedv.lanbahnpanel.elements.*
+import de.blankedv.lanbahnpanel.railroad.Commands
 import de.blankedv.lanbahnpanel.settings.PanelSettings
 import de.blankedv.lanbahnpanel.util.LanbahnBitmaps
 import de.blankedv.lanbahnpanel.util.LPaints
@@ -52,7 +53,7 @@ class LanbahnPanelApplication : Application() {
             override fun handleMessage(msg: Message) {
                 val what = msg.what
                 val chan = msg.arg1
-                //if (DEBUG) Log.d(TAG,"rec. msg for chan= "+chan);
+                if (DEBUG) Log.d(TAG,"received msg for chan= "+chan);
                 val data = msg.arg2
                 timeOfLastReceivedMessage = System.currentTimeMillis()
                 when (what) {
@@ -65,6 +66,14 @@ class LanbahnPanelApplication : Application() {
                     }
                     TYPE_GENERIC_MSG -> {
                         PanelElement.update(chan, data)
+                    }
+
+                    TYPE_LOCO_MSG -> {
+                        if (DEBUG) Log.d(TAG,"xloco message chan=$chan d=$data")
+                        if (selectedLoco == null) Log.e(TAG,"no loco selected")
+                        if (selectedLoco?.adr == chan) {
+                            selectedLoco?.updateLocoFromSX(data)
+                        }
                     }
 
                     // TYPE_LN_ACC_MSG -> PanelElement.updateAcc(chan, (1-data))   //inverted values for LN
@@ -282,33 +291,15 @@ class LanbahnPanelApplication : Application() {
             if (DEBUG) Log.d(TAG, "requstAllPanelData() proto=$panelProtocol")
             // request state of all active panel elements
 
-                for (pe in panelElements.filter { it.adr != INVALID_INT && (it.isExpired() == true) }) {
-                    if (pe is ActivePanelElement) {
-                        client?.readChannel(pe.adr, pe.javaClass)
-                    }
+            for (pe in panelElements.filter { it.adr != INVALID_INT && (it.isExpired() == true) }) {
+                if (pe is ActivePanelElement) {
+                    Commands.readChannel(pe.adr, pe.javaClass)
                 }
-
-        }
-
-        /** needed for sx loco control  TODO works only for SX */
-        fun requestAllLocoData() {
-            for (l in locolist) {
-                client?.readLocoData(l.adr)  // TODO works only for SX
             }
 
         }
 
-        /** needed for sx loco control  TODO works only for SX*/
-        fun requestLocoData(a : Int) {
-            if (a != INVALID_INT) {
-                client?.readLocoData(a)  // TODO works only for SX
-            }
-          }
 
-        /** needed for sx loco control  TODO works only for SX */
-        fun setLocoData(addr : Int, sx: Int) {
-            client?.setLocoData(addr, sx)  // TODO works only for SX
-        }
 
         /**
          * needs to be executed aPreferenceManagerlways at shutdown to have a state of "UNKNOWN" when

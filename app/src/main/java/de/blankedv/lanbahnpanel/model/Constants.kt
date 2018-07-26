@@ -97,6 +97,7 @@ const val TYPE_LN_SENSOR_MSG = 6
 const val TYPE_LN_LISSY_MSG = 7
 const val TYPE_POWER_MSG = 8
 const val TYPE_ROUTE_MSG = 9
+const val TYPE_LOCO_MSG = 10
 
 
 // fixed prefix for scaling - should be =1 for small displays and =2 for

@@ -82,10 +82,10 @@ var conn_state_string = "?"
 
 var appContext: Context? = null
 
-var globalPower = POWER_UNKNOWN
+@Volatile var globalPower = POWER_UNKNOWN
 
 var panelRect : Rect = Rect(0,0,100,100)
 
 var controlAreaRect: Rect? = null   // public needed for java
-var selectedLoco : Loco? = null
+@Volatile var selectedLoco : Loco? = null
 var locoListName = "?"

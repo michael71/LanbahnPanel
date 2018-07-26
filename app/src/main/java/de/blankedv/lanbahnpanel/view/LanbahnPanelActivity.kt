@@ -25,7 +25,6 @@ import java.util.Timer
 import java.util.TimerTask
 
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.clearPanelData
-import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.appHandler
 import de.blankedv.lanbahnpanel.config.ReadConfig
 import de.blankedv.lanbahnpanel.config.DownloadPanel
 import de.blankedv.lanbahnpanel.config.WriteConfig
@@ -36,6 +35,7 @@ import de.blankedv.lanbahnpanel.loco.Loco
 import de.blankedv.lanbahnpanel.loco.ParseLocos
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.pSett
+import de.blankedv.lanbahnpanel.railroad.Commands
 import de.blankedv.lanbahnpanel.railroad.Railroad
 import de.blankedv.lanbahnpanel.settings.SettingsActivity
 import de.blankedv.lanbahnpanel.util.Utils.threadSleep
@@ -49,14 +49,14 @@ import org.jetbrains.anko.*
  */
 class LanbahnPanelActivity : AppCompatActivity() {
 
-    lateinit internal var builder: Builder
+    internal lateinit var builder: Builder
 
 
     internal var mBound = false
-    lateinit internal var tv: TextView
-    lateinit internal var params: LayoutParams
+    internal lateinit var tv: TextView
+    internal lateinit var params: LayoutParams
 
-    lateinit internal var but: Button
+    internal lateinit var but: Button
     private var mOptionsMenu: Menu? = null
     private var mHandler = Handler()  // used for UI Update timer
     private var counter = 0
@@ -127,7 +127,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         openCommunication()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getSupportActionBar()?.setBackgroundDrawable(ColorDrawable(-0xcf77d0))
+            supportActionBar?.setBackgroundDrawable(ColorDrawable(-0xcf77d0))
         }
 
     }
@@ -137,14 +137,6 @@ class LanbahnPanelActivity : AppCompatActivity() {
         super.onBackPressed()
         if (DEBUG)
             Log.d(TAG, "onBackPressed - LanbahnPanelActivity")
-    }
-
-    override fun onStart() {
-        super.onStart()
-        // TODO Bind to LoconetService
-        //Intent intent = new Intent(this, LoconetService.class);
-        // bindService(intent, mConnection, Context.BIND_AUTO_CREATE);     val onComplete : BroadcastReceiver {
-
     }
 
     override fun onStop() {
@@ -208,7 +200,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         if (DEBUG) Log.d(TAG, "panelN=$panelName en5V=$enableFiveViews selQua=$selQuadrant")
         // set quadrants mode and display selected selQuadrant
         enableForQuadrantButtons(enableFiveViews)
-        displayQuadrant(selQuadrant);
+        displayQuadrant(selQuadrant)
         displayLockState()
 
         if (DEBUG) debugLogDisplayMetrics()
@@ -237,9 +229,9 @@ class LanbahnPanelActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return // does not work for old android versions
 
         when (selectedStyle) {
-            "US" -> getSupportActionBar()?.setBackgroundDrawable(ColorDrawable(-0xff990f)) //Color.BLUE))  // TODO color ??
-            "UK" -> getSupportActionBar()?.setBackgroundDrawable(ColorDrawable(-0xdfAAdd))  // kotlin: 0xffff0000.toInt()
-            "DE" -> getSupportActionBar()?.setBackgroundDrawable(ColorDrawable(Color.BLUE))
+            "US" -> supportActionBar?.setBackgroundDrawable(ColorDrawable(-0xff990f)) //Color.BLUE))  // TODO color ??
+            "UK" -> supportActionBar?.setBackgroundDrawable(ColorDrawable(-0xdfAAdd))  // kotlin: 0xffff0000.toInt()
+            "DE" -> supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.BLUE))
         }
 
     }
@@ -357,15 +349,17 @@ class LanbahnPanelActivity : AppCompatActivity() {
      */
     fun startCommunication() {
         Log.d(TAG, "LahnbahnPanelActivity - startCommunication.")
-        client?.shutdown()
-        Thread.sleep(100) // give client some time to shut down.
+        if (client != null) {
+            client?.shutdown()
+            Thread.sleep(100) // give client some time to shut down.
+        }
 
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
         val ip = prefs.getString(KEY_IP, DEFAULT_SXNET_IP)
         val port = Integer.parseInt(prefs.getString(KEY_PORT, DEFAULT_SXNET_PORT))
 
-        client = Railroad(this, ip!!, port, appHandler)
+        client = Railroad(ip!!, port)
         client?.start()
 
         /*
@@ -398,12 +392,12 @@ class LanbahnPanelActivity : AppCompatActivity() {
         //displayLockState()
         Route.auto()
 
-        /* TODO check necessity
+        /* TODO check necessity */
          if ((counter.rem(2) == 0) and (selectedLoco != null)) {
 
              val adr = selectedLoco?.adr   ?: INVALID_INT
-             //LanbahnPanelApplication.requestSxLocoData(adr)
-         } */
+             Commands.readLocoData(adr)
+         }
 
         mHandler.postDelayed({ updateUI() }, 500)
     }
@@ -444,9 +438,9 @@ class LanbahnPanelActivity : AppCompatActivity() {
             toast("ERROR: not connected - cannot set global power state")
         } else if (allowed) {
             when (globalPower) {
-                POWER_OFF -> client?.setPower(1)
-                POWER_ON -> client?.setPower(0)
-                POWER_UNKNOWN -> client?.setPower(1)
+                POWER_OFF -> Commands.setPower(1)
+                POWER_ON -> Commands.setPower(0)
+                POWER_UNKNOWN -> Commands.setPower(1)
             }
         } else {
             toast("not allowed to set global power state, check settings")
@@ -500,7 +494,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         }
 
         if (selectedLoco == null) { // use first loco in list or use default
-            if (locolist?.size >= 1) {
+            if (locolist.size >= 1) {
                 selectedLoco = locolist[0]  // first loco in xml file
             } else {
                 // as a default use a "dummy loco"
@@ -510,6 +504,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 selectedLoco = Loco(locoName, lastLocoAddress, locoMass)
                 selectedLoco?.initFromSX()
             }
+            if (DEBUG) Log.d(TAG,"selectedLoco adr="+ selectedLoco?.adr)
         }
     }
 

@@ -12,11 +12,11 @@ import java.io.InputStreamReader
 import java.io.PrintWriter
 import java.net.InetSocketAddress
 import java.net.Socket
+import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.appHandler
 
 /** generic class which implements a connection to any TCP socket server which emits and
  * receives ASCII messages, can be SXNET or LbServer (or SRCP) */
-open class Railroad(private var context: Context?, private val ip: String,
-                    private val port: Int, private val rxHandler: Handler) : Thread() {
+open class Railroad(private val ip: String, private val port: Int) : Thread() {
     // threading und BlockingQueue siehe http://www.javamex.com/tutorials/blockingqueue_example.shtml
 
     @Volatile
@@ -40,20 +40,21 @@ open class Railroad(private var context: Context?, private val ip: String,
             connectionActive = true
         } else { // the connection could not be established, send Error Message to UI
             connString = "NOT CONNECTED"
+            if (DEBUG) Log.d(TAG, "NOT Connected")
             val m = Message.obtain()
             m.what = TYPE_ERROR_MSG
             m.obj = connResult
-            rxHandler.sendMessage(m)  // send data to UI Thread via Message
+            appHandler.sendMessage(m)  // send data to UI Thread via Message
             return
         }
 
 
-        while (shutdownFlag == false && !Thread.currentThread().isInterrupted && context != null) {
+        while ((shutdownFlag == false) && !Thread.currentThread().isInterrupted) {
             try {
                 if (`in` != null && `in`!!.ready()) {
                     val in1 = `in`!!.readLine()
                     if (DEBUG) Log.d(TAG, "read: $in1")
-                    handleReceive(in1.toUpperCase(), rxHandler)
+                    handleReceive(in1.toUpperCase())
                     countNoResponse = 0 // reset timeout counter.
                     connectionActive = true
                 }
@@ -74,11 +75,9 @@ open class Railroad(private var context: Context?, private val ip: String,
             }
 
             // send a command at least every 10 secs
-            if (System.currentTimeMillis() - timeElapsed > LIFECHECK_SECONDS * 1000) {
+            if (System.currentTimeMillis() - timeElapsed > LIFECHECK_SECONDS * 10000) {
                 if (isConnected()) {
-
-                    readPower()
-
+                    Commands.readPower()
                     countNoResponse++
                 }
                 timeElapsed = System.currentTimeMillis()  // reset
@@ -96,65 +95,6 @@ open class Railroad(private var context: Context?, private val ip: String,
         Log.e(TAG, "Railroad - socket closed")
     }
 
-    fun readChannel(addr: Int, peClass: Class<*> = Object::class.java) {
-        if (addr == INVALID_INT) return
-        var cmd = "READ $addr"
-        val success = sendQ.offer(cmd)
-        if (!success && DEBUG) {
-            Log.d(TAG, "readChannel failed, queue full")
-        }
-    }
-
-
-    fun setChannel(addr: Int, data: Int, peClass: Class<*> = Object::class.java) {
-        if ((addr == INVALID_INT) or (data == INVALID_INT)) return
-        var cmd = "SET $addr $data"
-
-        val success = sendQ.offer(cmd)
-        if (!success && DEBUG) {
-            Log.d(TAG, "setChannel failed, queue full")
-        }
-    }
-
-    fun setPower(state: Int) {
-        var cmd = "SETPOWER "
-        when (state) {
-            POWER_ON -> cmd += "1"
-            POWER_OFF -> cmd += "0"
-        }
-
-        val success = sendQ.offer(cmd)
-        if (!success && DEBUG) {
-            Log.d(TAG, "setPower failed, queue full")
-        }
-    }
-
-    fun readPower() {
-        var cmd = "READPOWER "
-        val success = sendQ.offer(cmd)
-        if (!success && DEBUG) {
-            Log.d(TAG, "readPower failed, queue full")
-        }
-    }
-
-
-    fun setLocoData(addr : Int, data : Int) {
-        var cmd = "SETLOCO $addr $data"
-
-        val success = sendQ.offer(cmd)
-        if (!success && DEBUG) {
-            Log.d(TAG, "setLocoData failed, queue full")
-        }
-    }
-
-    fun readLocoData(addr : Int) {
-        if (addr == INVALID_INT) return
-        var cmd = "READLOCO $addr"
-        val success = sendQ.offer(cmd)
-        if (!success && DEBUG) {
-            Log.d(TAG, "readChannel failed, queue full")
-        }
-    }
 
     private fun immediateSend(command: String) {
         if (shutdownFlag) return
@@ -189,7 +129,7 @@ open class Railroad(private var context: Context?, private val ip: String,
                     socket!!.getInputStream()))
             val resString = `in`!!.readLine()
 
-            if (DEBUG) Log.d(TAG, "connected to: $connString")
+            if (DEBUG) Log.d(TAG, "connect connString=$resString")
 
             return Pair(true, resString)
 
@@ -217,7 +157,7 @@ open class Railroad(private var context: Context?, private val ip: String,
         shutdownFlag = true
     }
 
-    fun handleReceive(receivedMsg: String, recHandler: Handler): Boolean {
+    fun handleReceive(receivedMsg: String): Boolean {
 
         // check whether there is an application to send info to -
         // to avoid crash if application has stopped but thread is still running
@@ -230,33 +170,44 @@ open class Railroad(private var context: Context?, private val ip: String,
         // example: String msg = "S 780 2 ;; S 800 3  ;  S 720 1";
         val allcmds = msg.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         for (cmd in allcmds) {
-            //Log.d(TAG,"single cmd="+cmd);
+            //Log.d(TAG, "single cmd=" + cmd);
             if (!cmd.contains("ERROR")) {
                 info = cmd.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-                // all feedback message have the Format "CMD <adr> <data>"
+                // all feedback message have the Format "CMD <adr> <data>" or "CMD <data>"
+                when (info.size) {
+                    0, 1 -> return false
+                    2 -> {
+                        if (info[0] == "XPOWER") {
+                            val data = extractDataByteFromString(info[1])
+                            if (data == INVALID_INT) return false
+                            val m = Message.obtain()
+                            m.what = TYPE_POWER_MSG
+                            m.arg2 = data
+                            appHandler.sendMessage(m)  // send to UI Thread via Message
+                        }
+                    }
+                    3 -> {
+                        val addr = extractChannelFromString(info[1])
+                        val data = extractDataByteFromString(info[2])
+                        if ((addr == INVALID_INT) or (data == INVALID_INT)) return false
+                        val m = Message.obtain()
+                        m.arg1 = addr
+                        m.arg2 = data
+                        when (info[0]) {
+                            "X", "XL" -> m.what = TYPE_GENERIC_MSG
+                            "XLOCO" -> m.what = TYPE_LOCO_MSG
+                            "RT" -> m.what = TYPE_ROUTE_MSG
+                            else -> m.what = INVALID_INT
+                        }
+                        if (m.what != INVALID_INT) {
+                            //Log.d(TAG,"what=${m.what} a=${m.arg1} d=${m.arg2}")
+                            appHandler.sendMessage(m)  // send route data to UI Thread via Message
+                        }
 
-                if (info.size < 3) return false
+                    }
 
-                // check validity of numbers
-                val addr = extractChannelFromString(info[1])
-                val data = extractDataByteFromString(info[2])
-
-                if ((addr == INVALID_INT) or (data == INVALID_INT)) return false
-
-                val m = Message.obtain()
-                m.arg1 = addr
-                m.arg2 = data
-
-                when (info[0]) {
-                    "X" -> m.what = TYPE_GENERIC_MSG
-                    "XPOWER" -> m.what = TYPE_POWER_MSG
-                    "RT" -> m.what = TYPE_ROUTE_MSG
-                    else -> m.what = INVALID_INT
                 }
 
-                if (m.what != INVALID_INT) {
-                    recHandler.sendMessage(m)  // send route data to UI Thread via Message
-                }
             }
 
         }

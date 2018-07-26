@@ -11,6 +11,7 @@ import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication
 import de.blankedv.lanbahnpanel.model.DEBUG
 import de.blankedv.lanbahnpanel.model.TAG
 import de.blankedv.lanbahnpanel.model.sendQ
+import de.blankedv.lanbahnpanel.railroad.Commands
 
 
 class Loco {
@@ -94,7 +95,7 @@ class Loco {
 
 
     fun initFromSX() {
-        LanbahnPanelApplication.requestLocoData(this.adr)
+        Commands.readLocoData(this.adr)
         resetToBe()
     }
 
@@ -105,8 +106,8 @@ class Loco {
         lamp_to_be = lamp
     }
 
-    fun setSXData(d : Int) {
-
+    fun updateLocoFromSX(d : Int) {
+        if (DEBUG) Log.d(TAG,"updateLocoFromSX d="+d)
         var s = d and 0x1f
         if (d and 0x20 != 0) s = -s
         speed_from_sx = s
@@ -149,7 +150,7 @@ class Loco {
                     handler.sendMessage(m);  // send SX data to UI Thread via Message
                     return;
                 } */
-                LanbahnPanelApplication.setLocoData(adr, sx)
+                Commands.setLocoData(adr, sx)
 
 
             }
