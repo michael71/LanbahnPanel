@@ -18,18 +18,12 @@ import android.util.Log
 import com.google.gson.Gson
 import de.blankedv.lanbahnpanel.R
 import de.blankedv.lanbahnpanel.elements.*
-import de.blankedv.lanbahnpanel.loco.Loco
-import de.blankedv.lanbahnpanel.railroad.SXnetClient
 import de.blankedv.lanbahnpanel.settings.PanelSettings
 import de.blankedv.lanbahnpanel.util.LanbahnBitmaps
 import de.blankedv.lanbahnpanel.util.LPaints
 
-/** Lanbahn Panel
- * Rev 3.1 - 28 Jun 2018 - now using sxnet protocol
- */
-
 // TODO: kotlin review and simplify
-// TODO: handle absence ot connection to SX command station
+// TODO: handle absence ot connection to command station
 
 class LanbahnPanelApplication : Application() {
 
@@ -69,16 +63,17 @@ class LanbahnPanelApplication : Application() {
                             globalPower = POWER_ON
                         }
                     }
-                    TYPE_GENERIC_MSG -> PanelElement.update(chan, data)
+                    TYPE_GENERIC_MSG -> {
+                        PanelElement.update(chan, data)
+                    }
 
-                    TYPE_LN_ACC_MSG -> PanelElement.updateAcc(chan, (1-data))   //inverted values for LN
-
-                    TYPE_LN_SENSOR_MSG -> PanelElement.updateSensor(chan, data)
-
+                    // TYPE_LN_ACC_MSG -> PanelElement.updateAcc(chan, (1-data))   //inverted values for LN
+                    // TYPE_LN_SENSOR_MSG -> PanelElement.updateSensor(chan, data)
+                    /*
                     TYPE_LN_LISSY_MSG -> {
                         val lissymsg = msg.obj as String
                         // TODO update lissy element
-                    }
+                    }*/
 
                     TYPE_ROUTE_MSG -> {
                         for (rt in routes) {
@@ -97,36 +92,10 @@ class LanbahnPanelApplication : Application() {
                         }
                     }
 
-                    TYPE_SX_MSG -> {
-                        evaluateSxMessage(chan, data)
-                    }
-
                 }
 
             }
 
-        }
-    }
-
-    private fun evaluateSxMessage(ch : Int, data: Int) {
-        if (ch <= SXMAX) {
-            val d = data.and(0xFF)
-            sxData[ch] = d
-            // update locos (if a loco has the "ch" address)
-            for (l in locolist) {
-                if (l.adr == ch) {
-                    l.setSXData(d)
-                }
-            }
-            // update all panel elements which have ch*10+1 ... ch*10+8 address range
-            for (i in 1..8) {
-                val fullAddr = ch * 10 + i
-                for (pe in panelElements.filter{it is ActivePanelElement}) {
-                    if (pe.adr == fullAddr) {
-                        pe.updateData(SXnetClient.getSXBitValueFromByte(d,i))
-                    }
-                }
-            }
         }
     }
 
@@ -312,44 +281,33 @@ class LanbahnPanelApplication : Application() {
         fun requestAllPanelData() {
             if (DEBUG) Log.d(TAG, "requstAllPanelData() proto=$panelProtocol")
             // request state of all active panel elements
-            if (panelProtocol == PROTOCOL_SX) {  // cluster by sx-address
-                var addrList = mutableListOf<Int>()
-                for (pe in panelElements.filter { it.adr != INVALID_INT && (it.isExpired() == true) }) {
-                    addrList.add(pe.adr / 10)
-                }
-                for (addr in addrList.distinct()) {
-                    if (DEBUG) Log.d(TAG,"requesting: $addr")
-                    client?.readSXChannel(addr)
-                }
 
-            } else {  // one message per panel element
                 for (pe in panelElements.filter { it.adr != INVALID_INT && (it.isExpired() == true) }) {
                     if (pe is ActivePanelElement) {
                         client?.readChannel(pe.adr, pe.javaClass)
                     }
                 }
-            }
 
         }
 
         /** needed for sx loco control  TODO works only for SX */
-        fun requestAllSxLocoData() {
+        fun requestAllLocoData() {
             for (l in locolist) {
-                client?.readSXChannel(l.adr)  // TODO works only for SX
+                client?.readLocoData(l.adr)  // TODO works only for SX
             }
 
         }
 
         /** needed for sx loco control  TODO works only for SX*/
-        fun requestSxLocoData(a : Int) {
+        fun requestLocoData(a : Int) {
             if (a != INVALID_INT) {
-                client?.readSXChannel(a)  // TODO works only for SX
+                client?.readLocoData(a)  // TODO works only for SX
             }
           }
 
         /** needed for sx loco control  TODO works only for SX */
-        fun setSxLocoData(addr : Int, sx: Int) {
-            client?.setSXChannel(addr, sx)  // TODO works only for SX
+        fun setLocoData(addr : Int, sx: Int) {
+            client?.setLocoData(addr, sx)  // TODO works only for SX
         }
 
         /**

@@ -97,12 +97,7 @@ const val TYPE_LN_SENSOR_MSG = 6
 const val TYPE_LN_LISSY_MSG = 7
 const val TYPE_POWER_MSG = 8
 const val TYPE_ROUTE_MSG = 9
-const val TYPE_SX_MSG = 10
 
-const val PROTOCOL_SX = "sx"
-const val PROTOCOL_LN = "ln"
-
-const val MAX_LAMP_BUTTONS = 4
 
 // fixed prefix for scaling - should be =1 for small displays and =2 for
 // large displays

@@ -13,7 +13,6 @@ import android.preference.PreferenceManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.app.ActionBar
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Menu
@@ -26,7 +25,6 @@ import java.util.Timer
 import java.util.TimerTask
 
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.clearPanelData
-import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.connectionIsAlive
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.appHandler
 import de.blankedv.lanbahnpanel.config.ReadConfig
 import de.blankedv.lanbahnpanel.config.DownloadPanel
@@ -38,8 +36,7 @@ import de.blankedv.lanbahnpanel.loco.Loco
 import de.blankedv.lanbahnpanel.loco.ParseLocos
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.pSett
-import de.blankedv.lanbahnpanel.railroad.RRConnectionThread
-import de.blankedv.lanbahnpanel.settings.PanelSettings
+import de.blankedv.lanbahnpanel.railroad.Railroad
 import de.blankedv.lanbahnpanel.settings.SettingsActivity
 import de.blankedv.lanbahnpanel.util.Utils.threadSleep
 import org.jetbrains.anko.*
@@ -368,7 +365,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         val ip = prefs.getString(KEY_IP, DEFAULT_SXNET_IP)
         val port = Integer.parseInt(prefs.getString(KEY_PORT, DEFAULT_SXNET_PORT))
 
-        client = RRConnectionThread(this, ip!!, port, appHandler)
+        client = Railroad(this, ip!!, port, appHandler)
         client?.start()
 
         /*
@@ -447,9 +444,9 @@ class LanbahnPanelActivity : AppCompatActivity() {
             toast("ERROR: not connected - cannot set global power state")
         } else if (allowed) {
             when (globalPower) {
-                POWER_OFF -> client?.setPower(true)
-                POWER_ON -> client?.setPower(false)
-                POWER_UNKNOWN -> client?.setPower(true)
+                POWER_OFF -> client?.setPower(1)
+                POWER_ON -> client?.setPower(0)
+                POWER_UNKNOWN -> client?.setPower(1)
             }
         } else {
             toast("not allowed to set global power state, check settings")

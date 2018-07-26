@@ -44,7 +44,6 @@ class DownloadPanel(private val url: String) {
     }
 
     private fun getFilename(filecontent: String): String {
-        var fName = FNAME_PANEL_FROM_SERVER   // default name, if fName not found in panel
 
         val factory = DocumentBuilderFactory.newInstance()
         val builder = factory.newDocumentBuilder()
@@ -52,7 +51,7 @@ class DownloadPanel(private val url: String) {
         val doc = builder.parse(mystream)
         val root = doc.documentElement ?: return FNAME_PANEL_FROM_SERVER
 
-        fName = parseAttribute(root, "filename")
+        val fName = parseAttribute(root, "filename")
         if (fName.endsWith(".xml")) {
             return fName
         } else {

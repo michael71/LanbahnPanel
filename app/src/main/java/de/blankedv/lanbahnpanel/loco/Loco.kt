@@ -94,7 +94,7 @@ class Loco {
 
 
     fun initFromSX() {
-        LanbahnPanelApplication.requestSxLocoData(this.adr)
+        LanbahnPanelApplication.requestLocoData(this.adr)
         resetToBe()
     }
 
@@ -149,7 +149,7 @@ class Loco {
                     handler.sendMessage(m);  // send SX data to UI Thread via Message
                     return;
                 } */
-                LanbahnPanelApplication.setSxLocoData(adr, sx)
+                LanbahnPanelApplication.setLocoData(adr, sx)
 
 
             }

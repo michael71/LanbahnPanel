@@ -10,8 +10,7 @@ import de.blankedv.lanbahnpanel.elements.CompRoute
 import de.blankedv.lanbahnpanel.elements.PanelElement
 import de.blankedv.lanbahnpanel.elements.Route
 import de.blankedv.lanbahnpanel.loco.Loco
-import de.blankedv.lanbahnpanel.railroad.RRConnectionThread
-import de.blankedv.lanbahnpanel.settings.PanelSettings
+import de.blankedv.lanbahnpanel.railroad.Railroad
 import java.util.ArrayList
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingQueue
@@ -46,7 +45,7 @@ var hCalc = 0f // DEBUG only
 var hRect = 0f // DEBUG only
 
 // connection state
-var client: RRConnectionThread? = null
+var client: Railroad? = null
 
 var restartCommFlag = false
 
