@@ -1,5 +1,5 @@
 
-// to make constants usable in JAVA via  Constants.GLOBAL_NUMBER for example
+// to make constants usable in JAVA via  Constants.GLOBAL_NUMBER ...
 @file:JvmName("Constants")
 
 package de.blankedv.lanbahnpanel.model
@@ -71,6 +71,7 @@ const val POWER_UNKNOWN = INVALID_INT
 const val POWER_ON = 1
 const val POWER_OFF = 0
 const val SX_POWER_CHANNEL = 127      // SX global power state is requested using  this address
+const val MAX_PURE_SX = 1278   // addresses below this address (and including this address are "pure SX" addresses = real hardware addresses
 const val SXMIN = 0
 const val SXMAX = 111   // highest channel number for selectrix (lowest is 0)
 const val LIFECHECK_SECONDS = 10  // every 10 seconds check if server connection is alive

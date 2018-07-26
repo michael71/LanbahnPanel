@@ -58,7 +58,7 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
             val m = Message.obtain()
             m.what = TYPE_ERROR_MSG
             m.obj = connResult
-            rxHandler?.sendMessage(m)  // send data to UI Thread via Message
+            rxHandler.sendMessage(m)  // send data to UI Thread via Message
             return
         }
 
@@ -80,9 +80,8 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
 
             // check send queue
             if (!sendQ.isEmpty()) {
-                var comm = ""
                 try {
-                    comm = sendQ.take()
+                    val comm = sendQ.take()
                     if (comm.length > 0) immediateSend(comm)
                 } catch (e: Exception) {
                     Log.e(TAG, "could not take command from sendQ")
@@ -209,7 +208,7 @@ open class RRConnectionThread(private var context: Context?, private val ip: Str
 
             // create a socket
             socket = Socket()
-            socket!!.connect(socketAddress, 2000)
+            socket!!.connect(socketAddress, 5000)
             //socket.setSoTimeout(2000);  // set read timeout to 2000 msec
 
             socket!!.setSoLinger(true, 0)  // force close, dont wait.

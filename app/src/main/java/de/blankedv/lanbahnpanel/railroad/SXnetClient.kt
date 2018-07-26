@@ -14,26 +14,25 @@ import de.blankedv.lanbahnpanel.model.*
 class SXnetClient() : GenericClient() {
 
     init {
-        if (DEBUG) Log.d(TAG, "SXnetClient constructor.")
+        if (DEBUG) Log.d(TAG, "SXnetClient constructor. ")
     }
 
     override fun readChannel(addr: Int, peClass : Class<*>) : String {
         // class can be ignored for selectrix (sxnet)
-        // lanbahn address 701 => sxAddress 70.1  (bit 1)
-        // bit is ignored here
-        if (isValidSXAddress(addr/10)) {
-            return "R ${addr / 10}"
-        } else {
-            return ""
-        }
+        return readChannel(addr)
     }
 
     override fun readChannel(addr: Int) : String {
         // lanbahn address 701 => sxAddress 70.1  (bit 1)
-        if (isValidSXAddress(addr/10)) {
-            return "R ${addr / 10}"
-        } else {
-            return ""
+        if (addr <= MAX_PURE_SX) {
+            if (isValidSXAddress(addr / 10)) {
+                return "R ${addr / 10}"  // sx-bit is ignored here, always a complete byte
+                // will be returned
+            } else {
+                return ""
+            }
+        } else { // simulation addresses
+            return "READ $addr"
         }
     }
 
@@ -49,9 +48,13 @@ class SXnetClient() : GenericClient() {
 
     override fun setChannel(addr: Int, data: Int) :String {
         // for sx, we need to calculate the bit from the address=chan.bit
-        val chan = addr / 10
-        val bit = addr.rem(10)
-        return "S $chan.$bit $data"
+        if (addr <= MAX_PURE_SX) {
+            val chan = addr / 10
+            val bit = addr.rem(10)
+            return "S $chan.$bit $data"
+        } else { //simulation channels
+            return "SET $addr $data"
+        }
     }
 
     override fun setPowerState (switchOn : Boolean) : String {

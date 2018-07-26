@@ -209,32 +209,32 @@ object ReadConfig {
             if (theAttribute.nodeName == "name") {
                 pe.name = theAttribute.nodeValue
             } else if (theAttribute.nodeName == "x") {
-                pe.x = getPositionNode(theAttribute)
+                pe.x = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "y") {
-                pe.y = getPositionNode(theAttribute)
+                pe.y = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "x2") {
-                pe.x2 = getPositionNode(theAttribute)
+                pe.x2 = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "y2") {
-                pe.y2 = getPositionNode(theAttribute)
+                pe.y2 = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "xt") {
-                pe.xt = getPositionNode(theAttribute)
+                pe.xt = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "yt") {
-                pe.yt = getPositionNode(theAttribute)
+                pe.yt = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "adr") {
-                pe.adr = getPositionNode(theAttribute)
+                pe.adr = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "inv")  {
-                pe.invert = getPositionNode(theAttribute)
+                pe.invert = getIntegerNodeValue(theAttribute)
 
                 // turnout have either an lanbahn/dcc address ("adr") or a combination of
                 // sxadr and sxbit (for ex. sxadr="98" sxbit="7") which will be compiled to
                 // lanbahn address "987" and an sxmapping will be created.
 
             } else if (theAttribute.nodeName == "sxadr") {
-                sxadr = getPositionNode(theAttribute)
+                sxadr = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "sxbit") {
-                sxbit = getPositionNode(theAttribute)
+                sxbit = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "nbits") {
-                nbit = getPositionNode(theAttribute)  // TODO implement for multi-aspect signals
+                nbit = getIntegerNodeValue(theAttribute)  // TODO implement for multi-aspect signals
             } else {
                 if (DEBUG_PARSING)
                     Log.d(TAG,
@@ -257,8 +257,15 @@ object ReadConfig {
 
     }
 
-    private fun getPositionNode(a: Node): Int {
-        return Integer.parseInt(a.nodeValue)
+    private fun getIntegerNodeValue(a: Node): Int {
+        // remove "." first to convert SX addresses like 72.1 to LB addr (=721)
+        val s = a.nodeValue.replace(".","")
+        try {
+            val num =  Integer.parseInt(s)
+            return num
+        } catch (e : NumberFormatException) {
+            return INVALID_INT;
+        }
     }
 
     private fun parseSignal(item: Node): SignalElement {
@@ -277,21 +284,21 @@ object ReadConfig {
             if (theAttribute.nodeName == "name") {
                 pe.name = theAttribute.nodeValue
             } else if (theAttribute.nodeName == "x") {
-                pe.x = getPositionNode(theAttribute)
+                pe.x = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "y") {
-                pe.y = getPositionNode(theAttribute)
+                pe.y = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "x2") {
-                pe.x2 = getPositionNode(theAttribute)
+                pe.x2 = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "y2") {
-                pe.y2 = getPositionNode(theAttribute)
+                pe.y2 = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "adr") {
-                pe.adr = getPositionNode(theAttribute)
+                pe.adr = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "sxadr") {
-                sxadr = getPositionNode(theAttribute)
+                sxadr = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "sxbit") {
-                sxbit = getPositionNode(theAttribute)
+                sxbit = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "nbits") {
-                nbit = getPositionNode(theAttribute)  // TODO implement for multi-aspect signals
+                nbit = getIntegerNodeValue(theAttribute)  // TODO implement for multi-aspect signals
             } else {
                 if (DEBUG_PARSING)
                     Log.d(TAG,
@@ -321,13 +328,13 @@ object ReadConfig {
             if (theAttribute.nodeName == "name") {
                 pe.name = theAttribute.nodeValue
             } else if (theAttribute.nodeName == "x") {
-                pe.x = getPositionNode(theAttribute)
+                pe.x = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "y") {
-                pe.y = getPositionNode(theAttribute)
+                pe.y = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "route") {
                 pe.route = theAttribute.nodeValue
             } else if (theAttribute.nodeName == "adr") {
-                pe.adr = Integer.parseInt(theAttribute.nodeValue)
+                pe.adr = getIntegerNodeValue(theAttribute)
             } else {
                 if (DEBUG_PARSING)
                     Log.d(TAG,
@@ -372,21 +379,21 @@ object ReadConfig {
             if (theAttribute.nodeName == "name") {
                 pe.name = theAttribute.nodeValue
             } else if (theAttribute.nodeName == "x") {
-                pe.x = getPositionNode(theAttribute)
+                pe.x = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "y") {
-                pe.y = getPositionNode(theAttribute)
+                pe.y = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "x2") {
-                pe.x2 = getPositionNode(theAttribute)
+                pe.x2 = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "y2") {
-                pe.y2 = getPositionNode(theAttribute)
+                pe.y2 = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "adr") {
-                pe.adr = getPositionNode(theAttribute)
+                pe.adr = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "sxadr") {
-                sxadr = getPositionNode(theAttribute)
+                sxadr = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "sxbit") {
-                sxbit = getPositionNode(theAttribute)
+                sxbit = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "nbits") {
-                nbit = getPositionNode(theAttribute)  // TODO implement for multi-aspect signals
+                nbit = getIntegerNodeValue(theAttribute)  // TODO implement for multi-aspect signals
             } else {
                 if (DEBUG_PARSING)
                     Log.d(TAG,
@@ -422,13 +429,13 @@ object ReadConfig {
             // if (DEBUG_PARSING) Log.d(TAG,theAttribute.getNodeName() + "=" +
             // theAttribute.getNodeValue());
             if (theAttribute.nodeName == "x") {
-                pe.x = getPositionNode(theAttribute)
+                pe.x = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "y") {
-                pe.y = getPositionNode(theAttribute)
+                pe.y = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "x2") {
-                pe.x2 = getPositionNode(theAttribute)
+                pe.x2 = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "y2") {
-                pe.y2 = getPositionNode(theAttribute)
+                pe.y2 = getIntegerNodeValue(theAttribute)
             } else {
                 if (DEBUG_PARSING)
                     Log.d(TAG,
@@ -490,9 +497,10 @@ object ReadConfig {
             } else if (theAttribute.nodeName == "btn2") {
                 btn2 = getValue(theAttribute.nodeValue)
             } else if (theAttribute.nodeName == "route") {
-                route = theAttribute.nodeValue
+                route = (theAttribute.nodeValue).replace(".","")
+                 // in kotlin String.replace = string occurrances by string, NOT REGEX
             } else if (theAttribute.nodeName == "sensors") {
-                sensors = theAttribute.nodeValue
+                sensors = (theAttribute.nodeValue).replace("." ,"")
             } else if (theAttribute.nodeName == "offending") {
                 offending = theAttribute.nodeValue
             } else {
@@ -565,7 +573,7 @@ object ReadConfig {
             } else if (theAttribute.nodeName == "btn2") {
                 btn2 = getValue(theAttribute.nodeValue)
             } else if (theAttribute.nodeName == "routes") {
-                routes = theAttribute.nodeValue
+                routes = (theAttribute.nodeValue).replace(".","")
             } else {
                 if (DEBUG_PARSING) {
                     Log.d(TAG, "unknown attribute " + theAttribute.nodeName + " in config file")

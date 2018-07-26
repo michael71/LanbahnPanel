@@ -3,14 +3,12 @@ package de.blankedv.lanbahnpanel.railroad
 import android.os.Handler
 import android.os.Message
 import android.util.Log
-import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import de.blankedv.lanbahnpanel.elements.SignalElement
 import de.blankedv.lanbahnpanel.elements.TurnoutElement
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.railroad.loconet.Accessory
 import de.blankedv.lanbahnpanel.railroad.loconet.LNMessage
 import de.blankedv.lanbahnpanel.railroad.loconet.Sensor
-import org.jetbrains.anko.toast
 
 /**
  * communicates with the SX3-PC server program (usually on port 4104)
@@ -58,8 +56,8 @@ class LbServerClient() : GenericClient() {
         return ""
     }
 
-    override fun setPowerState (switchOn : Boolean) : String {
-        if (switchOn) {
+    override fun setPowerState (onoff : Boolean) : String {
+        if (onoff) {
             return ""
         } else {
             return ""
@@ -70,14 +68,13 @@ class LbServerClient() : GenericClient() {
      * Loconet TCP Protocol, see https://sourceforge.net/projects/loconetovertcp/
      */
 
-    override fun handleReceive(msg: String, recHandler: Handler): Boolean {
-        var msg = msg
+    override fun handleReceive(msg: String, rxHandler: Handler): Boolean {
+
         // check whether there is an application to send info to -
         // to avoid crash if application has stopped but thread is still running
 
-        rx = recHandler
+        rx = rxHandler
 
-        var info: Array<String>? = null
         Log.d(TAG,"LN rec: $msg")
 
         interpretLoconetMessage(msg)   // calls "storeDCC_Data()"
@@ -163,6 +160,7 @@ class LbServerClient() : GenericClient() {
     }
 
     private fun isValidAccessoryAddress (a : Int) : Boolean {
+        // TODO
         return true
         /* return (!filterAddresses
                 or (a in minAccAddress..maxAccAddress)

@@ -35,7 +35,6 @@ class LanbahnPanelApplication : Application() {
 
     var timeOfLastReceivedMessage = 0L
 
-
     //@SuppressLint("HandlerLeak")
     @SuppressLint("HandlerLeak")
     override fun onCreate() {
@@ -283,7 +282,7 @@ class LanbahnPanelApplication : Application() {
             val channel = NotificationChannel(channelId,
                     "Lanbahn Channel",
                     NotificationManager.IMPORTANCE_DEFAULT)
-            manager?.createNotificationChannel(channel)
+            manager.createNotificationChannel(channel)
         }
 
         manager.notify(LBP_NOTIFICATION_ID, builder.build())
@@ -391,12 +390,14 @@ class LanbahnPanelApplication : Application() {
          * set global scale values for this quadrant (variable qClip[qua].scale, .xoff, .yoff )
          */
         fun calcAutoScale(width: Int, heightIn: Int, qua: Int) {
-            if (DEBUG) Log.d(TAG, "calcAutoScale($width, $heightIn, q=$qua)")
+            if (DEBUG) Log.d(TAG, "calcAutoScale(w=$width, h=$heightIn, q=$qua)")
             if ((width == 0) or (heightIn == 0)) return //makes no sense
+
             var remainingHeight = heightIn
-            //if (enableLocoControl) {
+            if (enableLocoControl) {
                 remainingHeight = 7 * heightIn / 8  // can only use 7/8 of height because of locoControlArea
-            //}
+                if (DEBUG) Log.d(TAG, "calcAutoScale(remH=$remainingHeight)")
+            }
             // Rect(int left, int top, int right, int bottom)
             val re = Rect(panelRect)
             var scale = 1f

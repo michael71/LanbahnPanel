@@ -55,7 +55,6 @@ class LanbahnPanelActivity : AppCompatActivity() {
     lateinit internal var builder: Builder
 
 
-
     internal var mBound = false
     lateinit internal var tv: TextView
     lateinit internal var params: LayoutParams
@@ -209,7 +208,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         }  // reset view
         Route.clearAllRoutes()
 
-        if (DEBUG) Log.d(TAG,"panelN=$panelName en5V=$enableFiveViews selQua=$selQuadrant")
+        if (DEBUG) Log.d(TAG, "panelN=$panelName en5V=$enableFiveViews selQua=$selQuadrant")
         // set quadrants mode and display selected selQuadrant
         enableForQuadrantButtons(enableFiveViews)
         displayQuadrant(selQuadrant);
@@ -241,9 +240,9 @@ class LanbahnPanelActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return // does not work for old android versions
 
         when (selectedStyle) {
-           "US" -> getSupportActionBar()?.setBackgroundDrawable(ColorDrawable(-0xff990f)) //Color.BLUE))  // TODO color ??
-           "UK" -> getSupportActionBar()?.setBackgroundDrawable(ColorDrawable(-0xdfAAdd))  // kotlin: 0xffff0000.toInt()
-           "DE" -> getSupportActionBar()?.setBackgroundDrawable(ColorDrawable(Color.BLUE))
+            "US" -> getSupportActionBar()?.setBackgroundDrawable(ColorDrawable(-0xff990f)) //Color.BLUE))  // TODO color ??
+            "UK" -> getSupportActionBar()?.setBackgroundDrawable(ColorDrawable(-0xdfAAdd))  // kotlin: 0xffff0000.toInt()
+            "DE" -> getSupportActionBar()?.setBackgroundDrawable(ColorDrawable(Color.BLUE))
         }
 
     }
@@ -306,12 +305,12 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 return true
             }
 
-            /* R.id.menu_check_service -> {
-                //TODO int num = mService.getRandomNumber();
-                toast("not implemented")
-                // "number: " + num, Toast.LENGTH_SHORT).show();
-                return true
-            } */
+        /* R.id.menu_check_service -> {
+            //TODO int num = mService.getRandomNumber();
+            toast("not implemented")
+            // "number: " + num, Toast.LENGTH_SHORT).show();
+            return true
+        } */
             R.id.menu_quit -> {
                 val alert = builder.create()
                 alert.show()
@@ -324,16 +323,16 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
 
     fun openCommunication() {
-
         Log.d(TAG, "LanbahnPanelActivity - openCommunication.")
+        sendQ.clear()
         if (client != null) {
-            sendQ.clear()
+            Log.d(TAG, "LanbahnPanelActivity - shutdown client.")
             client?.shutdown()
             threadSleep(100) // give client some time to shut down.
         }
-        sendQ.clear()
 
-        Log.d(TAG, "first start of Communication to Comm.Station")
+
+        Log.d(TAG, "Sart of Communication to Comm.Station")
         startCommunication()
 
         Timer().scheduleAtFixedRate(object : TimerTask() {
@@ -342,7 +341,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 if (restartCommFlag) {
                     restartCommFlag = false
                     runOnUiThread {
-                        Log.d(TAG, "restarting Communication")
+                        Log.d(TAG, "restarting Communication to Comm.Station")
                         startCommunication()
                     }
 
@@ -353,6 +352,40 @@ class LanbahnPanelActivity : AppCompatActivity() {
         // request updates for all channels used in Panel is now done in "OnResume"
 
     }
+
+    /**
+     * remark: always running from UI Thread
+     *
+     * @return
+     */
+    fun startCommunication() {
+        Log.d(TAG, "LahnbahnPanelActivity - startCommunication.")
+        client?.shutdown()
+        Thread.sleep(100) // give client some time to shut down.
+
+        val prefs = PreferenceManager
+                .getDefaultSharedPreferences(this)
+        val ip = prefs.getString(KEY_IP, DEFAULT_SXNET_IP)
+        val port = Integer.parseInt(prefs.getString(KEY_PORT, DEFAULT_SXNET_PORT))
+
+        client = RRConnectionThread(this, ip!!, port, appHandler)
+        client?.start()
+
+        /*
+        // check connection after some seconds (async) (socket creation has 5sec timeout)
+        val handler = Handler()
+        handler.postDelayed({
+            if (connectionIsAlive()) {
+                LanbahnPanelApplication.requestAllPanelData()
+            } else {
+                val msg = " NO CONNECTION TO $ip:$port! Check WiFi/SSID and server settings "
+               longToast(msg)
+                conn_state_string = "NOT CONNECTED"
+            }
+        }, 6500)
+*/
+    }
+
 
     private fun updateUI() {
         counter++
@@ -368,12 +401,12 @@ class LanbahnPanelActivity : AppCompatActivity() {
         //displayLockState()
         Route.auto()
 
-       /* TODO check necessity
-        if ((counter.rem(2) == 0) and (selectedLoco != null)) {
+        /* TODO check necessity
+         if ((counter.rem(2) == 0) and (selectedLoco != null)) {
 
-            val adr = selectedLoco?.adr   ?: INVALID_INT
-            //LanbahnPanelApplication.requestSxLocoData(adr)
-        } */
+             val adr = selectedLoco?.adr   ?: INVALID_INT
+             //LanbahnPanelApplication.requestSxLocoData(adr)
+         } */
 
         mHandler.postDelayed({ updateUI() }, 500)
     }
@@ -381,7 +414,8 @@ class LanbahnPanelActivity : AppCompatActivity() {
     private fun enableForQuadrantButtons(yes: Boolean) {
         if (DEBUG) Log.d(TAG, "enableForQuadrantButtons($yes)")
         if (yes) {
-            mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.q1_v2_48_gray) ?: Log.e(TAG,"mOptionsMenu is not set")
+            mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.q1_v2_48_gray)
+                    ?: Log.e(TAG, "mOptionsMenu is not set")
             mOptionsMenu?.findItem(R.id.action_q2)?.setIcon(R.drawable.q2_v2_48_gray)
             mOptionsMenu?.findItem(R.id.action_q3)?.setIcon(R.drawable.q3_v2_48_gray)
             mOptionsMenu?.findItem(R.id.action_q4)?.setIcon(R.drawable.q4_v2_48_gray)
@@ -396,7 +430,8 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
 
         } else {
-            mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.trans_48) ?: Log.e(TAG,"mOptionsMenu is not set")
+            mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.trans_48)
+                    ?: Log.e(TAG, "mOptionsMenu is not set")
             mOptionsMenu?.findItem(R.id.action_q2)?.setIcon(R.drawable.trans_48)
             mOptionsMenu?.findItem(R.id.action_q3)?.setIcon(R.drawable.trans_48)
             mOptionsMenu?.findItem(R.id.action_q4)?.setIcon(R.drawable.trans_48)
@@ -423,13 +458,13 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
 
     private fun displayLockState() {
-        if (DEBUG) Log.d(TAG,"selectedScale = $selectedScale")
+        if (DEBUG) Log.d(TAG, "selectedScale = $selectedScale")
         when (selectedScale) {
             "auto" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_letter_a)
-            "manual" ->  mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_lock_open_white_48dp)
+            "manual" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_lock_open_white_48dp)
             "locked" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_lock_white_48dp)
         }
-     }
+    }
 
     private fun displayQuadrant(q: Int) {
         // 0 means "ALL"
@@ -449,7 +484,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
 
         locoConfigFilename = prefs.getString(KEY_LOCOS_CONFIG_FILE, DEMO_LOCOS_FILE)
-                ParseLocos.readLocosFromFile(this, locoConfigFilename)
+        ParseLocos.readLocosFromFile(this, locoConfigFilename)
 
         val lastLocoAddress = prefs.getInt(KEY_LOCO_ADR, 3)
 
@@ -552,35 +587,6 @@ class LanbahnPanelActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * remark: always running from UI Thread
-     *
-     * @return
-     */
-    fun startCommunication() {
-        Log.d(TAG, "LahnbahnPanelActivity - startCommunication.")
-        client?.shutdown()
-        Thread.sleep(100) // give client some time to shut down.
-
-        val prefs = PreferenceManager
-                .getDefaultSharedPreferences(this)
-        val ip = prefs.getString(KEY_IP, DEFAULT_SXNET_IP)
-        val port = Integer.parseInt(prefs.getString(KEY_PORT, DEFAULT_SXNET_PORT))
-
-        client = RRConnectionThread(this, ip!!, port, appHandler)
-        client?.start()
-
-        Thread.sleep(300)
-
-        if (connectionIsAlive()) {
-            LanbahnPanelApplication.requestAllPanelData()
-        } else {
-            val msg = " NO CONNECTION TO $ip:$port! Check WiFi/SSID and server settings "
-            longToast(msg)
-            conn_state_string = "NOT CONNECTED"
-        }
-    }
-
     private fun checkStorageWritePermission(): Boolean {
         if (ContextCompat.checkSelfPermission(this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -634,13 +640,13 @@ class LanbahnPanelActivity : AppCompatActivity() {
         }
     }
 
-    private fun reloadConfigIfPanelFileChanged() : Boolean {
+    private fun reloadConfigIfPanelFileChanged(): Boolean {
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
         val cfFilename = prefs.getString(KEY_CONFIG_FILE, "-")
         var result = false
         // panel file changed or empty panel => (re-)load panel
-        if ( (cfFilename != configFilename) || (panelElements.size == 0)) {
+        if ((cfFilename != configFilename) || (panelElements.size == 0)) {
             // reload, if a new panel config file selected
             configFilename = cfFilename
             if (DEBUG) {
@@ -704,7 +710,6 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
         lateinit var popUp: PopupWindow
         lateinit var layout: LinearLayout
-
 
     }
 
