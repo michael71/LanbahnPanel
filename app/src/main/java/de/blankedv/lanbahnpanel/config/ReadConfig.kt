@@ -142,6 +142,7 @@ object ReadConfig {
         panelName = parsePanelDescription(items.item(0), "name")
         panelProtocol = parsePanelDescription(items.item(0), "protocol")
         panelVersion = parsePanelDescription(items.item(0), "version")
+        panelStyle = parsePanelDescription(items.item(0), "style")
 
         if (panelProtocol.isEmpty()) panelProtocol = "sx"  // make default
 
@@ -227,7 +228,7 @@ object ReadConfig {
 
                 // turnout have either an lanbahn/dcc address ("adr") or a combination of
                 // sxadr and sxbit (for ex. sxadr="98" sxbit="7") which will be compiled to
-                // lanbahn address "987" and an sxmapping will be created.
+                // lanbahn address "987"
 
             } else if (theAttribute.nodeName == "sxadr") {
                 sxadr = getIntegerNodeValue(theAttribute)
@@ -249,7 +250,6 @@ object ReadConfig {
                 lbSxPair = LanbahnSXPair(INVALID_INT, sxadr, sxbit, nbit)
             }
             pe.adr = lbSxPair.lbAddr
-            sxMappings.add(lbSxPair)
         }
 
         if (DEBUG_PARSING) Log.d(TAG, "turnout: x=" + pe.x + " y=" + pe.y + " adr=" + pe.adr)
@@ -261,10 +261,9 @@ object ReadConfig {
         // remove "." first to convert SX addresses like 72.1 to LB addr (=721)
         val s = a.nodeValue.replace(".","")
         try {
-            val num =  Integer.parseInt(s)
-            return num
+            return Integer.parseInt(s)
         } catch (e : NumberFormatException) {
-            return INVALID_INT;
+            return INVALID_INT
         }
     }
 
@@ -310,7 +309,6 @@ object ReadConfig {
             // calc from sx add a LanbahnSXPair for later storage
             val lbSxPair = LanbahnSXPair(INVALID_INT, sxadr, sxbit)   // lbaddr gets calculated
             pe.adr = lbSxPair.lbAddr
-            sxMappings.add(lbSxPair)
         }
         if (DEBUG_PARSING) Log.d(TAG, "signal x=" + pe.x + " y=" + pe.y + " adr=" + pe.adr)
         return pe
@@ -406,9 +404,6 @@ object ReadConfig {
             // calc from sx add a LanbahnSXPair for later storage
             val lbSxPair = LanbahnSXPair(INVALID_INT, sxadr, sxbit)
             pe.adr = lbSxPair.lbAddr
-            if (!sxMappings.contains(lbSxPair)) {
-                sxMappings.add(lbSxPair)
-            }
         }
 
         return pe

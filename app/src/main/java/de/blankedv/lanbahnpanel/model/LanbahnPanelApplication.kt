@@ -65,12 +65,14 @@ class LanbahnPanelApplication : Application() {
                         }
                     }
                     TYPE_GENERIC_MSG -> {
-                        PanelElement.update(chan, data)
+                        PanelElement.updateAcc(chan, data)
+                        PanelElement.updateSensor(chan, data)
+                        Route.update(chan, data)
                     }
 
                     TYPE_LOCO_MSG -> {
                         //if (DEBUG) Log.d(TAG,"xloco message chan=$chan d=$data")
-                        if (selectedLoco == null) Log.e(TAG,"no loco selected")
+                        if ((selectedLoco == null) && (enableLocoControl)) Log.e(TAG,"no loco selected")
                         if (selectedLoco?.adr == chan) {
                             selectedLoco?.updateLocoFromSX(data)
                         }
@@ -84,13 +86,6 @@ class LanbahnPanelApplication : Application() {
                         // TODO update lissy element
                     }*/
 
-                    TYPE_ROUTE_MSG -> {
-                        for (rt in routes) {
-                            if (rt.id == chan) {
-                                rt.updateData(data)
-                            }
-                        }
-                    }
 
                     TYPE_ERROR_MSG -> {
                         if (DEBUG) Log.d(TAG, "error msg $chan $data")
@@ -129,7 +124,6 @@ class LanbahnPanelApplication : Application() {
         editor.putString(KEY_STYLE_PREF, selectedStyle)
         editor.putString(KEY_SCALE_PREF, selectedScale)
         editor.putBoolean(KEY_ROUTES, enableRoutes)
-        editor.putBoolean(KEY_FLIP, flipUpsideDown)
         editor.putBoolean(KEY_FIVE_VIEWS_PREF, enableFiveViews)
         editor.putInt(KEY_QUADRANT, selQuadrant)
 
@@ -152,7 +146,6 @@ class LanbahnPanelApplication : Application() {
         pSett.selStyle = selectedStyle
         pSett.selScale = selectedScale
         pSett.enRoutes = enableRoutes
-        pSett.flip = flipUpsideDown
         pSett.fiveViews = enableFiveViews
         pSett.selQua = selQuadrant
 
@@ -179,7 +172,6 @@ class LanbahnPanelApplication : Application() {
         selectedStyle = prefs.getString(KEY_STYLE_PREF, "US")
         selectedScale = prefs.getString(KEY_SCALE_PREF, "auto")
         enableRoutes = prefs.getBoolean(KEY_ROUTES, false)
-        flipUpsideDown = prefs.getBoolean(KEY_FLIP, false)
         enableFiveViews = prefs.getBoolean(KEY_FIVE_VIEWS_PREF, false)
         if (enableFiveViews == true) {
             selQuadrant = prefs.getInt(KEY_QUADRANT, 0)   // currently display selQuadrant
@@ -191,12 +183,12 @@ class LanbahnPanelApplication : Application() {
         LPaints.init(prescale, selectedStyle, applicationContext)
     }
 
-    fun loadPanelSettings() {
+    fun loadPanelSettings()  {
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
         Log.d(TAG, "loadPanelSettings panel=$panelName")
         // init from generic settings
-        pSett = PanelSettings(selectedScale, selectedScale, enableRoutes, flipUpsideDown, enableFiveViews, selQuadrant)
+        pSett = PanelSettings(selectedScale, selectedScale, enableRoutes, enableFiveViews, selQuadrant)
 
         if (prefs.contains(KEY_PANEL_SETTINGS + "_" + panelName)) {
             val gson = Gson()
@@ -207,7 +199,6 @@ class LanbahnPanelApplication : Application() {
             selectedStyle = pSett.selStyle
             selectedScale = pSett.selScale
             enableRoutes = pSett.enRoutes
-            flipUpsideDown = pSett.flip
             enableFiveViews = pSett.fiveViews
             if (enableFiveViews == true) {
                 selQuadrant = pSett.selQua
@@ -219,12 +210,16 @@ class LanbahnPanelApplication : Application() {
             editor.putString(KEY_STYLE_PREF, selectedStyle)
             editor.putString(KEY_SCALE_PREF, selectedScale)
             editor.putBoolean(KEY_ROUTES, enableRoutes)
-            editor.putBoolean(KEY_FLIP, flipUpsideDown)
             editor.putBoolean(KEY_FIVE_VIEWS_PREF, enableFiveViews)
             editor.putInt(KEY_QUADRANT, selQuadrant)
             // Commit the edits!
             editor.apply()
 
+        } else {
+            // no settings stored so far for this panel, use style from xml-file
+            if (panelStyle != "") {
+                selectedStyle = panelStyle
+            }
         }
 
         LPaints.init(prescale, selectedStyle, applicationContext)

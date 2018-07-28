@@ -3,6 +3,7 @@ package de.blankedv.lanbahnpanel.elements
 import android.graphics.Canvas
 import android.graphics.Point
 import android.graphics.Rect
+import android.preference.PreferenceManager
 import android.util.Log
 import de.blankedv.lanbahnpanel.util.LPaints
 import de.blankedv.lanbahnpanel.model.*
@@ -25,6 +26,8 @@ open class PanelElement {
     var yt = INVALID_INT
     var adr = INVALID_INT
     var state = STATE_UNKNOWN
+    var inRoute = false
+
     var route = ""
     var invert = DISP_STANDARD     // not inverted
 
@@ -140,7 +143,11 @@ open class PanelElement {
          */
         fun relocatePanelOrigin() {
             // in WriteConfig the NEW values are written !!
-
+            if (DEBUG) Log.d(TAG,"relocatePanelOrigin")
+            val prefs = PreferenceManager
+                    .getDefaultSharedPreferences(appContext)
+            //val flip = prefs.getBoolean(KEY_FLIP, false)
+            val flip = false
             var xmin = INVALID_INT
             var xmax = INVALID_INT
             var ymin = INVALID_INT
@@ -193,7 +200,7 @@ open class PanelElement {
                 Log.d(TAG, "scallAll: move by dx=" + deltaX + " dy=" + deltaY + "  ----------------")
             }
             for (pe in panelElements) {
-                if (!flipUpsideDown) {
+                if (!flip) {
                     if (pe.x != INVALID_INT)
                         pe.x += deltaX
                     if (pe.x2 != INVALID_INT)

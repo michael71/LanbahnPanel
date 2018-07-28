@@ -29,6 +29,7 @@ import de.blankedv.lanbahnpanel.config.ReadConfig
 import de.blankedv.lanbahnpanel.config.DownloadPanel
 import de.blankedv.lanbahnpanel.config.WriteConfig
 import de.blankedv.lanbahnpanel.elements.ActivePanelElement
+import de.blankedv.lanbahnpanel.elements.PanelElement
 import de.blankedv.lanbahnpanel.elements.Route
 import de.blankedv.lanbahnpanel.elements.RouteButtonElement
 import de.blankedv.lanbahnpanel.loco.Loco
@@ -199,7 +200,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
         if (DEBUG) Log.d(TAG, "panelN=$panelName en5V=$enableFiveViews selQua=$selQuadrant")
         // set quadrants mode and display selected selQuadrant
-        enableForQuadrantButtons(enableFiveViews)
+        PanelElement.relocatePanelOrigin()
         displayQuadrant(selQuadrant)
         displayLockState()
 
@@ -392,8 +393,8 @@ class LanbahnPanelActivity : AppCompatActivity() {
         //displayLockState()
         Route.auto()
 
-        /* TODO check necessity */
-         if ((counter.rem(4) == 0) and (selectedLoco != null)) {
+        /* TODO check which frequency is needed */
+         if (enableLocoControl && (counter.rem(4) == 0) and (selectedLoco != null)) {
 
              val adr = selectedLoco?.adr   ?: INVALID_INT
              Commands.readLocoData(adr)
@@ -403,10 +404,11 @@ class LanbahnPanelActivity : AppCompatActivity() {
     }
 
     private fun enableForQuadrantButtons(yes: Boolean) {
+        if (mOptionsMenu == null) return
+
         if (DEBUG) Log.d(TAG, "enableForQuadrantButtons($yes)")
         if (yes) {
             mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.q1_v2_48_gray)
-                    ?: Log.e(TAG, "mOptionsMenu is not set")
             mOptionsMenu?.findItem(R.id.action_q2)?.setIcon(R.drawable.q2_v2_48_gray)
             mOptionsMenu?.findItem(R.id.action_q3)?.setIcon(R.drawable.q3_v2_48_gray)
             mOptionsMenu?.findItem(R.id.action_q4)?.setIcon(R.drawable.q4_v2_48_gray)
@@ -422,7 +424,6 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
         } else {
             mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.trans_48)
-                    ?: Log.e(TAG, "mOptionsMenu is not set")
             mOptionsMenu?.findItem(R.id.action_q2)?.setIcon(R.drawable.trans_48)
             mOptionsMenu?.findItem(R.id.action_q3)?.setIcon(R.drawable.trans_48)
             mOptionsMenu?.findItem(R.id.action_q4)?.setIcon(R.drawable.trans_48)

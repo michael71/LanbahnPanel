@@ -24,16 +24,15 @@ var selectedScale: String = "auto" // automatic scaling
 var panelElements = ArrayList<PanelElement>()
 var routes = ArrayList<Route>()
 var compRoutes = ArrayList<CompRoute>()
-var sxMappings = ArrayList<LanbahnSXPair>();  // maps lanbahn addresses to SX addresses
 var locolist = ArrayList<Loco>()
 
 var panelName = ""
 var panelProtocol = ""
 var panelVersion = ""
+var panelStyle = ""
 
 var drawAddresses = false
 var drawAddresses2 = false
-var flipUpsideDown = false  //display all panel element from "other side"
 var saveStates: Boolean = false
 var enableDiscoverTurnouts = false
 var enableFiveViews = false

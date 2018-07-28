@@ -178,10 +178,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                     enableRoutes = prefs!!.getBoolean(KEY_ROUTES, false)
                     pSett.enRoutes = enableRoutes
                 }
-                KEY_FLIP -> {
-                    flipUpsideDown = prefs!!.getBoolean(KEY_FLIP, false)
-                    pSett.flip = flipUpsideDown
-                }
                 // quadrant cannot be changed in the SettingsActivity
             }
         }

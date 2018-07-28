@@ -128,6 +128,21 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         //		Log.d(TAG, rtOffending.size() + " offending routes in config");
     }//
 
+    fun deactivateSensorsAndTurnouts() {
+        // deactivate sensors => set "inRoute = false"
+        for (se in rtSensors) {
+            se.inRoute = false
+            //  if a route is de-activated, all connected tablets need to set the sensors to inroute = false
+            // this is handled via activating and de-activating routes globally
+        }
+
+        for (rrt in rtTurnouts) {
+            rrt.turnout.inRoute = false
+            //  if a route is de-activated, all connected tablets need to set the turnouts to inroute = false
+            // this is handled via activating and de-activating routes globally
+        }
+
+    }
     /** clear a route, set sensors to free and signals to RED
      *
      */
@@ -137,24 +152,21 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         if (DEBUG)
             Log.d(TAG, "clearing route id=$id")
 
-        // deactivate sensors
-        for (se in rtSensors) {
-            se.state = STATE_FREE
-            val cmd = "SET " + se.adr + " " + STATE_FREE
-            if (!sendQ.contains(cmd)) {
-                sendQ.add(cmd)
-            }
-        }
+        deactivateSensorsAndTurnouts()
 
         // set signals turnout red
         for (rs in rtSignals) {
-            rs.signal.state = STATE_RED
+            if (rs.signal.state != STATE_RED) {
+                rs.signal.state = STATE_RED
 
-            val cmd = "SET " + rs.signal.adr + " " + STATE_RED
-            if (!sendQ.contains(cmd)) {
-                sendQ.add(cmd)
+                val cmd = "SET " + rs.signal.adr + " " + STATE_RED
+                if (!sendQ.contains(cmd)) {
+                    sendQ.add(cmd)
+                }
             }
         }
+
+
 
         // TODO unlock turnouts
         /*
@@ -167,7 +179,7 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         isActive = false
         // notify that route was cleared
         // route id's are unique, the standard number space is used
-        val cmd = "SET $id 0"
+        val cmd = "SET $id 0"    // this is used by other tablets to set sensors to "not in Route"
         sendQ.add(cmd)
     }
 
@@ -190,6 +202,17 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         }
     }
 
+    fun activateSensorsAndTurnouts() {
+        // activate sensors => set "inRoute = true"
+        for (se in rtSensors) {
+            se.inRoute = true
+        }
+        // set and // TODO lock turnouts
+        for (rtt in rtTurnouts) {
+            rtt.turnout.inRoute = true
+        }
+    }
+
     fun set() {
         timeSet = System.currentTimeMillis() // store for resetting
         // automatically
@@ -199,18 +222,13 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
 
         // notify that route is set
         // route id's are unique, the standard number space is used
-        var cmd = "SET $id 1"
+        var cmd = "SET $id 1"    // for other tablets
         sendQ.add(cmd)
         isActive = true
 
         clearOffendingRoutes()
 
-        // activate sensors
-        for (se in rtSensors) {
-            se.state = STATE_INROUTE
-            cmd = "SET " + se.adr + " " + STATE_INROUTE
-            sendQ.add(cmd)
-        }
+        activateSensorsAndTurnouts()
 
         // set signals
         for (rs in rtSignals) {
@@ -294,9 +312,11 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
     fun updateData(data: Int) {
         if (data == 0) {
             isActive = false
+            deactivateSensorsAndTurnouts()
             timeSet = System.currentTimeMillis()
         } else if (data == 1) {
             isActive = true
+            activateSensorsAndTurnouts()
             timeSet = System.currentTimeMillis()
         }
     }
@@ -368,6 +388,14 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         fun clearAllRoutes() {
             routes.forEach { it.clear() }
          }
+
+        fun update(chan : Int, data : Int) {
+            for (rt in routes) {
+                if (rt.id == chan) {
+                    rt.updateData(data)
+                }
+            }
+        }
     }
 }
 

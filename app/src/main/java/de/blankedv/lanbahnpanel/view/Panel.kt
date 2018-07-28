@@ -41,10 +41,10 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
     private var scalingTime = 0L
 
 
-
     var locoControlArea: LocoControlArea? = null
 
-    private val toneG = ToneGenerator(AudioManager.STREAM_ALARM, 70)
+    private lateinit var toneG: ToneGenerator
+    private var toneEnabled = false
 
     private var time0 = System.currentTimeMillis() - 10001
 
@@ -61,6 +61,13 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
         locoControlArea = LocoControlArea(context)
         mThread = ViewThread(this)
+
+        try {
+            toneG = ToneGenerator(AudioManager.STREAM_ALARM, 70)
+            toneEnabled = true;
+        } catch (e: Exception) {
+            Log.e(TAG, "could not init ToneGenerator => disabled Tones.")
+        }
 
     }
 
@@ -183,8 +190,10 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                                     } else {
                                         e.toggle()
                                         // vibrate(500L)
-
-                                        toneG.startTone(ToneGenerator.TONE_CDMA_ABBR_INTERCEPT, 100) //TONE_CDMA_PIP) //TONE_CDMA_KEYPAD_VOLUME_KEY_LITE)
+                                        if (toneEnabled) {
+                                            toneG?.startTone(ToneGenerator.TONE_CDMA_ABBR_INTERCEPT, 100)
+                                            //TONE_CDMA_PIP) //TONE_CDMA_KEYPAD_VOLUME_KEY_LITE)
+                                        }
                                     }
                                     break // only 1 can be selected with one touch
                                 }
@@ -192,7 +201,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                         }
 
                     }
-                 }
+                }
 
                 MotionEvent.ACTION_CANCEL -> {
                     if (DEBUG) Log.d(TAG, "ACTION_CANCEL - mPosX=$mPosX mPosY=$mPosY")

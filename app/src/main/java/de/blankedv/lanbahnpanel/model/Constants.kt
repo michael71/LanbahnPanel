@@ -46,6 +46,8 @@ const val LBP_NOTIFICATION_ID = 201 //arbitrary id for notification
 // turnouts
 const val STATE_CLOSED = 0
 const val STATE_THROWN = 1
+
+
 const val DISP_STANDARD = 0
 const val DISP_INVERTED = 1
 
@@ -56,6 +58,7 @@ const val STATE_YELLOW = 2
 const val STATE_YELLOW_FEATHER = 3
 const val STATE_SWITCHING = 4
 
+
 // buttons
 const val STATE_NOT_PRESSED = 0
 const val STATE_PRESSED = 1
@@ -63,15 +66,13 @@ const val STATE_PRESSED = 1
 // sensors
 const val STATE_FREE = 0
 const val STATE_OCCUPIED = 1
-const val STATE_INROUTE = 2
-const val STATE_UNKNOWN = -1
+const val STATE_UNKNOWN = INVALID_INT
 
 //power
 const val POWER_UNKNOWN = INVALID_INT
 const val POWER_ON = 1
 const val POWER_OFF = 0
-const val SX_POWER_CHANNEL = 127      // SX global power state is requested using  this address
-const val MAX_PURE_SX = 1278   // addresses below this address (and including this address are "pure SX" addresses = real hardware addresses
+
 const val SXMIN = 0
 const val SXMAX = 111   // highest channel number for selectrix (lowest is 0)
 const val LIFECHECK_SECONDS = 10  // every 10 seconds check if server connection is alive
@@ -96,7 +97,6 @@ const val TYPE_LN_ACC_MSG = 5
 const val TYPE_LN_SENSOR_MSG = 6
 const val TYPE_LN_LISSY_MSG = 7
 const val TYPE_POWER_MSG = 8
-const val TYPE_ROUTE_MSG = 9
 const val TYPE_LOCO_MSG = 10
 
 

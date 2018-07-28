@@ -196,18 +196,14 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
                         when (info[0]) {
                             "X", "XL" -> m.what = TYPE_GENERIC_MSG
                             "XLOCO" -> m.what = TYPE_LOCO_MSG
-                            "RT" -> m.what = TYPE_ROUTE_MSG
                             else -> m.what = INVALID_INT
                         }
                         if (m.what != INVALID_INT) {
                             //Log.d(TAG,"what=${m.what} a=${m.arg1} d=${m.arg2}")
                             appHandler.sendMessage(m)  // send route data to UI Thread via Message
                         }
-
                     }
-
                 }
-
             }
 
         }
