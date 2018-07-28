@@ -16,6 +16,11 @@
         android:orderInCategory="100"
         android:title="@string/get_panel_from_server"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_flip_panel"
+        android:orderInCategory="100"
+        android:title="@string/flipUpsideDown"
+        app:showAsAction="never" />
     <!-- <item
         android:id="@+id/menu_check_service"
         android:orderInCategory="100"

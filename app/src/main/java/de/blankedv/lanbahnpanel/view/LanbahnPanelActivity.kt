@@ -200,7 +200,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
         if (DEBUG) Log.d(TAG, "panelN=$panelName en5V=$enableFiveViews selQua=$selQuadrant")
         // set quadrants mode and display selected selQuadrant
-        PanelElement.relocatePanelOrigin()
+
         displayQuadrant(selQuadrant)
         displayLockState()
 
@@ -292,6 +292,10 @@ class LanbahnPanelActivity : AppCompatActivity() {
             }
             R.id.menu_get_panel -> {
                 readPanelFromServer()
+                return true
+            }
+            R.id.menu_flip_panel -> {
+                PanelElement.flipPanel()
                 return true
             }
 
