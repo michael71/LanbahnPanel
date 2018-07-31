@@ -13,10 +13,10 @@ import java.net.URL
 import javax.xml.parsers.DocumentBuilderFactory
 
 
-class DownloadPanel(private val url: String) {
+class Download(private val url: String) {
 
     fun run(): Pair<Boolean, String> {
-        Log.d(TAG, "DownloadPanel(url).run()")
+        Log.d(TAG, "Download(url).run(), url=$url")
         try {
             val content = URL(url).readText()
 
@@ -31,31 +31,35 @@ class DownloadPanel(private val url: String) {
                 fWriter.write(content)
                 fWriter.flush()
             } catch (e: IOException) {
-                Log.e(TAG, "DownloadPanel WRITE ERROR: " + e.message)
+                Log.e(TAG, "Download WRITE ERROR: " + e.message)
                 return Pair(false, "WRITE: " + e.message)
             } finally {
                 fWriter?.close()
             }
             return Pair(true, fileName)
         } catch (e: IOException) {
-            Log.e(TAG, "DownloadPanel ERROR: " + e.message)
+            Log.e(TAG, "Download ERROR: " + e.message)
             return Pair(false, "" + e.message)
         }
     }
 
     private fun getFilename(filecontent: String): String {
-
+        var defaultFileName = FNAME_FROM_SERVER
         val factory = DocumentBuilderFactory.newInstance()
         val builder = factory.newDocumentBuilder()
         val mystream = InputSource(StringReader(filecontent))
         val doc = builder.parse(mystream)
-        val root = doc.documentElement ?: return FNAME_PANEL_FROM_SERVER
-
+        val root = doc.documentElement ?: return FNAME_FROM_SERVER
+        if (root.tagName.contains("loco")) {
+            defaultFileName += "locolist_"
+        } else {
+            defaultFileName += "panel_"
+        }
         val fName = parseAttribute(root, "filename")
         if (fName.endsWith(".xml")) {
             return fName
         } else {
-            return FNAME_PANEL_FROM_SERVER
+            return defaultFileName
         }
     }
 

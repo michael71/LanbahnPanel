@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<layout-config filename="lb-panel4.xml">
+<panel name="Lonstoke West" protocol="sx" style="UK">
+<track x="3" y="20" x2="320" y2="20" />
+<track x="3" y="40" x2="320" y2="40" />
+<track x="40" y="70" x2="200" y2="70" />
+<track x="10" y="90" x2="200" y2="90" />
+<track x="260" y="90" x2="320" y2="90" />
+<track x="210" y="40" x2="260" y2="90" />
+<track x="210" y="20" x2="280" y2="90" />
+<track x="40" y="90" x2="60" y2="70" />
+<track x="80" y="20" x2="100" y2="40" />
+<track x="101" y="40" x2="131" y2="70" />
+<track x="132" y="70" x2="152" y2="90" />
+<turnout x="210" y="20" x2="224" y2="20" xt="220" yt="30" adr="811" />
+<turnout x="80" y="20" x2="94" y2="20" xt="90" yt="30" adr="843" />
+<turnout x="210" y="40" x2="224" y2="40" xt="220" yt="50" adr="813" />
+<turnout x="100" y="40" x2="86" y2="40" xt="90" yt="30" adr="841" />
+<turnout x="101" y="40" x2="115" y2="40" xt="111" yt="50" adr="842" />
+<turnout x="131" y="70" x2="117" y2="70" xt="121" yt="60" adr="723" />
+<turnout x="132" y="70" x2="146" y2="70" xt="142" yt="80" adr="721" />
+<turnout x="40" y="90" x2="54" y2="90" xt="50" yt="80" />
+<turnout x="60" y="70" x2="54" y2="70" xt="50" yt="80" />
+<turnout x="60" y="70" x2="46" y2="70" xt="50" yt="80" />
+<turnout x="152" y="90" x2="138" y2="90" xt="142" yt="80" adr="722" />
+<turnout x="280" y="90" x2="266" y2="90" xt="270" yt="80" adr="812" />
+<signal x="130" y="50" x2="138" y2="50" adr="761" nbit="2" />
+<signal x="148" y="10" x2="140" y2="10" adr="763" nbit="2" />
+<signal x="38" y="10" x2="30" y2="10" adr="2100" />
+<signal x="10" y="50" x2="18" y2="50" adr="2101" />
+<signal x="308" y="10" x2="300" y2="10" adr="2102" />
+<signal x="290" y="50" x2="298" y2="50" adr="2103" />
+<signal x="170" y="100" x2="178" y2="100" adr="752" />
+<signal x="170" y="80" x2="178" y2="80" adr="751" />
+<signal x="290" y="100" x2="298" y2="100" adr="765" nbit="2" />
+<routebutton x="20" y="20" adr="1200" />
+<routebutton x="20" y="40" adr="1201" />
+<routebutton x="140" y="20" adr="1202" />
+<routebutton x="140" y="40" adr="1203" />
+<routebutton x="300" y="90" adr="1204" />
+<routebutton x="300" y="20" adr="1205" />
+<routebutton x="300" y="40" adr="1206" />
+<routebutton x="180" y="70" adr="1207" />
+<routebutton x="180" y="90" adr="1208" />
+<routebutton x="80" y="70" adr="1209" />
+<routebutton x="80" y="90" adr="1210" />
+<sensor x="30" y="20" x2="78" y2="20" adr="2000" />
+<sensor x="105" y="20" x2="130" y2="20" adr="2001" />
+<sensor x="150" y="20" x2="200" y2="20" adr="2002" />
+<sensor x="224" y="20" x2="295" y2="20" adr="2003" />
+<sensor x="30" y="40" x2="80" y2="40" adr="2004" />
+<sensor x="114" y="40" x2="130" y2="40" adr="2005" />
+<sensor x="150" y="40" x2="200" y2="40" adr="2006" />
+<sensor x="240" y="40" x2="290" y2="40" adr="2007" />
+<sensor x="220" y="50" x2="260" y2="90" adr="2009" />
+<sensor x="240" y="50" x2="270" y2="80" adr="2008" />
+<sensor x="284" y="90" x2="292" y2="90" adr="2010" />
+<sensor x="113" y="52" x2="123" y2="62" adr="2011" />
+<sensor x="150" y="70" x2="175" y2="70" adr="2012" />
+<sensor x="152" y="90" x2="175" y2="90" adr="2013" />
+<sensor x="90" y="70" x2="120" y2="70" adr="2014" />
+<sensor x="90" y="90" x2="129" y2="90" adr="2015" />
+<route id="2201" btn1="1200" btn2="1202" route="843,0;841,0;2100,1;2101,0" sensors="2000,2001" offending="" />
+<route id="2202" btn1="1203" btn2="1201" route="843,0;841,0;842,0;761,2;2101,0" sensors="2005,2004" offending="" />
+<route id="2242" btn1="1203" btn2="1200" route="843,1;841,1;842,0;761,3;2101,0" sensors="2005,2000" offending="" />
+<route id="2243" btn1="1200" btn2="1203" route="843,1;841,1;842,0;761,0;2100,1;2101,0" sensors="2005,2000" offending="" />
+<route id="2203" btn1="1207" btn2="1201" route="721,0;723,1;842,1;841,0;843,0;751,1" sensors="2004,2011,2012" offending="" />
+<route id="2204" btn1="1208" btn2="1201" route="722,1;721,1;723,1;842,1;841,0;843,0;752,1" sensors="2004,2011,2013" offending=""/>
+<route id="2205" btn1="1202" btn2="1205" route="763,2;811,0;2102,0" sensors="2002,2003" offending="" />
+<route id="2206" btn1="1202" btn2="1204" route="763,3;811,1;812,1;765,0" sensors="2002,2008,2010" offending="2207,2209"/>
+<route id="2207" btn1="1206" btn2="1203" route="2103,1;811,0;813,0;765,0" sensors="2007,2006" offending="2206,2209" />
+<route id="2208" btn1="1204" btn2="1203" route="813,1;812,0;765,1,761" sensors="2010,2009,2006" offending="" />
+<route id="2209" btn1="1204" btn2="1202" route="813,1;811,1;812,1;765,2" sensors="2010,2008,2002" offending="2207,2206" />
+<route id="2210" btn1="1202" btn2="1200" route="843,0;841,0;763,0" sensors="2000,2001" offending="" />
+<route id="2223" btn1="1201" btn2="1207" route="721,0;723,1;842,1;841,0;843,0;751,0" sensors="2004,2011,2012" offending="" />
+<route id="2224" btn1="1201" btn2="1208" route="722,1;721,1;723,1;842,1;841,0;843,0;752,0" sensors="2004,2011,2013" offending="" />
+<route id="2222" btn1="1201" btn2="1203" route="843,0;841,0;842,0;761,0" sensors="2005,2004" offending="" />
+<route id="2211" btn1="1207" btn2="1209" route="842,0;721,0;723,0;722,0;751,1" sensors="2012,2014" offending="" />
+<route id="2212" btn1="1208" btn2="1210" route="721,0;722,0;752,1" sensors="2013,2015" offending="" />
+<route id="2213" btn1="1208" btn2="1209" route="723,0;721,1;722,1;752,1;751,0" sensors="2013,2014" offending="" />
+<route id="2231" btn1="1209" btn2="1207" route="842,0;721,0;723,0;722,0;751,0" sensors="2012,2014" offending="" />
+<route id="2232" btn1="1210" btn2="1208" route="721,0;722,0;752,0" sensors="2013,2015" offending="" />
+<route id="2232" btn1="1209" btn2="1208" route="723,0;721,1;722,1;752,0;751,0" sensors="2013,2014" offending="" />
+<route id="2240" btn1="1200" btn2="1207" route ="2100,2;843,1;841,1;842,1;723,1;721,0;751,0;722,0" sensors="2000,2011,2012" />
+<route id="2241" btn1="1200" btn2="1208"  route ="2100,2;843,1;841,1;842,1;723,1;721,1;752,0;722,1" sensors="2000,2011,2013" />
+<route id="2242" btn1="1207" btn2="1200" route ="2100,0;843,1;841,1;842,1;723,1;721,0;751,1;722,0" sensors="2000,2011,2012" />
+<route id="2243" btn1="1208" btn2="1200"  route ="2100,0;843,1;841,1;842,1;723,1;721,1;752,1;722,1" sensors="2000,2011,2013" />
+<comproute id="2300" btn1="1200" btn2="1205" routes="2201,2205" />
+<comproute id="2301" btn1="1206" btn2="1201" routes="2207,2202" />
+<comproute id="2302" btn1="1204" btn2="1201" routes="2208,2202" />
+<comproute id="2303" btn1="1204" btn2="1200" routes="2209,2210" />
+<comproute id="2304" btn1="1200" btn2="1204" routes="2201,2206" />
+</panel>
+</layout-config>

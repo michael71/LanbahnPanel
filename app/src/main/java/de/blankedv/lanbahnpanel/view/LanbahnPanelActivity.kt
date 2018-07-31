@@ -26,7 +26,7 @@ import java.util.TimerTask
 
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.clearPanelData
 import de.blankedv.lanbahnpanel.config.ReadConfig
-import de.blankedv.lanbahnpanel.config.DownloadPanel
+import de.blankedv.lanbahnpanel.config.Download
 import de.blankedv.lanbahnpanel.config.WriteConfig
 import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import de.blankedv.lanbahnpanel.elements.PanelElement
@@ -39,6 +39,7 @@ import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.pSett
 import de.blankedv.lanbahnpanel.railroad.Commands
 import de.blankedv.lanbahnpanel.railroad.Railroad
 import de.blankedv.lanbahnpanel.settings.SettingsActivity
+import de.blankedv.lanbahnpanel.util.LPaints
 import de.blankedv.lanbahnpanel.util.Utils.threadSleep
 import org.jetbrains.anko.*
 
@@ -153,8 +154,8 @@ class LanbahnPanelActivity : AppCompatActivity() {
         if (DEBUG)
             Log.d(TAG, "onPause - LanbahnPanelActivity")
 
-        (application as LanbahnPanelApplication).saveGenericSettings()
-        (application as LanbahnPanelApplication).savePanelSettings()
+        //TODO review settings (application as LanbahnPanelApplication).saveGenericSettings()
+        //(application as LanbahnPanelApplication).savePanelSettings()
         //if (configHasChanged) {
         if (checkStorageWritePermission()) {
             WriteConfig.toXMLFile()
@@ -189,16 +190,19 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
         sendQ.clear()
 
-        (application as LanbahnPanelApplication).loadGenericSettings()   // get preferences
+        //TODO (application as LanbahnPanelApplication).loadGenericSettings()   // get preferences
+
         setActionBarBackground()  // matching to panel style
+        LPaints.init(prescale, prefs.getString(KEY_STYLE_PREF, "US"), applicationContext)
 
         var newPanel = reloadConfigIfPanelFileChanged()
         if (newPanel) {
             (application as LanbahnPanelApplication).loadPanelSettings()   // get panel preferences
         }  // reset view
-        Route.clearAllRoutes()
 
-        if (DEBUG) Log.d(TAG, "panelN=$panelName en5V=$enableFiveViews selQua=$selQuadrant")
+
+
+        if (DEBUG) Log.d(TAG, "panelName=$panelName enableFiveViews=$enableFiveViews selQuadrant=$selQuadrant")
         // set quadrants mode and display selected selQuadrant
 
         displayQuadrant(selQuadrant)
@@ -206,7 +210,9 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
         if (DEBUG) debugLogDisplayMetrics()
 
-        if (enableRoutes == false) {
+        if (prefs.getBoolean(KEY_ROUTES, false)) {
+            Route.clearAllRoutes()
+        } else {
             RouteButtonElement.autoReset()  // this will also reset the sensors to STATE_FREE
         }
 
@@ -214,7 +220,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
             loadStates()
         }
 
-        if (enableLocoControl) loadLocos()
+        if (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)) loadLocos()
 
         LanbahnPanelApplication.expireAllPanelElements()
         LanbahnPanelApplication.requestAllPanelData()
@@ -398,8 +404,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         Route.auto()
 
         /* TODO check which frequency is needed */
-         if (enableLocoControl && (counter.rem(4) == 0) and (selectedLoco != null)) {
-
+         if ((counter.rem(4) == 0) and (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)) and (selectedLoco != null)) {
              val adr = selectedLoco?.adr   ?: INVALID_INT
              Commands.readLocoData(adr)
          }
@@ -661,13 +666,16 @@ class LanbahnPanelActivity : AppCompatActivity() {
             val prefs = PreferenceManager
                     .getDefaultSharedPreferences(this)
             val server = prefs.getString(KEY_IP, "")
-            getPanel(server)
+            val urlConfig = "http://$server:8000/config"
+            getPanel(urlConfig)
+            val urlLoco = "http://$server:8000/loco"
+            getPanel(urlLoco)
         } else {
             longToast("ERROR: App has NO PERMISSION to write files !")
         }
     }
 
-    private fun getPanel(server: String) {
+    private fun getPanel(url: String) {
 
         val state = Environment.getExternalStorageState()
         if (state != Environment.MEDIA_MOUNTED) {// We cannot read/write the media
@@ -677,16 +685,15 @@ class LanbahnPanelActivity : AppCompatActivity() {
         }
 
         doAsync {
-            val url = "http://" + server + ":8000/config"
-            val (res, content) = DownloadPanel(url).run()
+            val (res, content) = Download(url).run()
             uiThread {
                 if (res) {
                     //Log.d(TAG, content)
                     // content == filename
-                    longToast("panel file read => select $content in settings to use it")
+                    longToast("file read => select $content in settings to use it")
                 } else {
                     Log.e(TAG, content)  // content == error message
-                    longToast("panel file NOT read - ERROR:\n$content")
+                    longToast("file NOT read - ERROR:\n$content")
                 }
             }
         }

@@ -22,7 +22,7 @@ class SignalElement : ActivePanelElement {
     }
 
     override fun getSensitiveRect() : Rect {
-       return Rect(x - RASTER / 7, y - RASTER / 11, x + RASTER / 7, y + RASTER / 11)
+       return Rect(x - RASTER / 5, y - RASTER / 7, x + RASTER / 5, y + RASTER / 7)
     }
 
     override fun doDraw(canvas: Canvas) {
@@ -32,7 +32,7 @@ class SignalElement : ActivePanelElement {
         canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), signalLine)
         canvas.drawLine((x2 * prescale).toFloat(), (y2 - 2.5f) * prescale, (x2 * prescale).toFloat(), (y2 + 2.5f) * prescale, signalLine)
         canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3f * prescale, whitePaint)
-        if (enableEdit || adr == INVALID_INT) {
+        if (prefs.getBoolean(KEY_ENABLE_EDIT, false) || adr == INVALID_INT) {
             canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3f * prescale, whitePaint)
         } else {
             if (state == STATE_RED) {
@@ -47,11 +47,11 @@ class SignalElement : ActivePanelElement {
 
         }
 
-        if (drawAddresses) doDrawAddresses(canvas)
+        if (prefs.getBoolean(KEY_DRAW_ADR, false)) doDrawAddresses(canvas)
     }
 
     override fun toggle() {
-        if (enableRoutes) return  // do not set signals by hand if routes are enabled
+        if (prefs.getBoolean(KEY_ROUTES, false)) return  // do not set signals by hand if routes are enabled
 
         if (adr == INVALID_INT) return  // do nothing if no sx address defined.
 

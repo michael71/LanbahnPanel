@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <layout-config filename="panel-ibm26a.xml">
-<panel name="IBM2018/7" offsetX="100" offsetY="100">
+<panel name="IBM2018/7" offsetX="100" offsetY="100" protocol="sx" style="US">
 <sensor name="CS24" x="600" y="-20" sxadr="87" sxbit="5" />
 <sensor name="CS24" x="390" y="-80" sxadr="87" sxbit="3" />
 <sensor name="CS24" x="490" y="-60" sxadr="87" sxbit="4" />

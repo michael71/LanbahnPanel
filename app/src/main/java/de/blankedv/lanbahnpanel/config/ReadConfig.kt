@@ -28,7 +28,6 @@ import de.blankedv.lanbahnpanel.util.LinearMath
 /**
  * Parse Configuration from XML file
  * TODO review kotlin code
- * TODO Berechtigung erfragen für Android >= 7
  *
  * @author mblank
  */
@@ -234,8 +233,9 @@ object ReadConfig {
                 sxadr = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "sxbit") {
                 sxbit = getIntegerNodeValue(theAttribute)
-            } else if (theAttribute.nodeName == "nbits") {
+            } else if (theAttribute.nodeName == "nbit") {
                 nbit = getIntegerNodeValue(theAttribute)  // TODO implement for multi-aspect signals
+                pe.nbit = nbit
             } else {
                 if (DEBUG_PARSING)
                     Log.d(TAG,
@@ -296,8 +296,8 @@ object ReadConfig {
                 sxadr = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "sxbit") {
                 sxbit = getIntegerNodeValue(theAttribute)
-            } else if (theAttribute.nodeName == "nbits") {
-                nbit = getIntegerNodeValue(theAttribute)  // TODO implement for multi-aspect signals
+            } else if (theAttribute.nodeName == "nbit") {
+                pe.nbit = getIntegerNodeValue(theAttribute)  // TODO implement for multi-aspect signals
             } else {
                 if (DEBUG_PARSING)
                     Log.d(TAG,
@@ -306,9 +306,7 @@ object ReadConfig {
             }
         }
         if ((pe.adr == INVALID_INT) and (sxadr != INVALID_INT) and (sxbit != INVALID_INT)) {
-            // calc from sx add a LanbahnSXPair for later storage
-            val lbSxPair = LanbahnSXPair(INVALID_INT, sxadr, sxbit)   // lbaddr gets calculated
-            pe.adr = lbSxPair.lbAddr
+            pe.adr  = sxadr * 10 + sxbit   // lbaddr gets calculated from sx
         }
         if (DEBUG_PARSING) Log.d(TAG, "signal x=" + pe.x + " y=" + pe.y + " adr=" + pe.adr)
         return pe

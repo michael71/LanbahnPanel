@@ -37,7 +37,7 @@ const val KEY_LOCO_SYSTEM = "locoSystemPref"
 /** {@value #N_PANEL_FOR_4Q} = minimum number of panel elements to display the 4 quadrants */
 const val N_PANEL_FOR_4Q = 75
 
-const val FNAME_PANEL_FROM_SERVER = "panel_from_server.xml"
+const val FNAME_FROM_SERVER = "from_server.xml"
 
 const val DEMO_LOCOS_FILE = "locos-demo.xml"
 
@@ -75,7 +75,7 @@ const val POWER_OFF = 0
 
 const val SXMIN = 0
 const val SXMAX = 111   // highest channel number for selectrix (lowest is 0)
-const val LIFECHECK_SECONDS = 10  // every 10 seconds check if server connection is alive
+const val LIFECHECK_SECONDS = 30  // every 10 seconds check if server connection is alive
 
 const val DEFAULT_SXNET_PORT = "4104"  // string
 const val DEFAULT_SXNET_IP = "192.168.178.29"  // string
@@ -91,6 +91,7 @@ const val TYPE_LISSY = 3
 const val TYPE_LOCO = 4
 
 // Message Types for UI Thread
+const val TYPE_SX_MSG = 2
 const val TYPE_ERROR_MSG = 3
 const val TYPE_GENERIC_MSG = 4
 const val TYPE_LN_ACC_MSG = 5
@@ -98,6 +99,7 @@ const val TYPE_LN_SENSOR_MSG = 6
 const val TYPE_LN_LISSY_MSG = 7
 const val TYPE_POWER_MSG = 8
 const val TYPE_LOCO_MSG = 10
+const val TYPE_SHUTDOWN_MSG = 11
 
 
 // fixed prefix for scaling - should be =1 for small displays and =2 for

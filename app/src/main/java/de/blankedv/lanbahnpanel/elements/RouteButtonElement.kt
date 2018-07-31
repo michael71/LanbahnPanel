@@ -44,11 +44,11 @@ class RouteButtonElement : ActivePanelElement {
      * */
     override fun doDraw(canvas: Canvas) {
 
-        if (!enableRoutes) return
+        if (!prefs.getBoolean(KEY_ROUTES, false)) return
 
         canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 4f * prescale, LPaints.whitePaint)
 
-        if (enableEdit || adr == INVALID_INT) {
+        if (prefs.getBoolean(KEY_ENABLE_EDIT, false) || adr == INVALID_INT) {
             canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3f * prescale, LPaints.btn0Paint)
         } else {
             if (state == STATE_PRESSED) {
@@ -69,11 +69,11 @@ class RouteButtonElement : ActivePanelElement {
 
         }
 
-        if (drawAddresses2) doDrawAddresses(canvas)
+        if (prefs.getBoolean(KEY_DRAW_ADR2, false)) doDrawAddresses(canvas)
     }
 
     override fun toggle() {
-        if (!enableRoutes) return  // do not enable route keys if not routes are enabled
+        if (!prefs.getBoolean(KEY_ROUTES, false)) return  // do not enable route keys if not routes are enabled
 
         if (adr == INVALID_INT) return  // do nothing if no address defined.
 

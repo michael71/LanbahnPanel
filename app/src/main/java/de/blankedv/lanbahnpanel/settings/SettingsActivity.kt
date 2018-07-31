@@ -164,7 +164,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 KEY_STYLE_PREF -> {
                     selectedStyle = prefs!!.getString(KEY_STYLE_PREF,"US")
                     pSett.selStyle = selectedStyle
-                    Log.d(TAG,"CHANGE: style=${pSett.selStyle} $selectedStyle")
+                    Log.d(TAG,"CHANGED: style=${pSett.selStyle} $selectedStyle")
                 }
                 KEY_SCALE_PREF -> {
                     selectedScale = prefs!!.getString(KEY_SCALE_PREF,"auto")
@@ -173,10 +173,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 KEY_FIVE_VIEWS_PREF -> {
                     enableFiveViews = prefs!!.getBoolean(KEY_FIVE_VIEWS_PREF, false)
                     pSett.fiveViews = enableFiveViews
-                }
-                KEY_ROUTES -> {
-                    enableRoutes = prefs!!.getBoolean(KEY_ROUTES, false)
-                    pSett.enRoutes = enableRoutes
                 }
                 // quadrant cannot be changed in the SettingsActivity
             }
@@ -343,21 +339,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             }
             true
         }
-        /* NOT USED
-            private val sBindPreferenceToBoolListener = Preference.OnPreferenceChangeListener { preference, value ->
 
-            if (preference is CheckBoxPreference) {
-                val checkBoxPreference = preference
-                Log.d(TAG, "settings, key=" + preference.key + " value="+value)
-
-                if (preference.key == KEY_VIEW_VIEWS_PREF) {
-                    if (value == false) {
-                        selQuadrant = 0   // needs to be reset
-                    }
-                }
-            }
-            true
-        } */
 
         /**
          * Helper method to determine if the device has an extra-large screen. For
@@ -388,18 +370,6 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                             .getString(preference.key, ""))
         }
 
-        /* NOT USED
-           private fun bindPreferenceToBoolValue(preference: Preference) {
 
-            // Set the listener to watch for value changes.
-            preference.onPreferenceChangeListener = sBindPreferenceSummaryToValueListener
-
-            // Trigger the listener immediately with the preference's
-            // current value.
-            sBindPreferenceToBoolListener.onPreferenceChange(preference,
-                    PreferenceManager
-                            .getDefaultSharedPreferences(preference.context)
-                            .getBoolean(preference.key, false))
-        } */
     }
 }

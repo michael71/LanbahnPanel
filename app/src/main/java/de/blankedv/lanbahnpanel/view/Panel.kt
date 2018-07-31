@@ -143,7 +143,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
                     mLastTouchX = x
                     mLastTouchY = y
-                    if (enableEdit) {
+                    if (prefs.getBoolean(KEY_ENABLE_EDIT, false)) {
                         //selSxAddress.dismiss();
                     }
                 }
@@ -157,7 +157,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                     if (!mScaleDetector.isInProgress) { //&& (deltaT > SCALING_WAIT)) {
                         // assuming control area is always at the top !!
                         var controlAreaBottom = 0
-                        if (enableLocoControl) {
+                        if (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)) {
                             controlAreaBottom = controlAreaRect?.bottom ?: 0
                         }
 
@@ -176,8 +176,8 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                             Log.d(TAG, "ACTION_UP _Checking panel elements at: xs=$xs  ys$ys")
                             for (e in panelElements) {
                                 var sel = false
-                                if (enableRoutes) {
-                                    // check only!! route buttons when routing is enabled
+                                if (prefs.getBoolean(KEY_ROUTES, false)) {
+                                    // check route buttons only (!!) when routing is enabled
                                     if (e is RouteButtonElement) {
                                         sel = e.isSelected(xs, ys)
                                     }
@@ -185,7 +185,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                                     sel = e.isSelected(xs, ys)
                                 }
                                 if (sel) { //mLastTouchX, mLastTouchY)) {
-                                    if (enableEdit) {
+                                    if (prefs.getBoolean(KEY_ENABLE_EDIT, false)) {
                                         Dialogs.selectAddressDialog(e) //
                                     } else {
                                         e.toggle()
@@ -255,9 +255,10 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         var yo = pSett.qClip[selQuadrant].yoff
 
         if ((DEBUG) and ((System.currentTimeMillis() - time0) > 10000)) {
-            Log.d(TAG, "panelRect x=(" + panelRect.left + "," + panelRect.right + ") y=(" + panelRect.top + "," + panelRect.bottom + ")")
-            Log.d(TAG, "qua=$selQuadrant mWidth=$mWidth mHeight=$mHeight - actual scale=$sc xoff=$xo yoff=$yo} hCalc=$hCalc hRect=$hRect")
-            Log.d(TAG, "controlAreaRect =(${controlAreaRect?.left},${controlAreaRect?.right}),(${controlAreaRect?.top},${controlAreaRect?.bottom})")
+            //Log.d(TAG, "panelRect x=(" + panelRect.left + "," + panelRect.right + ") y=(" + panelRect.top + "," + panelRect.bottom + ")")
+           // Log.d(TAG, "qua=$selQuadrant mWidth=$mWidth mHeight=$mHeight - actual scale=$sc xoff=$xo yoff=$yo} hCalc=$hCalc hRect=$hRect")
+           // Log.d(TAG, "controlAreaRect =(${controlAreaRect?.left},${controlAreaRect?.right}),(${controlAreaRect?.top},${controlAreaRect?.bottom})")
+
             // Samsung SM-T580  panelRect 2040x960 *prescale (=2)
             // metric 1920x1200 pixel , ratio 1.6
             /* for the 4 quadrants       (full layout  autoscale: 0.94 / 0 0)       (experimental)
@@ -282,7 +283,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
         canvas.drawBitmap(mBitmap, matrix, null)
 
-        if (enableLocoControl) {
+        if (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)) {
             canvas.drawRect(controlAreaRect, paintControlAreaBG);
             locoControlArea?.draw(canvas); // not scaled with zoom
         }

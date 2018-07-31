@@ -26,9 +26,10 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
     private var connectionActive = false  // determined with time out counter
     private var timeElapsed: Long = 0
 
+    private val TAG = "Railroad_Thread"
 
     override fun run() {
-        if (DEBUG) Log.d(TAG, "Railroad run.")
+        if (DEBUG) Log.d(TAG, " run.")
         shutdownFlag = false
         connectionActive = false
         val (result, connResult) = connect(ip, port)
@@ -74,8 +75,8 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
                 }
             }
 
-            // send a command at least every 10 secs
-            if (System.currentTimeMillis() - timeElapsed > LIFECHECK_SECONDS * 10000) {
+            // send a command at least every 30 secs
+            if (System.currentTimeMillis() - timeElapsed > LIFECHECK_SECONDS * 1000) {
                 if (isConnected()) {
                     Commands.readPower()
                     countNoResponse++
@@ -85,6 +86,9 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
                     Log.e(TAG, "Railroad - connection lost?")
                     countNoResponse = 0
                     connectionActive = false
+                    sendShutdownMessage()
+                    threadSleep(200)
+                    shutdownFlag = true
 
                 }
             }
@@ -96,6 +100,12 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
     }
 
 
+    private fun sendShutdownMessage() {
+        val m = Message.obtain()
+        m.what = TYPE_SHUTDOWN_MSG
+        m.obj = "no response -> shutting down"
+        appHandler.sendMessage(m)  // send data to UI Thread via Message
+    }
     private fun immediateSend(command: String) {
         if (shutdownFlag) return
         if (out == null) {
@@ -155,6 +165,7 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
 
     fun shutdown() {
         shutdownFlag = true
+        Thread.interrupted()
     }
 
     fun handleReceive(receivedMsg: String): Boolean {
@@ -194,7 +205,8 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
                         m.arg1 = addr
                         m.arg2 = data
                         when (info[0]) {
-                            "X", "XL" -> m.what = TYPE_GENERIC_MSG
+                            "X" -> m.what = TYPE_SX_MSG
+                            "XL" -> m.what = TYPE_GENERIC_MSG
                             "XLOCO" -> m.what = TYPE_LOCO_MSG
                             else -> m.what = INVALID_INT
                         }

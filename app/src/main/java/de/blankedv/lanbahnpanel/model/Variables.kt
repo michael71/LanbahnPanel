@@ -5,7 +5,9 @@
 package de.blankedv.lanbahnpanel.model
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Rect
+import android.preference.PreferenceManager
 import de.blankedv.lanbahnpanel.elements.CompRoute
 import de.blankedv.lanbahnpanel.elements.PanelElement
 import de.blankedv.lanbahnpanel.elements.Route
@@ -15,8 +17,6 @@ import java.util.ArrayList
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingQueue
 
-
-var sxData = IntArray(SXMAX+1, { _ -> 0 })
 
 var selectedStyle: String = "UK" // German style or USS style
 var selectedScale: String = "auto" // automatic scaling
@@ -31,11 +31,10 @@ var panelProtocol = ""
 var panelVersion = ""
 var panelStyle = ""
 
-var drawAddresses = false
-var drawAddresses2 = false
 var saveStates: Boolean = false
 var enableDiscoverTurnouts = false
 var enableFiveViews = false
+lateinit var prefs : SharedPreferences
 
 var mWidth: Int = 0  // TODO move away from global scope
 var mHeight: Int = 0  // TODO move away from global scope
@@ -59,7 +58,6 @@ public const val DIRECTORY = "/lanbahnpanel/"
 
 var configFilename = "lb-panel1.xml"
 var locoConfigFilename = "locos.xml"
-var enableLocoControl = false
 
 const val DEMO_FILE = "demo-panel.xml" // demo data in raw
 // assets dir.
@@ -71,8 +69,6 @@ var locoConfigHasChanged = false
 
 @Volatile var selQuadrant = 0  // TODO move away from global scope
 
-var enableEdit = false
-var enableRoutes = false
 // enable edit mode for lanbahn addresses in panel.
 
 var clearRouteButtonActive = false // state of clear

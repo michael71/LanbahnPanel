@@ -26,6 +26,7 @@ open class PanelElement {
     var yt = INVALID_INT
     var adr = INVALID_INT
     var state = STATE_UNKNOWN
+    var nbit = 1  // for multi-aspect signals, nbit=2 => 4 possible values 0,1,2,3
     var inRoute = false
 
     var route = ""
@@ -146,60 +147,17 @@ open class PanelElement {
         fun relocatePanelOrigin() {
             // in WriteConfig the NEW values are written !!
             if (DEBUG) Log.d(TAG,"relocatePanelOrigin")
-            val prefs = PreferenceManager
-                    .getDefaultSharedPreferences(appContext)
-            //val flip = prefs.getBoolean(KEY_FLIP, false)
-            val flip = false
-            var xmin = INVALID_INT
-            var xmax = INVALID_INT
-            var ymin = INVALID_INT
-            var ymax = INVALID_INT
-            var first = true
-            for (pe in panelElements) {
-                if (first) {
-                    xmax = pe.x
-                    xmin = xmax
-                    ymax = pe.y
-                    ymin = ymax
-                    first = false
-                }
 
-                if (pe.x != INVALID_INT && pe.x < xmin)
-                    xmin = pe.x
-                if (pe.x != INVALID_INT && pe.x > xmax)
-                    xmax = pe.x
-                if (pe.x2 != INVALID_INT && pe.x2 < xmin)
-                    xmin = pe.x2
-                if (pe.x2 != INVALID_INT && pe.x2 > xmax)
-                    xmax = pe.x2
-                if (pe.xt != INVALID_INT && pe.xt < xmin)
-                    xmin = pe.xt
-                if (pe.xt != INVALID_INT && pe.xt > xmax)
-                    xmax = pe.xt
-
-                if (pe.y != INVALID_INT && pe.y < ymin)
-                    ymin = pe.y
-                if (pe.y != INVALID_INT && pe.y > ymax)
-                    ymax = pe.y
-                if (pe.y2 != INVALID_INT && pe.y2 < ymin)
-                    ymin = pe.y2
-                if (pe.y2 != INVALID_INT && pe.y2 > ymax)
-                    ymax = pe.y2
-                if (pe.yt != INVALID_INT && pe.yt < ymin)
-                    ymin = pe.yt
-                if (pe.yt != INVALID_INT && pe.yt > ymax)
-                    ymax = pe.yt
-
-            }
+            val rec = getMinMaxXY()
             if (DEBUG) {
-                Log.d(TAG, "scallAll: before adding 10: xmin=" + (xmin) + " xmax="
-                        + (xmax) + " ymin=" + (ymin) + " ymax=" + (ymax) + "  ----------------")
+                Log.d(TAG, "relocatePanelOrigin: before adding 10: xmin=" + (rec.left) + " xmax="
+                        + (rec.right) + " ymin=" + (rec.top) + " ymax=" + (rec.bottom) + "  ----------------")
             }
             // now move origin to (10,10)
-            val deltaX = 10 - xmin
-            val deltaY = 10 - ymin
+            val deltaX = 10 - rec.left
+            val deltaY = 10 - rec.top
             if (DEBUG) {
-                Log.d(TAG, "scallAll: move by dx=" + deltaX + " dy=" + deltaY + "  ----------------")
+                Log.d(TAG, "relocatePanelOrigin: move by dx=" + deltaX + " dy=" + deltaY + "  ----------------")
             }
             for (pe in panelElements) {
                     if (pe.x != INVALID_INT)
@@ -214,12 +172,11 @@ open class PanelElement {
                         pe.y2 += deltaY
                     if (pe.yt != INVALID_INT)
                         pe.yt += deltaY
-
             }
-            panelRect = Rect(0, 0, (xmax + deltaX + 10) * prescale, (ymax + deltaY + 10) * prescale)
+            panelRect = Rect(0, 0, (rec.right + deltaX + 10) * prescale, (rec.bottom + deltaY + 10) * prescale)
 
             if (DEBUG) {
-                Log.d(TAG, "scallAll: after origin move (incl Rand) xmin=" + panelRect.left + " xmax="
+                Log.d(TAG, "relocatePanelOrigin: after origin move mult by prescale (incl border) xmin=" + panelRect.left + " xmax="
                         + panelRect.right + " ymin=" + panelRect.top
                         + " ymax=" + panelRect.bottom + "  ----------------")
             }
@@ -235,78 +192,32 @@ open class PanelElement {
          */
         fun flipPanel() {
             // in WriteConfig the NEW values are written !!
-            if (DEBUG) Log.d(TAG,"toggleflipPanel")
-            if (flipState) {
-                flipState = false
-            } else {
-                flipState = true
-            }
-            var xmin = INVALID_INT
-            var xmax = INVALID_INT
-            var ymin = INVALID_INT
-            var ymax = INVALID_INT
-            var first = true
-            for (pe in panelElements) {
-                if (first) {
-                    xmax = pe.x
-                    xmin = xmax
-                    ymax = pe.y
-                    ymin = ymax
-                    first = false
-                }
+            if (DEBUG) Log.d(TAG,"flipPanel (toggle)")
+            flipState = !flipState
 
-                if (pe.x != INVALID_INT && pe.x < xmin)
-                    xmin = pe.x
-                if (pe.x != INVALID_INT && pe.x > xmax)
-                    xmax = pe.x
-                if (pe.x2 != INVALID_INT && pe.x2 < xmin)
-                    xmin = pe.x2
-                if (pe.x2 != INVALID_INT && pe.x2 > xmax)
-                    xmax = pe.x2
-                if (pe.xt != INVALID_INT && pe.xt < xmin)
-                    xmin = pe.xt
-                if (pe.xt != INVALID_INT && pe.xt > xmax)
-                    xmax = pe.xt
-
-                if (pe.y != INVALID_INT && pe.y < ymin)
-                    ymin = pe.y
-                if (pe.y != INVALID_INT && pe.y > ymax)
-                    ymax = pe.y
-                if (pe.y2 != INVALID_INT && pe.y2 < ymin)
-                    ymin = pe.y2
-                if (pe.y2 != INVALID_INT && pe.y2 > ymax)
-                    ymax = pe.y2
-                if (pe.yt != INVALID_INT && pe.yt < ymin)
-                    ymin = pe.yt
-                if (pe.yt != INVALID_INT && pe.yt > ymax)
-                    ymax = pe.yt
-
-            }
+            val rec = getMinMaxXY()
 
             for (pe in panelElements) {
-
-                    if (pe.x != INVALID_INT)
-                        pe.x = 10 + (xmax - pe.x)
-                    if (pe.x2 != INVALID_INT)
-                        pe.x2 = 10 + (xmax - pe.x2)
-                    if (pe.xt != INVALID_INT)
-                        pe.xt = 10 + (xmax - pe.xt)
-                    if (pe.y != INVALID_INT)
-                        pe.y = 10 + (ymax - pe.y)
-                    if (pe.y2 != INVALID_INT)
-                        pe.y2 = 10 + (ymax - pe.y2)
-                    if (pe.yt != INVALID_INT)
-                        pe.yt = 10 + (ymax - pe.yt)
-
+                if (pe.x != INVALID_INT)
+                    pe.x = 10 + (rec.right - pe.x)
+                if (pe.x2 != INVALID_INT)
+                    pe.x2 = 10 + (rec.right - pe.x2)
+                if (pe.xt != INVALID_INT)
+                    pe.xt = 10 + (rec.right - pe.xt)
+                if (pe.y != INVALID_INT)
+                    pe.y = 10 + (rec.bottom - pe.y)
+                if (pe.y2 != INVALID_INT)
+                    pe.y2 = 10 + (rec.bottom - pe.y2)
+                if (pe.yt != INVALID_INT)
+                    pe.yt = 10 + (rec.bottom - pe.yt)
             }
-            panelRect = Rect(0, 0, (xmax) * prescale, (ymax) * prescale)
+            panelRect = Rect(0, 0, (rec.right) * prescale, (rec.bottom) * prescale)
 
             if (DEBUG) {
                 Log.d(TAG, "flipPanel: new Rect (should be equal old Rect!) " + panelRect.left + " xmax="
                         + panelRect.right + " ymin=" + panelRect.top
                         + " ymax=" + panelRect.bottom + "  ----------------")
             }
-
 
             configHasChanged = true
 
@@ -327,6 +238,58 @@ open class PanelElement {
                 Log.d(TAG, "pe#" + i + "(" + pe.x + "," + pe.x2 + ")/(" + pe.y + "," + pe.y2 + ")")
                 i++
             }
+        }
+
+        private fun getMinMaxXY() : Rect {
+            var xmin = INVALID_INT     // = left
+            var xmax = INVALID_INT     // = right
+            var ymin = INVALID_INT     // = top
+            var ymax = INVALID_INT     // = bottom
+            var first = true
+            for (pe in panelElements) {
+                if (first) {
+                    xmax = pe.x
+                    xmin = xmax
+                    ymax = pe.y
+                    ymin = ymax
+                    first = false
+                }
+
+                if (pe.x != INVALID_INT && pe.x < xmin)
+                    xmin = pe.x
+                if (pe.x != INVALID_INT && pe.x > xmax)
+                    xmax = pe.x
+                if (pe.x2 != INVALID_INT && pe.x2 < xmin)
+                    xmin = pe.x2
+                if (pe.x2 != INVALID_INT && pe.x2 > xmax)
+                    xmax = pe.x2
+                if (pe.xt != INVALID_INT && pe.xt < xmin)
+                    xmin = pe.xt
+                if (pe.xt != INVALID_INT && pe.xt > xmax)
+                    xmax = pe.xt
+
+                if (pe.y != INVALID_INT && pe.y < ymin)
+                    ymin = pe.y
+                if (pe.y != INVALID_INT && pe.y > ymax)
+                    ymax = pe.y
+                if (pe.y2 != INVALID_INT && pe.y2 < ymin)
+                    ymin = pe.y2
+                if (pe.y2 != INVALID_INT && pe.y2 > ymax)
+                    ymax = pe.y2
+                if (pe.yt != INVALID_INT && pe.yt < ymin)
+                    ymin = pe.yt
+                if (pe.yt != INVALID_INT && pe.yt > ymax)
+                    ymax = pe.yt
+
+            }
+
+            if (DEBUG) {
+                Log.d(TAG, "getMinMaxXY: xmin=" + xmin + " xmax="
+                        + xmax + " ymin=" + ymin
+                        + " ymax=" + ymax )
+            }
+            return Rect(xmin,ymin,xmax,ymax)
+
         }
     }
 

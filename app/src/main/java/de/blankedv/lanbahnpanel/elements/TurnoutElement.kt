@@ -2,6 +2,7 @@ package de.blankedv.lanbahnpanel.elements
 
 import android.graphics.Canvas
 import android.graphics.Rect
+import android.preference.PreferenceManager
 import android.util.Log
 import de.blankedv.lanbahnpanel.util.LPaints.bgPaint
 import de.blankedv.lanbahnpanel.util.LPaints.greenPaint
@@ -35,10 +36,10 @@ class TurnoutElement : ActivePanelElement {
     }
 
     override fun getSensitiveRect(): Rect {
-        val minx = Utils.min(x, xt, x2) - RASTER / 7
-        val maxx = Utils.max(x, xt, x2) + RASTER / 7
-        val miny = Utils.min(y, yt, y2) - RASTER / 7
-        val maxy = Utils.max(y, yt, y2) + RASTER / 7
+        val minx = Utils.min(x, xt, x2) - RASTER / 13
+        val maxx = Utils.max(x, xt, x2) + RASTER / 13
+        val miny = Utils.min(y, yt, y2) - RASTER / 13
+        val maxy = Utils.max(y, yt, y2) + RASTER / 13
         return Rect(minx, miny, maxx, maxy)
     }
 
@@ -47,7 +48,7 @@ class TurnoutElement : ActivePanelElement {
 
         // read data from SX bus and paint position of turnout accordingly
         // draw a line and not a bitmap
-        if (enableEdit) {
+        if (prefs.getBoolean(KEY_ENABLE_EDIT, false)) {
             if (invert == DISP_STANDARD) {
                 canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), greenPaint)
                 canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), redPaint)
@@ -81,11 +82,12 @@ class TurnoutElement : ActivePanelElement {
                 canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), bgPaint)
             }
         }
-        if (drawAddresses) doDrawAddresses(canvas)
+
+        if (prefs.getBoolean(KEY_DRAW_ADR, false)) doDrawAddresses(canvas)
     }
 
     override fun toggle() {
-        if (enableRoutes) return  // do not set turnouts by hand if routes are enabled
+        if (prefs.getBoolean(KEY_ROUTES, false)) return  // do not set turnouts by hand if routes are enabled
 
         if (adr == INVALID_INT) return  // do nothing if no sx address defined.
 

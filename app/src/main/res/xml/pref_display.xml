@@ -2,7 +2,7 @@
 
     <CheckBoxPreference
         android:defaultValue="false"
-        android:key="enableLocoControlPref"
+        android:key="drawAddressesPref"
         android:title="@string/draw_addresses" />
     <CheckBoxPreference
         android:defaultValue="false"

@@ -68,7 +68,7 @@ class SensorElement : ActivePanelElement {
                 // bitmap
             }
         }
-        if (drawAddresses2)
+        if (prefs.getBoolean(KEY_DRAW_ADR2, false))
             doDrawAddresses(canvas)
     }
 

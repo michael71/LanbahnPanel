@@ -22,6 +22,7 @@ import de.blankedv.lanbahnpanel.railroad.Commands
 import de.blankedv.lanbahnpanel.settings.PanelSettings
 import de.blankedv.lanbahnpanel.util.LanbahnBitmaps
 import de.blankedv.lanbahnpanel.util.LPaints
+import org.jetbrains.anko.toast
 
 // TODO: kotlin review and simplify
 // TODO: handle absence ot connection to command station
@@ -45,6 +46,9 @@ class LanbahnPanelApplication : Application() {
 
         Log.d(TAG, "LanbahnPanelApplication - androidDeviceID=$myAndroidDeviceId")
         // scaling, zoom prefs are loaded from LanbahnPanelActivity
+
+        prefs = PreferenceManager
+                .getDefaultSharedPreferences(this)
 
         // handler for receiving sxnet/loconet messages
         // this must be done in the "Application" (not activity) to keep track of changes
@@ -70,22 +74,46 @@ class LanbahnPanelApplication : Application() {
                         Route.update(chan, data)
                     }
 
+                    TYPE_SX_MSG -> {   // data of 8 (or less) lanbahn channels bundled in a data byte
+                        for (i in 1..8) {   // sxbit 1..8
+                           val lbChan = chan * 10 + i
+                           val pe = PanelElement.getPeByAddress(lbChan)
+                            if (pe != null) {
+                                var d: Int
+                                if (pe.nbit == 2) { // check if nbit is != 1
+                                    d = data.shr(i - 1) and 0x03
+                                } else {
+                                    d = data.shr(i - 1) and 0x01
+                                }
+                                pe.state = d
+                            }
+                            // there should be no routes in this address range Route.update(chan, data)
+                            // if (DEBUG) Log.d(TAG,"SX msg: lbChan=$lbChan d=$d")
+                        }
+                    }
+
                     TYPE_LOCO_MSG -> {
                         //if (DEBUG) Log.d(TAG,"xloco message chan=$chan d=$data")
-                        if ((selectedLoco == null) && (enableLocoControl)) Log.e(TAG,"no loco selected")
+                        if ((selectedLoco == null) && (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false))) Log.e(TAG, "no loco selected")
                         if (selectedLoco?.adr == chan) {
                             selectedLoco?.updateLocoFromSX(data)
                         }
                     }
 
-                    // TYPE_LN_ACC_MSG -> PanelElement.updateAcc(chan, (1-data))   //inverted values for LN
-                    // TYPE_LN_SENSOR_MSG -> PanelElement.updateSensor(chan, data)
-                    /*
-                    TYPE_LN_LISSY_MSG -> {
-                        val lissymsg = msg.obj as String
-                        // TODO update lissy element
-                    }*/
+                // TYPE_LN_ACC_MSG -> PanelElement.updateAcc(chan, (1-data))   //inverted values for LN
+                // TYPE_LN_SENSOR_MSG -> PanelElement.updateSensor(chan, data)
+                /*
+                TYPE_LN_LISSY_MSG -> {
+                    val lissymsg = msg.obj as String
+                    // TODO update lissy element
+                }*/
 
+
+                    TYPE_SHUTDOWN_MSG -> {
+                        if (DEBUG) Log.d(TAG, "client thread disconnecting")
+                        toast("no response, disconnecting")
+                        client = null
+                    }
 
                     TYPE_ERROR_MSG -> {
                         if (DEBUG) Log.d(TAG, "error msg $chan $data")
@@ -115,20 +143,16 @@ class LanbahnPanelApplication : Application() {
         val editor = prefs.edit()
         Log.d(TAG, "saveGenericSettings")
         // generic
-        editor.putBoolean(KEY_DRAW_ADR, drawAddresses)
-        editor.putBoolean(KEY_DRAW_ADR2, drawAddresses2)
-        editor.putBoolean(KEY_ENABLE_EDIT, enableEdit)
+
         editor.putBoolean(KEY_SAVE_STATES, saveStates)
 
-        // currently used - but these will be stored also for the panel
+        // currently used - but these will be stored also for the panel  TODO ??
         editor.putString(KEY_STYLE_PREF, selectedStyle)
         editor.putString(KEY_SCALE_PREF, selectedScale)
-        editor.putBoolean(KEY_ROUTES, enableRoutes)
         editor.putBoolean(KEY_FIVE_VIEWS_PREF, enableFiveViews)
         editor.putInt(KEY_QUADRANT, selQuadrant)
 
-        editor.putBoolean(KEY_ENABLE_LOCO_CONTROL, enableLocoControl)
-        if (enableLocoControl) {
+        if (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)) {
             val adr = selectedLoco?.adr ?: 3
             editor.putInt(KEY_LOCO_ADR, adr)  // last used loco address
         }
@@ -145,7 +169,6 @@ class LanbahnPanelApplication : Application() {
         // currently used - but these will be stored also for the panel
         pSett.selStyle = selectedStyle
         pSett.selScale = selectedScale
-        pSett.enRoutes = enableRoutes
         pSett.fiveViews = enableFiveViews
         pSett.selQua = selQuadrant
 
@@ -163,42 +186,36 @@ class LanbahnPanelApplication : Application() {
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
         // generic
-        enableEdit = prefs.getBoolean(KEY_ENABLE_EDIT, false)
         saveStates = prefs.getBoolean(KEY_SAVE_STATES, false)
-        drawAddresses = prefs.getBoolean(KEY_DRAW_ADR, false)
-        drawAddresses2 = prefs.getBoolean(KEY_DRAW_ADR2, false)
 
         // read generic settings (which might be overwritten by panel settings)
         selectedStyle = prefs.getString(KEY_STYLE_PREF, "US")
         selectedScale = prefs.getString(KEY_SCALE_PREF, "auto")
-        enableRoutes = prefs.getBoolean(KEY_ROUTES, false)
         enableFiveViews = prefs.getBoolean(KEY_FIVE_VIEWS_PREF, false)
         if (enableFiveViews == true) {
             selQuadrant = prefs.getInt(KEY_QUADRANT, 0)   // currently display selQuadrant
         } else {
             selQuadrant = 0  // must be reset, because we only have one view left
         }
-        enableLocoControl = prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)
         // selectedLoc.adr gets loaded when a locos-config.xml file is read
         LPaints.init(prescale, selectedStyle, applicationContext)
     }
 
-    fun loadPanelSettings()  {
+    fun loadPanelSettings() {
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
         Log.d(TAG, "loadPanelSettings panel=$panelName")
         // init from generic settings
-        pSett = PanelSettings(selectedScale, selectedScale, enableRoutes, enableFiveViews, selQuadrant)
+        pSett = PanelSettings(selectedScale, selectedScale, enableFiveViews, selQuadrant)
 
         if (prefs.contains(KEY_PANEL_SETTINGS + "_" + panelName)) {
             val gson = Gson()
             if (DEBUG) Log.d(TAG, "panel-settings=" +
-                    prefs.getString(KEY_PANEL_SETTINGS+ "_" + panelName, "??"))
+                    prefs.getString(KEY_PANEL_SETTINGS + "_" + panelName, "??"))
             pSett = gson.fromJson(prefs.getString(KEY_PANEL_SETTINGS + "_" + panelName, ""), pSett.javaClass)
             // overwrite generic settings and store as current values
             selectedStyle = pSett.selStyle
             selectedScale = pSett.selScale
-            enableRoutes = pSett.enRoutes
             enableFiveViews = pSett.fiveViews
             if (enableFiveViews == true) {
                 selQuadrant = pSett.selQua
@@ -209,7 +226,6 @@ class LanbahnPanelApplication : Application() {
             val editor = prefs.edit()
             editor.putString(KEY_STYLE_PREF, selectedStyle)
             editor.putString(KEY_SCALE_PREF, selectedScale)
-            editor.putBoolean(KEY_ROUTES, enableRoutes)
             editor.putBoolean(KEY_FIVE_VIEWS_PREF, enableFiveViews)
             editor.putInt(KEY_QUADRANT, selQuadrant)
             // Commit the edits!
@@ -270,7 +286,7 @@ class LanbahnPanelApplication : Application() {
     companion object {
 
         lateinit var appHandler: Handler // used for communication from RRConnection Thread to UI (application)
-        lateinit var pSett : PanelSettings
+        lateinit var pSett: PanelSettings
 
         /**
          * set all active panel elements to "expired" to have them updated soon
@@ -293,7 +309,6 @@ class LanbahnPanelApplication : Application() {
             }
 
         }
-
 
 
         /**
@@ -338,7 +353,7 @@ class LanbahnPanelApplication : Application() {
             if ((width == 0) or (heightIn == 0)) return //makes no sense
 
             var remainingHeight = heightIn
-            if (enableLocoControl) {
+            if (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)) {
                 remainingHeight = 7 * heightIn / 8  // can only use 7/8 of height because of locoControlArea
                 if (DEBUG) Log.d(TAG, "calcAutoScale(remH=$remainingHeight)")
             }
@@ -371,17 +386,18 @@ class LanbahnPanelApplication : Application() {
             val sc1X = width / ((re.right - re.left) * 1.0f)
             val sc1Y = remainingHeight / ((re.bottom - re.top) * 1.0f)
 
-            scale = Math.min(sc1X,sc1Y)
+            scale = Math.min(sc1X, sc1Y)
             val fact = sc1X / sc1Y
 
             val hRect = 1.0f * (re.bottom - re.top)
             val wRect = 1.0f * (re.right - re.left)
 
             if (sc1X < sc1Y) {
-                if (DEBUG) Log.d(TAG,"autoscale sc1X < sc1Y fact=$fact")
+                if (DEBUG) Log.d(TAG, "autoscale sc1X < sc1Y fact=$fact")
                 val hCalc = remainingHeight / scale
                 when (qua) {
-                    0 -> { xoff = 0f   //correct
+                    0 -> {
+                        xoff = 0f   //correct
                         yoff = scale * (hCalc - hRect) / 2 //correct
                     }
                     1 -> {
@@ -389,24 +405,24 @@ class LanbahnPanelApplication : Application() {
                         yoff = 0f   //correct
                     }
                     2 -> {
-                        xoff = - ( panelRect.left + (panelRect.right - panelRect.left) / 2.0f) * scale  // CORRECT
+                        xoff = -(panelRect.left + (panelRect.right - panelRect.left) / 2.0f) * scale  // CORRECT
                         yoff = 0f    //correct
                     }
                     3 -> {
                         xoff = 0f   //correct
-                        yoff = - ( re.top + (re.bottom - re.top) / 2f )   //correct
+                        yoff = -(re.top + (re.bottom - re.top) / 2f)   //correct
                     }
                     4 -> {
-                        xoff = - ( panelRect.left + (panelRect.right - panelRect.left) / 2.0f) * scale  // CORRECT
-                        yoff = - (re.top + (re.bottom - re.top) / 2f )    //correct
+                        xoff = -(panelRect.left + (panelRect.right - panelRect.left) / 2.0f) * scale  // CORRECT
+                        yoff = -(re.top + (re.bottom - re.top) / 2f)    //correct
                     }
                 }
             } else {
-                if (DEBUG) Log.d(TAG,"autoscale sc1X > sc1Y fact=$fact")
+                if (DEBUG) Log.d(TAG, "autoscale sc1X > sc1Y fact=$fact")
                 val wCalc = width / scale
                 when (qua) {
                     0 -> {
-                        xoff  = scale * (wCalc - wRect) / 2    //correct
+                        xoff = scale * (wCalc - wRect) / 2    //correct
                         yoff = 0f   //correct
                     }
                     1 -> {
@@ -414,17 +430,17 @@ class LanbahnPanelApplication : Application() {
                         yoff = 0f     //correct
                     }
                     2 -> {
-                        xoff = - ( panelRect.left + (panelRect.right - panelRect.left) / 2.0f) * scale  //  CORRECT
+                        xoff = -(panelRect.left + (panelRect.right - panelRect.left) / 2.0f) * scale  //  CORRECT
                         yoff = 0f // correct
                     }
                     3 -> {
                         xoff = 0f   // correct
-                        yoff = - (panelRect.top + (panelRect.bottom - panelRect.top) / 2f )  * scale // CORRECT
+                        yoff = -(panelRect.top + (panelRect.bottom - panelRect.top) / 2f) * scale // CORRECT
                     }
                     4 -> {
-                        xoff = - ( panelRect.left + (panelRect.right - panelRect.left) / 2.0f) * scale  // CORRECT
+                        xoff = -(panelRect.left + (panelRect.right - panelRect.left) / 2.0f) * scale  // CORRECT
                         //yoff = -(re.top + (re.bottom - re.top) / 2f)  // not correct
-                        yoff = - (panelRect.top + (panelRect.bottom - panelRect.top) / 2f )  * scale // CORRECT
+                        yoff = -(panelRect.top + (panelRect.bottom - panelRect.top) / 2f) * scale // CORRECT
                     }
                 }
             }
