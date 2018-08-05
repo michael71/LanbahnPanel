@@ -78,6 +78,7 @@ var conn_state_string = "?"
 var appContext: Context? = null
 
 @Volatile var globalPower = POWER_UNKNOWN
+var cmdStationConnection = CMD_STATION_UNKNOWN
 
 var panelRect : Rect = Rect(0,0,100,100)
 

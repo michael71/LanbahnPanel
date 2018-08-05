@@ -195,6 +195,13 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
                             m.what = TYPE_POWER_MSG
                             m.arg2 = data
                             appHandler.sendMessage(m)  // send to UI Thread via Message
+                        } else if (info[0] == "XCONN") {
+                            val data = extractDataByteFromString(info[1])
+                            if (data == INVALID_INT) return false
+                            val m = Message.obtain()
+                            m.what = TYPE_CONNECTION_MSG
+                            m.arg2 = data
+                            appHandler.sendMessage(m)  // send to UI Thread via Message
                         }
                     }
                     3 -> {

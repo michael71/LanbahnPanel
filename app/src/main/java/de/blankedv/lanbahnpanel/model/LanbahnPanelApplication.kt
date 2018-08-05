@@ -68,6 +68,13 @@ class LanbahnPanelApplication : Application() {
                             globalPower = POWER_ON
                         }
                     }
+                    TYPE_CONNECTION_MSG -> {
+                        if (data == 0) {
+                            cmdStationConnection = CMD_STATION_OFF
+                        } else {
+                            cmdStationConnection = CMD_STATION_ON
+                        }
+                    }
                     TYPE_GENERIC_MSG -> {
                         PanelElement.updateAcc(chan, data)
                         PanelElement.updateSensor(chan, data)

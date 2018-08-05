@@ -4,7 +4,7 @@
 
 package de.blankedv.lanbahnpanel.model
 
-const val DEBUG = true   // false for release-apk
+const val DEBUG = true  // false for release-apk
 const val TAG = "LanbahnPanel"
 
 const val INVALID_INT = -1
@@ -73,6 +73,10 @@ const val POWER_UNKNOWN = INVALID_INT
 const val POWER_ON = 1
 const val POWER_OFF = 0
 
+const val CMD_STATION_UNKNOWN = INVALID_INT
+const val CMD_STATION_ON = 1
+const val CMD_STATION_OFF = 0
+
 const val SXMIN = 0
 const val SXMAX = 111   // highest channel number for selectrix (lowest is 0)
 const val LIFECHECK_SECONDS = 30  // every 10 seconds check if server connection is alive
@@ -98,6 +102,7 @@ const val TYPE_LN_ACC_MSG = 5
 const val TYPE_LN_SENSOR_MSG = 6
 const val TYPE_LN_LISSY_MSG = 7
 const val TYPE_POWER_MSG = 8
+const val TYPE_CONNECTION_MSG = 9
 const val TYPE_LOCO_MSG = 10
 const val TYPE_SHUTDOWN_MSG = 11
 

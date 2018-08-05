@@ -576,16 +576,23 @@ class LanbahnPanelActivity : AppCompatActivity() {
         }
     }
 
+    /** display powert station only when the connection to the command station is on
+     *
+     */
     private fun setPowerStateIcon() {
 
-        when (globalPower) {
-            POWER_OFF -> {
-                mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_stop)
-            } //power_red)
-            POWER_ON -> {
-                mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_green)
+        if (cmdStationConnection == CMD_STATION_OFF) {
+            mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.cmd_station_off)
+        } else {
+            when (globalPower) {
+                POWER_OFF -> {
+                    mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_stop)
+                } //power_red)
+                POWER_ON -> {
+                    mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_green)
+                }
+                POWER_UNKNOWN -> mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_unknown)
             }
-            POWER_UNKNOWN -> mOptionsMenu?.findItem(R.id.action_power)?.setIcon(R.drawable.power_unknown)
         }
     }
 
