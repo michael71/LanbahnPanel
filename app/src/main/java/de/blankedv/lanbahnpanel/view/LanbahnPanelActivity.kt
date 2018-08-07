@@ -670,6 +670,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
     private fun readPanelFromServer() {
         if (checkStorageWritePermission()) {
+            saveStates()
             val prefs = PreferenceManager
                     .getDefaultSharedPreferences(this)
             val server = prefs.getString(KEY_IP, "")
@@ -697,10 +698,26 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 if (res) {
                     //Log.d(TAG, content)
                     // content == filename
-                    longToast("file read => select $content in settings to use it")
+                    longToast("file read => $content")
+                    if (url.contains("config")) {
+                        Log.d(TAG, "config file read => reloading config from $content")
+                        ReadConfig.readConfigFromFile(appContext!!)
+                        loadStates()
+                    } else if (url.contains("loco")) {
+                        Log.d(TAG, "loco file read => reloading locos from $content")
+                        loadLocos()
+                    }
                 } else {
-                    Log.e(TAG, content)  // content == error message
-                    longToast("file NOT read - ERROR:\n$content")
+                    if (url.contains("config")) {
+                        longToast("ERROR: config file NOT read")
+                        Log.e(TAG, "config file NOT read - ERROR:\n$content")  // content == error message
+                    } else if (url.contains("loco")) {
+                        longToast("ERROR: loco file NOT read")
+                        Log.e(TAG, "loco file NOT read - ERROR:\n$content")  // content == error message
+                    } else {
+                        longToast("ERROR: file NOT read\n$content")
+                        Log.e(TAG, "file NOT read - ERROR:\n$content")  // content == error message
+                    }
                 }
             }
         }
