@@ -3,6 +3,8 @@ package de.blankedv.lanbahnpanel.railroad
 import android.content.Context
 import android.os.Handler
 import android.os.Message
+import android.os.Process.THREAD_PRIORITY_BACKGROUND
+import android.os.Process.setThreadPriority
 import android.util.Log
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.util.Utils.threadSleep
@@ -32,6 +34,7 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
         if (DEBUG) Log.d(TAG, " run.")
         shutdownFlag = false
         connectionActive = false
+        setThreadPriority(THREAD_PRIORITY_BACKGROUND)
         val (result, connResult) = connect(ip, port)
 
         if (result) {
