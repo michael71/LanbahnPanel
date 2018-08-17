@@ -41,6 +41,18 @@ class LocoButton {
         }
     }
 
+    constructor(x2: Float, y2: Float, on: Bitmap) {
+        this.xrel = x2
+        this.yrel = y2
+        bmON = on
+        bmOFF = on
+        w = bmON!!.width / 2
+        h = bmON!!.height / 2
+        if (controlAreaRect != null) {
+            recalcXY()
+        }
+    }
+
 
     /** pure text button
      *

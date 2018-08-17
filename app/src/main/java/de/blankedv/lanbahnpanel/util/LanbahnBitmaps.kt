@@ -57,6 +57,9 @@ object LanbahnBitmaps {
 
         bitmaps["slider"] = BitmapFactory.decodeResource(resources, R.drawable.slider_white_24dp)
         bitmaps["slider_grey"] = BitmapFactory.decodeResource(resources, R.drawable.slider_grey_24dp)
+
+        bitmaps["left"] = BitmapFactory.decodeResource(resources, R.drawable.arrow_left_48dp)
+        bitmaps["right"] = BitmapFactory.decodeResource(resources, R.drawable.arrow_right_48dp)
     }
 
 

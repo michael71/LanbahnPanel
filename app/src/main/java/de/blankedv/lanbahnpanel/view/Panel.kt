@@ -48,10 +48,8 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
     private var time0 = System.currentTimeMillis() - 10001
 
-
-    // public static Bitmap myBitmap = Bitmap.createBitmap(4000,1600,
-// Bitmap.Config.ARGB_4444);
-    private var mBitmap = Bitmap.createBitmap(3200, 1400,
+    // Bitmap.Config.ARGB_4444 is deprecated and not used for SDK-version >= kitkat
+    private var mBitmap = Bitmap.createBitmap(2800, 1400,
             Bitmap.Config.ARGB_8888)
     private var mCanvas = Canvas(mBitmap)
 
@@ -99,7 +97,6 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
             val action = event.action
 
-
             when (action and MotionEvent.ACTION_MASK) {
                 MotionEvent.ACTION_DOWN -> {
                     val x = event.x
@@ -114,9 +111,13 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                     mPosX = 0f
                     mPosY = 0f
                     //if (DEBUG)  Log.d(TAG,"ACTION_DOWN - (scaled) mX="+mX+"  mY"+mY);
-                    //if (DEBUG)  Log.d(TAG,"ACTION_DOWN - (abs) x="+x+"  y"+y);
+                    Log.d(TAG,"ACTION_DOWN - (abs) x=$x  y=$y");
                     mActivePointerId = event.getPointerId(0)
+                    //if (!mScaleDetector.isInProgress) {
+                    //  locoControlArea?.checkIncrDecrSpeed(x, y)
+                    //}
                 }
+
                 MotionEvent.ACTION_MOVE -> {
                     val pointerIndex = event.findPointerIndex(mActivePointerId)
                     val x = event.getX(pointerIndex)
@@ -138,7 +139,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                         // invalidate();
                         // if (DEBUG)  Log.d(TAG,"mPosX="+mPosX+" mPosY="+mPosY);
 
-                        locoControlArea?.checkSpeedMove(x, y);
+                        locoControlArea?.checkSpeedMove(x, y)
                     }
 
                     mLastTouchX = x
@@ -256,8 +257,8 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
         if ((DEBUG) and ((System.currentTimeMillis() - time0) > 10000)) {
             //Log.d(TAG, "panelRect x=(" + panelRect.left + "," + panelRect.right + ") y=(" + panelRect.top + "," + panelRect.bottom + ")")
-           // Log.d(TAG, "qua=$selQuadrant mWidth=$mWidth mHeight=$mHeight - actual scale=$sc xoff=$xo yoff=$yo} hCalc=$hCalc hRect=$hRect")
-           // Log.d(TAG, "controlAreaRect =(${controlAreaRect?.left},${controlAreaRect?.right}),(${controlAreaRect?.top},${controlAreaRect?.bottom})")
+            // Log.d(TAG, "qua=$selQuadrant mWidth=$mWidth mHeight=$mHeight - actual scale=$sc xoff=$xo yoff=$yo} hCalc=$hCalc hRect=$hRect")
+            // Log.d(TAG, "controlAreaRect =(${controlAreaRect?.left},${controlAreaRect?.right}),(${controlAreaRect?.top},${controlAreaRect?.bottom})")
 
             // Samsung SM-T580  panelRect 2040x960 *prescale (=2)
             // metric 1920x1200 pixel , ratio 1.6

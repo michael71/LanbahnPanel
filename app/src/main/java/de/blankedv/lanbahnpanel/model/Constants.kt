@@ -4,7 +4,7 @@
 
 package de.blankedv.lanbahnpanel.model
 
-const val DEBUG = false  // false for release-apk
+const val DEBUG = true  // false for release-apk
 const val TAG = "LanbahnPanel"
 
 const val INVALID_INT = -1
@@ -30,7 +30,6 @@ const val KEY_PANEL_SETTINGS = "panelSettingsPref"
 const val KEY_LOCO_ADR = "locoAdrPref"
 const val KEY_LOCO_MASS = "locoMassPref"
 const val KEY_LOCO_NAME = "locoNamePref"
-const val KEY_LOCOS_CONFIG_FILE = "locosConfigFilenamePref"
 const val KEY_ENABLE_LOCO_CONTROL = "enableLocoControlPref"
 const val KEY_LOCO_SYSTEM = "locoSystemPref"
 
@@ -79,7 +78,7 @@ const val CMD_STATION_OFF = 0
 
 const val SXMIN = 0
 const val SXMAX = 111   // highest channel number for selectrix (lowest is 0)
-const val LIFECHECK_SECONDS = 30  // every 10 seconds check if server connection is alive
+const val LIFECHECK_SECONDS = 10  // every 10 seconds check if server connection is alive
 
 const val DEFAULT_SXNET_PORT = "4104"  // string
 const val DEFAULT_SXNET_IP = "192.168.178.29"  // string
@@ -118,3 +117,4 @@ const val TURNOUT_LENGTH = 10 // NOT to be prescaled
 const val TURNOUT_LENGTH_LONG = (TURNOUT_LENGTH * 1.4f).toInt()
 
 const val MY_PERMISSIONS_REQUEST_WRITE_STORAGE = 12
+const val NUMBER_OF_FILES_TO_RETAIN = 5

@@ -8,7 +8,6 @@ import de.blankedv.lanbahnpanel.R
 import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import android.content.DialogInterface
 import de.blankedv.lanbahnpanel.elements.PanelElement
-import de.blankedv.lanbahnpanel.loco.WriteLocos
 import de.blankedv.lanbahnpanel.loco.Loco
 
 import android.content.ContentValues.TAG
@@ -204,12 +203,11 @@ object Dialogs {
                     //e.setSxAdr(sxAddress.getValue());
                     //e.setSxBit(sxBit.getValue());
 
-                    locoConfigHasChanged = true // flag for saving the configuration later when pausing the activity
                     selectedLoco?.adr = sxAddress.value
                     selectedLoco?.mass = mass.value
                     selectedLoco?.name = lName.text.toString()
                     selectedLoco?.vmax = 10 * (vmax.value / 10)
-                    WriteLocos.writeToXML()
+                    configHasChanged = true
                     selectedLoco?.initFromSX()
                     dialog.dismiss()
                 })
@@ -246,7 +244,7 @@ object Dialogs {
                     //e.setSxBit(sxBit.getValue());
 
                     locolist.remove(delLoco)
-                    locoConfigHasChanged = true // flag for saving the configuration later when pausing the activity
+                    configHasChanged = true // flag for saving the configuration later when pausing the activity
                     if (locolist?.size >= 1) {
                         selectedLoco = locolist.get(0)
                         selectedLoco?.initFromSX()
@@ -254,7 +252,6 @@ object Dialogs {
                         selectedLoco = Loco()
                         locolist.add(selectedLoco!!) // at least 1 loco should be in the list
                     }
-                    WriteLocos.writeToXML()
 
                     dialog.dismiss()
                 }

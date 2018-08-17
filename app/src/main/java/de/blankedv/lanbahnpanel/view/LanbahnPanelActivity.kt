@@ -33,7 +33,6 @@ import de.blankedv.lanbahnpanel.elements.PanelElement
 import de.blankedv.lanbahnpanel.elements.Route
 import de.blankedv.lanbahnpanel.elements.RouteButtonElement
 import de.blankedv.lanbahnpanel.loco.Loco
-import de.blankedv.lanbahnpanel.loco.ParseLocos
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.pSett
 import de.blankedv.lanbahnpanel.railroad.Commands
@@ -201,7 +200,6 @@ class LanbahnPanelActivity : AppCompatActivity() {
         }  // reset view
 
 
-
         if (DEBUG) Log.d(TAG, "panelName=$panelName enableFiveViews=$enableFiveViews selQuadrant=$selQuadrant")
         // set quadrants mode and display selected selQuadrant
 
@@ -220,7 +218,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
             loadStates()
         }
 
-        if (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)) loadLocos()
+        if (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)) initLocoList()
 
         LanbahnPanelApplication.expireAllPanelElements()
         LanbahnPanelApplication.requestAllPanelData()
@@ -305,12 +303,12 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 return true
             }
 
-        /* R.id.menu_check_service -> {
-            //TODO int num = mService.getRandomNumber();
-            toast("not implemented")
-            // "number: " + num, Toast.LENGTH_SHORT).show();
-            return true
-        } */
+            /* R.id.menu_check_service -> {
+                //TODO int num = mService.getRandomNumber();
+                toast("not implemented")
+                // "number: " + num, Toast.LENGTH_SHORT).show();
+                return true
+            } */
             R.id.menu_quit -> {
                 val alert = builder.create()
                 alert.show()
@@ -404,10 +402,10 @@ class LanbahnPanelActivity : AppCompatActivity() {
         Route.auto()
 
         /* TODO check which frequency is needed */
-         if ((counter.rem(4) == 0) and (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)) and (selectedLoco != null)) {
-             val adr = selectedLoco?.adr   ?: INVALID_INT
-             Commands.readLocoData(adr)
-         }
+        if ((counter.rem(4) == 0) and (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)) and (selectedLoco != null)) {
+            val adr = selectedLoco?.adr ?: INVALID_INT
+            Commands.readLocoData(adr)
+        }
 
         mHandler.postDelayed({ updateUI() }, 500)
     }
@@ -479,19 +477,13 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
     }
 
-    private fun loadLocos() {
-        val prefs = PreferenceManager
-                .getDefaultSharedPreferences(this)
-
-
-        locoConfigFilename = prefs.getString(KEY_LOCOS_CONFIG_FILE, DEMO_LOCOS_FILE)
-        ParseLocos.readLocosFromFile(this, locoConfigFilename)
+    private fun initLocoList() {
 
         val lastLocoAddress = prefs.getInt(KEY_LOCO_ADR, 3)
 
         if (locolist == null) {
-            Toast.makeText(this, "could not read loco list xml file or errors in file", Toast.LENGTH_LONG).show()
-            Log.e(TAG, "could not read loco list xml file or errors in file: $locoConfigFilename")
+            Toast.makeText(this, "could not read locolist from config xml file or errors in file", Toast.LENGTH_LONG).show()
+            Log.e(TAG, "could not read loco list")
         } else {
             // if last loco (from stored loco_address) is in list then use this loco
             for (loco in locolist) {
@@ -514,7 +506,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 selectedLoco = Loco(locoName, lastLocoAddress, locoMass)
                 selectedLoco?.initFromSX()
             }
-            if (DEBUG) Log.d(TAG,"selectedLoco adr="+ selectedLoco?.adr)
+            if (DEBUG) Log.d(TAG, "selectedLoco adr=" + selectedLoco?.adr)
         }
     }
 
@@ -676,8 +668,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
             val server = prefs.getString(KEY_IP, "")
             val urlConfig = "http://$server:8000/config"
             getPanel(urlConfig)
-            val urlLoco = "http://$server:8000/loco"
-            getPanel(urlLoco)
+
         } else {
             longToast("ERROR: App has NO PERMISSION to write files !")
         }
@@ -699,25 +690,17 @@ class LanbahnPanelActivity : AppCompatActivity() {
                     //Log.d(TAG, content)
                     // content == filename
                     longToast("file read => $content")
-                    if (url.contains("config")) {
-                        Log.d(TAG, "config file read => reloading config from $content")
-                        ReadConfig.readConfigFromFile(appContext!!)
-                        loadStates()
-                    } else if (url.contains("loco")) {
-                        Log.d(TAG, "loco file read => reloading locos from $content")
-                        loadLocos()
-                    }
+
+                    Log.d(TAG, "config file read => reloading config from $content")
+                    ReadConfig.readConfigFromFile(appContext!!)
+                    loadStates()
+                    initLocoList()
+
                 } else {
-                    if (url.contains("config")) {
-                        longToast("ERROR: config file NOT read")
-                        Log.e(TAG, "config file NOT read - ERROR:\n$content")  // content == error message
-                    } else if (url.contains("loco")) {
-                        longToast("ERROR: loco file NOT read")
-                        Log.e(TAG, "loco file NOT read - ERROR:\n$content")  // content == error message
-                    } else {
-                        longToast("ERROR: file NOT read\n$content")
-                        Log.e(TAG, "file NOT read - ERROR:\n$content")  // content == error message
-                    }
+
+                    longToast("ERROR: config file NOT read")
+                    Log.e(TAG, "config file NOT read - ERROR:\n$content")  // content == error message
+
                 }
             }
         }

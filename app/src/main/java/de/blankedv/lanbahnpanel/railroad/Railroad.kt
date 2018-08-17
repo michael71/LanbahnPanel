@@ -85,7 +85,7 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
                     countNoResponse++
                 }
                 timeElapsed = System.currentTimeMillis()  // reset
-                if (countNoResponse > 2) {
+                if (!isConnected() or (countNoResponse > 2)) {
                     Log.e(TAG, "Railroad - connection lost?")
                     countNoResponse = 0
                     connectionActive = false

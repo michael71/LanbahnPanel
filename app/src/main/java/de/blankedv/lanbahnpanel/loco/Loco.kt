@@ -41,8 +41,14 @@ class Loco {
     var lbm: Bitmap? = null
 
     private var massCounter = 0
+    private val CHANGERATE = 10   // incr/decr speed every 300msec
+    private var changeCounter = 0
 
     private var sendNewDataFlag = false
+
+    var incrFlag = false
+    var decrFlag = false
+
 
     val isForward: Boolean
         get() = speed_act >= 0
@@ -120,9 +126,16 @@ class Loco {
         }
     }
 
-
+    /** called every 100 milliseconds
+     *
+     */
     fun timer() {
+
         massSimulation()
+
+        changeCounter++
+
+
         if (sendNewDataFlag) {  // if anything changed, send new value
             sendNewDataFlag = false
 
@@ -164,6 +177,13 @@ class Loco {
             massCounter++
             return
         }
+
+        if (incrFlag) {
+            incrLocoSpeed()
+        } else if (decrFlag) {
+            decrLocoSpeed()
+        }
+
         massCounter = 0 //reset
         // bring actual speed and speed_to_be closer together
 
@@ -186,6 +206,8 @@ class Loco {
 
     fun stopLoco() {
         speed_act = 0
+        incrFlag = false
+        decrFlag = false
         speed_to_be = speed_act
         sendNewDataFlag = true
         speedSetTime = System.currentTimeMillis()
@@ -206,9 +228,9 @@ class Loco {
         speed_to_be += 1
         if (speed_to_be < -31) speed_to_be = -31
         if (speed_to_be > 31) speed_to_be = 31
-        if (Math.abs(speed_act - speed_to_be) <= 1) {
+        /*if (Math.abs(speed_act - speed_to_be) <= 1) {
             speed_act = speed_to_be
-        }
+        } */
         sendNewDataFlag = true
         speedSetTime = System.currentTimeMillis()
     }
@@ -220,13 +242,28 @@ class Loco {
         speed_to_be += -1
         if (speed_to_be < -31) speed_to_be = -31
         if (speed_to_be > 31) speed_to_be = 31
-        if (Math.abs(speed_act - speed_to_be) <= 1) {
-            speed_act = speed_to_be
-        }
         sendNewDataFlag = true
         speedSetTime = System.currentTimeMillis()
     }
 
+    fun startDecrLocoSpeed() {
+        Log.d(TAG,"startDecrLocoSpeed")
+        decrFlag = true
+    }
+
+    fun startIncrLocoSpeed() {
+        Log.d(TAG,"startIncrLocoSpeed")
+        incrFlag = true
+    }
+
+    fun isDecrOrIncr () : Boolean {
+        return (decrFlag or incrFlag)
+    }
+
+    fun stopDecrIncr() {
+        decrFlag = false
+        incrFlag = false
+    }
     fun toggleLocoLamp() {
         if (System.currentTimeMillis() - lastToggleTime > 250) {  // entprellen
             if (lamp_to_be) {

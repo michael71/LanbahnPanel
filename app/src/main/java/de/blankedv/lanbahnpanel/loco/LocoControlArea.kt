@@ -23,6 +23,8 @@ class LocoControlArea(internal var ctx: Context) {
     private val lampBtn: LocoButton    // F0
     private val addressBtn: LocoButton
     private val functionBtn: LocoButton  //F1
+    private val leftBtn: LocoButton  // speed to left
+    private val rightBtn: LocoButton  // speed to right
 
     private var paintText = Paint()
     private var paintLargeTxt = Paint()
@@ -67,6 +69,9 @@ class LocoControlArea(internal var ctx: Context) {
                 bitmaps?.get("func1")!!,
                 bitmaps?.get("func0")!!)
 
+        leftBtn = LocoButton(0.03f, 0.5f, bitmaps?.get("left")!!, bitmaps?.get("left")!!)
+        rightBtn = LocoButton(0.97f, 0.5f, bitmaps?.get("right")!!)
+
       }
 
     private fun drawSlider(canvas : Canvas) {
@@ -78,7 +83,8 @@ class LocoControlArea(internal var ctx: Context) {
         //        selectedLoco?.updateLocoFromSX()  // to be able to display actual states of this loco
 
         // draw "buttons" and states
-
+        leftBtn.doDraw(canvas,true)
+        rightBtn.doDraw(canvas,true)
         addressBtn.doDraw(canvas, "A:"+selectedLoco?.adr!!.toString(), paintLargeTxt)
         lampBtn.doDraw(canvas, selectedLoco?.lamp_to_be!!)
         functionBtn.doDraw(canvas, selectedLoco?.function_to_be!!)
@@ -164,16 +170,29 @@ class LocoControlArea(internal var ctx: Context) {
             selectedLoco?.toggleFunc()
         } else if (addressBtn.isTouched(x, y)) {
             Dialogs.selectLocoDialog()
-
+        } else if (leftBtn.isTouched(x, y)) {
+            selectedLoco?.decrLocoSpeed()
+        } else if (rightBtn.isTouched(x, y)) {
+            selectedLoco?.incrLocoSpeed()
         }
 
     }
+/*
+    fun checkIncrDecrSpeed(x: Float, y: Float) {
+        if (leftBtn.isTouched(x, y)) {
+            selectedLoco?.startDecrLocoSpeed()
+        } else if (rightBtn.isTouched(x, y)) {
+            selectedLoco?.startIncrLocoSpeed()
+        }
+    } */
 
     fun recalcGeometry() {
         stopBtn.recalcXY()
         lampBtn.recalcXY()
         addressBtn.recalcXY()
         functionBtn.recalcXY()
+        leftBtn.recalcXY()
+        rightBtn.recalcXY()
         ySpeed = (controlAreaRect?.bottom!!.toFloat() - controlAreaRect?.top!!) / 2  // mid of control area range.
     }
 

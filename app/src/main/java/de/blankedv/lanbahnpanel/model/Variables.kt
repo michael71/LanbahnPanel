@@ -28,7 +28,7 @@ var locolist = ArrayList<Loco>()
 
 var panelName = ""
 var panelProtocol = ""
-var panelVersion = ""
+var configFileVersion = ""
 var panelStyle = ""
 
 var saveStates: Boolean = false
@@ -57,7 +57,6 @@ public const val DIRECTORY = "/lanbahnpanel/"
 // with leading and trailing slash !!
 
 var configFilename = "lb-panel1.xml"
-var locoConfigFilename = "locos.xml"
 
 const val DEMO_FILE = "demo-panel.xml" // demo data in raw
 // assets dir.
@@ -65,7 +64,6 @@ const val DEMO_FILE = "demo-panel.xml" // demo data in raw
 var configHasChanged = false // store info whether config
 // has changed
 // if true, then a new config file is written at the end of the Activity
-var locoConfigHasChanged = false
 
 @Volatile var selQuadrant = 0  // TODO move away from global scope
 

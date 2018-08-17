@@ -1,13 +1,13 @@
 package de.blankedv.lanbahnpanel.config
 
 import java.io.FileWriter
-import java.io.IOException
 import java.io.StringWriter
 import android.os.Environment
 import android.util.Log
 import android.util.Xml
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.util.Utils
+import java.io.File
 
 /**
  * WriteConfig - Utility turnout save Panel Config
@@ -39,17 +39,19 @@ object WriteConfig {
 
         var fWriter: FileWriter? = null
         try {
-            panelVersion = Utils.dateTime
+            configFileVersion = Utils.dateTime
             fWriter = FileWriter(
                     Environment.getExternalStorageDirectory().toString()
-                            + DIRECTORY + configFilename + "." + panelVersion)
+                            + DIRECTORY + configFilename + "." + configFileVersion)
 
             fWriter.write(writeXml())
             fWriter.flush()
 
             if (DEBUG or DEBUG_WRITE)
-                Log.d(TAG, "Config File $configFilename.$panelVersion saved! ")
+                Log.d(TAG, "Config File $configFilename.$configFileVersion saved! ")
             configHasChanged = false // reset flag
+
+            deleteOlderFiles()
 
         } catch (e: Exception) {
             Log.e(TAG, "Exception: " + e.message)
@@ -79,14 +81,31 @@ object WriteConfig {
             serializer.text("\n")
             serializer.startTag("", "layout-config") // namespace ="" always
             serializer.attribute("", "filename", configFilename)
+            serializer.attribute("", "version", configFileVersion)
+            serializer.text("\n")
+            serializer.startTag("", "locolist")
+            serializer.attribute("", "name", locoListName)
+            serializer.text("\n")
+            for (l in locolist) {
+                if (DEBUG) Log.d(TAG, "writing loco ")
+                serializer.startTag("", "loco")
+                serializer.attribute("", "adr", "" + l.getAdr())
+                serializer.attribute("", "name", "" + l.name)
+                serializer.attribute("", "mass", "" + l.mass)
+                serializer.attribute("", "vmax", "" + l.vmax)
+                serializer.endTag("", "loco")
+                serializer.text("\n")
+                if (l.lbm != null) {
+                    WriteBitmap.save(l.name, l.lbm)
+                }
+            }
+            serializer.endTag("", "locolist")
             serializer.text("\n")
             serializer.startTag("", "panel")
             serializer.attribute("", "name", panelName)
             serializer.attribute("", "protocol", panelProtocol)
             serializer.attribute("", "panelStyle", panelStyle)
-            serializer.attribute("", "panelVersion", panelVersion)
             serializer.text("\n")
-
 
             // now write all panel elements to the file
             for (pe in panelElements) {
@@ -158,6 +177,44 @@ object WriteConfig {
             throw RuntimeException(e)
         }
 
+    }
+
+    /*
+	example for loco config:
+
+	<locolist name="demo-loco-list">
+	<loco adr="22" name="Lok22" mass="2"/><loco adr="97" name="SchönBB" mass="2"/>
+	<loco adr="44" name="CSX4416" mass="4"/><loco adr="27" name="ET423-1" mass="2"/>
+	</locolist>
+	*/
+
+    private fun deleteOlderFiles() {
+
+        if ((Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED)
+                and (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED_READ_ONLY)) {
+            // Something  is wrong
+            Log.d(TAG, "cannot read ExternalStorage Directory ")
+            return
+        }
+
+        val dir = File(Environment.getExternalStorageDirectory().toString() + "/" + DIRECTORY)
+        //Log.d(TAG, "reading directory " + dir.absolutePath)
+
+        var fileList = dir.list().filter { it.startsWith(configFilename) }
+                .filter { !it.endsWith(".xml") }.sortedWith(naturalOrder())
+
+        if (fileList.isNotEmpty()) {
+
+            if (fileList.lastIndex > NUMBER_OF_FILES_TO_RETAIN) {
+                for (i in 0..(fileList.lastIndex - NUMBER_OF_FILES_TO_RETAIN)) {
+                    Log.d(TAG, "deleting ${fileList.get(i)}")
+                    var file = File(dir.absolutePath + "/" + fileList.get(i))
+                    file?.delete()
+                }
+            }
+        } else {
+            Log.d(TAG, "no old config files found")
+        }
     }
 
 }
