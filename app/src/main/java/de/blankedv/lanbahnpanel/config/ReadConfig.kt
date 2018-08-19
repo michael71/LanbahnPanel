@@ -233,7 +233,7 @@ object ReadConfig {
                 pe.yt = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "adr") {
                 pe.adr = getIntegerNodeValue(theAttribute)
-            } else if (theAttribute.nodeName == "inv")  {
+            } else if (theAttribute.nodeName == "inv") {
                 pe.invert = getIntegerNodeValue(theAttribute)
 
                 // turnout have either an lanbahn/dcc address ("adr") or a combination of
@@ -270,12 +270,31 @@ object ReadConfig {
 
     private fun getIntegerNodeValue(a: Node): Int {
         // remove "." first to convert SX addresses like 72.1 to LB addr (=721)
-        val s = a.nodeValue.replace(".","")
+        // remove whitespace also
+        val s = a.nodeValue.replace(".", "").replace("\\s+".toRegex(), "")
         try {
             return Integer.parseInt(s)
-        } catch (e : NumberFormatException) {
+        } catch (e: NumberFormatException) {
             return INVALID_INT
         }
+    }
+
+    private fun getIntegerNodeValueArray(a: Node): IntArray {
+        // remove "." first to convert SX addresses like 72.1 to LB addr (=721)
+        // remove whitespace also
+        val s = a.nodeValue.replace(".", "").replace("\\s+".toRegex(), "")
+        val sArr = s.split(",")
+        var iArr = intArrayOf()
+        for (s in sArr) {
+            var n = INVALID_INT
+            try {
+                n = Integer.parseInt(s)
+            } catch (e: NumberFormatException) {
+            }
+            iArr = iArr.plus(n)
+        }
+        return iArr
+
     }
 
     private fun parseSignal(item: Node): SignalElement {
@@ -313,11 +332,11 @@ object ReadConfig {
                 if (DEBUG_PARSING)
                     Log.d(TAG,
                             "unknown attribute " + theAttribute.nodeName
-                                    + " in config file")
+                                    + " in config file <signal>")
             }
         }
         if ((pe.adr == INVALID_INT) and (sxadr != INVALID_INT) and (sxbit != INVALID_INT)) {
-            pe.adr  = sxadr * 10 + sxbit   // lbaddr gets calculated from sx
+            pe.adr = sxadr * 10 + sxbit   // lbaddr gets calculated from sx
         }
         if (DEBUG_PARSING) Log.d(TAG, "signal x=" + pe.x + " y=" + pe.y + " adr=" + pe.adr)
         return pe
@@ -346,7 +365,7 @@ object ReadConfig {
                 if (DEBUG_PARSING)
                     Log.d(TAG,
                             "unknown attribute " + theAttribute.nodeName
-                                    + " in config file")
+                                    + " in config file <routebutton>")
             }
         }
 
@@ -394,18 +413,22 @@ object ReadConfig {
             } else if (theAttribute.nodeName == "y2") {
                 pe.y2 = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "adr") {
-                pe.adr = getIntegerNodeValue(theAttribute)
+                val adrArray = getIntegerNodeValueArray(theAttribute)
+                if (adrArray.size == 1) {
+                    pe.adr = adrArray[0]
+                } else if (adrArray.size >= 2) {
+                    pe.adr = adrArray[0]
+                    pe.adr2 = adrArray[1]
+                }
             } else if (theAttribute.nodeName == "sxadr") {
                 sxadr = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "sxbit") {
                 sxbit = getIntegerNodeValue(theAttribute)
-            } else if (theAttribute.nodeName == "nbits") {
-                nbit = getIntegerNodeValue(theAttribute)  // TODO implement for multi-aspect signals
             } else {
                 if (DEBUG_PARSING)
                     Log.d(TAG,
                             "unknown attribute " + theAttribute.nodeName
-                                    + " in config file")
+                                    + " in config file, <sensor>")
             }
         }
 
@@ -501,10 +524,10 @@ object ReadConfig {
             } else if (theAttribute.nodeName == "btn2") {
                 btn2 = getValue(theAttribute.nodeValue)
             } else if (theAttribute.nodeName == "route") {
-                route = (theAttribute.nodeValue).replace(".","")
-                 // in kotlin String.replace = string occurrances by string, NOT REGEX
+                route = (theAttribute.nodeValue).replace(".", "")
+                // in kotlin String.replace = string occurrances by string, NOT REGEX
             } else if (theAttribute.nodeName == "sensors") {
-                sensors = (theAttribute.nodeValue).replace("." ,"")
+                sensors = (theAttribute.nodeValue).replace(".", "")
             } else if (theAttribute.nodeName == "offending") {
                 offending = theAttribute.nodeValue
             } else {
@@ -577,7 +600,7 @@ object ReadConfig {
             } else if (theAttribute.nodeName == "btn2") {
                 btn2 = getValue(theAttribute.nodeValue)
             } else if (theAttribute.nodeName == "routes") {
-                routes = (theAttribute.nodeValue).replace(".","")
+                routes = (theAttribute.nodeValue).replace(".", "")
             } else {
                 if (DEBUG_PARSING) {
                     Log.d(TAG, "unknown attribute " + theAttribute.nodeName + " in config file")
@@ -668,14 +691,14 @@ object ReadConfig {
         return newPe
     }
 
-    private fun parseDocForLocos(doc: Document) : ArrayList<Loco> {
+    private fun parseDocForLocos(doc: Document): ArrayList<Loco> {
         //ArrayList<Loco> ls = new ArrayList<Loco>();
         var ll = ArrayList<Loco>()
         var items: NodeList
         val root = doc.documentElement
 
         items = root.getElementsByTagName("locolist")
-        if ((items == null)  or (items.length == 0)) {
+        if ((items == null) or (items.length == 0)) {
             locoListName = "noName"
         } else {
             locoListName = parsePanelDescription(items.item(0), "name")

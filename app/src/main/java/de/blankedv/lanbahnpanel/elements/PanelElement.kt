@@ -25,6 +25,7 @@ open class PanelElement {
     var xt = INVALID_INT // "thrown" position for turnout
     var yt = INVALID_INT
     var adr = INVALID_INT
+    var adr2 = INVALID_INT   // needed for DCC sensors and signals
     var state = STATE_UNKNOWN
     var nbit = 1  // for multi-aspect signals, nbit=2 => 4 possible values 0,1,2,3
     var inRoute = false
