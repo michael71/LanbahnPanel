@@ -83,9 +83,9 @@ class LanbahnPanelApplication : Application() {
 
                     TYPE_SX_MSG -> {   // data of 8 (or less) lanbahn channels bundled in a data byte
                         for (i in 1..8) {   // sxbit 1..8
-                           val lbChan = chan * 10 + i
-                           val pe = PanelElement.getPeByAddress(lbChan)
-                            if (pe != null) {
+                            val lbChan = chan * 10 + i
+                            val allMatchingPEs = PanelElement.getAllPesByAddress(lbChan)
+                            for (pe in allMatchingPEs) {
                                 var d: Int
                                 if (pe.nbit == 2) { // check if nbit is != 1
                                     d = data.shr(i - 1) and 0x03
@@ -94,8 +94,7 @@ class LanbahnPanelApplication : Application() {
                                 }
                                 pe.state = d
                             }
-                            // there should be no routes in this address range Route.update(chan, data)
-                            // if (DEBUG) Log.d(TAG,"SX msg: lbChan=$lbChan d=$d")
+                            // there should be no routes in the SX address range !!!
                         }
                     }
 
@@ -107,13 +106,13 @@ class LanbahnPanelApplication : Application() {
                         }
                     }
 
-                // TYPE_LN_ACC_MSG -> PanelElement.updateAcc(chan, (1-data))   //inverted values for LN
-                // TYPE_LN_SENSOR_MSG -> PanelElement.updateSensor(chan, data)
-                /*
-                TYPE_LN_LISSY_MSG -> {
-                    val lissymsg = msg.obj as String
-                    // TODO update lissy element
-                }*/
+                    // TYPE_LN_ACC_MSG -> PanelElement.updateAcc(chan, (1-data))   //inverted values for LN
+                    // TYPE_LN_SENSOR_MSG -> PanelElement.updateSensor(chan, data)
+                    /*
+                    TYPE_LN_LISSY_MSG -> {
+                        val lissymsg = msg.obj as String
+                        // TODO update lissy element
+                    }*/
 
 
                     TYPE_SHUTDOWN_MSG -> {

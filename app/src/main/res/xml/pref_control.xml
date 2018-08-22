@@ -18,4 +18,8 @@
         android:key="configFilenamePref"
         android:summary="Bitte auswählen"
         android:title="@string/panel_cfg_files" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="discoverTurnoutsPref"
+        android:title="@string/discover_turnouts" />
 </PreferenceScreen>

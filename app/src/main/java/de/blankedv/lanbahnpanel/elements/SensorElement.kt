@@ -15,7 +15,7 @@ class SensorElement : ActivePanelElement {
     constructor() : super() {}
 
 
-    override fun getSensitiveRect() : Rect {
+    override fun getSensitiveRect(): Rect {
         if (x2 == INVALID_INT) { // dot type sensor
             return Rect(x - RASTER / 5, y - RASTER / 7, x + RASTER / 5, y + RASTER / 7)
         } else { // line type sensor
@@ -27,19 +27,14 @@ class SensorElement : ActivePanelElement {
     override fun doDraw(canvas: Canvas) {
 
         if (x2 != INVALID_INT) {  // draw dashed line as sensor
-            // read data from SX bus and set red/gray dashed line accordingly
-
-            if (inRoute) {
-                if (state == STATE_OCCUPIED) {
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintRedDash)
-                } else {
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintDarkYellowDash)
-                }
+            // read data from central station and set red/gray dashed line accordingly
+            if (state == STATE_OCCUPIED) {
+                canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintRedDash)
             } else {
-                if ((state == STATE_UNKNOWN) || (state == STATE_FREE)) {
+                if (inRoute) {
+                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintDarkYellowDash)
+                } else {
                     canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintGrayDash)
-                } else {  // occupied
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintRedDash)
                 }
             }
         } else {
@@ -51,7 +46,7 @@ class SensorElement : ActivePanelElement {
 
             val bmName = StringBuilder("sensor")
 
-            if ((state == STATE_FREE) or (state == STATE_UNKNOWN) ) {
+            if ((state == STATE_FREE) or (state == STATE_UNKNOWN)) {
                 bmName.append("_off")
             } else {
                 bmName.append("_on")

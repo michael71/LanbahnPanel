@@ -114,13 +114,19 @@ open class PanelElement {
 
         var flipState : Boolean = true
 
-        fun getPeByAddress(address: Int): PanelElement? {
+        /* NOT WORKING if there are 2 Panel Elements with identical address !!!
+        i.e. works for signals, but certainly not for turnouts */
+        fun getFirstPeByAddress(address: Int): PanelElement? {
             for (pe in panelElements) {
                 if (pe.adr == address) {
                     return pe
                 }
             }
             return null
+        }
+
+        fun getAllPesByAddress(address: Int) : List<PanelElement> {
+            return panelElements.filter { it.adr == address}
         }
 
         fun update(addr: Int, data: Int) {

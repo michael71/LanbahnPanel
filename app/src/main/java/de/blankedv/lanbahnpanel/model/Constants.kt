@@ -4,7 +4,7 @@
 
 package de.blankedv.lanbahnpanel.model
 
-const val DEBUG = true  // false for release-apk
+const val DEBUG = false  // false for release-apk
 const val TAG = "LanbahnPanel"
 
 const val INVALID_INT = -1
@@ -19,6 +19,7 @@ const val KEY_SCALE_PREF = "selectScalePref"
 const val KEY_ENABLE_EDIT = "enableEditPref"
 const val KEY_ENABLE_POWER_CONTROL = "powerControlPref"
 const val KEY_SAVE_STATES = "saveStatesPref"
+const val KEY_DISCOVER_TURNOUTS_PREF = "discoverTurnoutsPref"
 const val KEY_ROUTES = "routesPref"
 const val KEY_FLIP = "flipPref"
 const val KEY_IP = "ipPref"

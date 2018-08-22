@@ -95,4 +95,6 @@
     <string name="sel_system_type">System auswählen</string>
     <string name="loco_cfg_files">Loco Config File</string>
     <string name="pref_header_loco">Loco Control</string>
+    <string name="discover_turnouts">Discover new Turnouts</string>
+    <string name="routing_active">Routing ON</string>
 </resources>

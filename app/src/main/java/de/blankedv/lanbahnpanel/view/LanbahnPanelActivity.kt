@@ -204,7 +204,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         // set quadrants mode and display selected selQuadrant
 
         displayQuadrant(selQuadrant)
-        displayLockState()
+        displayLockAndRoutingState()
 
         if (DEBUG) debugLogDisplayMetrics()
 
@@ -247,7 +247,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         mOptionsMenu = menu
         setConnectionIcon()
         enableForQuadrantButtons(enableFiveViews)
-        displayLockState()
+        displayLockAndRoutingState()
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -398,7 +398,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         // https://stackoverflow.com/questions/38660735/how-bind-android-databinding-to-menu
         setConnectionIcon()
         setPowerStateIcon()
-        //displayLockState()
+        //displayLockAndRoutingState()
         Route.auto()
 
         /* TODO check which frequency is needed */
@@ -456,13 +456,17 @@ class LanbahnPanelActivity : AppCompatActivity() {
     }
 
 
-    private fun displayLockState() {
+    private fun displayLockAndRoutingState() {
         if (DEBUG) Log.d(TAG, "selectedScale = $selectedScale")
         when (selectedScale) {
             "auto" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_letter_a)
             "manual" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_lock_open_white_48dp)
             "locked" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_lock_white_48dp)
         }
+        when (prefs.getBoolean(KEY_ROUTES,false)) {
+            true -> mOptionsMenu?.findItem(R.id.action_routing)?.setIcon(R.drawable.ic_letter_r)
+            false -> mOptionsMenu?.findItem(R.id.action_routing)?.setIcon(R.drawable.ic_letter_non_r)
+         }
     }
 
     private fun displayQuadrant(q: Int) {

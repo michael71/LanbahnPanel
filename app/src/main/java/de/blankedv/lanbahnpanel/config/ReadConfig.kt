@@ -180,26 +180,29 @@ object ReadConfig {
             pes.add(parseSignal(items.item(i)))
         }
 
-        if (enableDiscoverTurnouts) {
+
+        if (prefs.getBoolean(KEY_DISCOVER_TURNOUTS_PREF,false)) {
             val newTurnouts = discoverTurnouts(pes)
             for (pe in newTurnouts) pes.add(pe)
         }
 
-        // nach dem Track => on top
-        items = root.getElementsByTagName("routebutton")
-        if (DEBUG) Log.d(TAG, "config: " + items.length + " routebuttons")
-        for (i in 0 until items.length) {
-            pes.add(parseRouteButton(items.item(i)))
-        }
-
         // look for sensors
-        // SENSORS als LETZTE !!!! important (sind damit immer "on top")
+        // after tracks and turnouts !! important => on top of track
 
         items = root.getElementsByTagName("sensor")
         if (DEBUG) Log.d(TAG, "config: " + items.length + " sensors")
         for (i in 0 until items.length) {
             pes.add(parseSensor(items.item(i)))
         }
+
+
+        // after all other elements - on top of everything
+        items = root.getElementsByTagName("routebutton")
+        if (DEBUG) Log.d(TAG, "config: " + items.length + " routebuttons")
+        for (i in 0 until items.length) {
+            pes.add(parseRouteButton(items.item(i)))
+        }
+
 
 
         return pes

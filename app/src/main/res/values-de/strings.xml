@@ -48,5 +48,7 @@
     <string name="enableAutoscale">Automatische Skalierung</string>
     <string name="sel_scale">Art der Skalierung auswählen</string>
     <string name="title_activity_settings">Einstellungen</string>
+    <string name="discover_turnouts">Neue Weichen berechnen</string>
+    <string name="routing_active">Fahrstrassenmodus</string>
 
 </resources>

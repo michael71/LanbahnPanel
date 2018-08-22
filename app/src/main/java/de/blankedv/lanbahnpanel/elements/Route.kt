@@ -70,11 +70,11 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         val routeElements = route.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         for (i in routeElements.indices) {
             val reInfo = routeElements[i].split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            //TODO re-write with filter - allow multiple pe with same address
-            val pe = PanelElement.getPeByAddress(Integer.parseInt(reInfo[0]))
 
-            // if this is a signal, then add to my signal list "rtSignals"
-            if (pe != null) {
+            val addr = Integer.parseInt(reInfo[0])
+            val allMatchingPEs = PanelElement.getAllPesByAddress(addr)
+            for (pe in allMatchingPEs) {
+                // if this is a signal, then add to my signal list "rtSignals"
                 if (pe is SignalElement) {
                     if (reInfo.size == 3) {  // route signal with dependency
                         rtSignals.add(RouteSignal(pe,
@@ -143,6 +143,7 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         }
 
     }
+
     /** clear a route, set sensors to free and signals to RED
      *
      */
@@ -165,7 +166,6 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
                 }
             }
         }
-
 
 
         // TODO unlock turnouts
@@ -272,7 +272,7 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
             } else {
                 // if standard-value == GREEN then check the other signal, which
                 // this signal state depends on
-                val depPe = PanelElement.getPeByAddress(depFrom)
+                val depPe = PanelElement.getFirstPeByAddress(depFrom)
                 return if (depPe!!.state == STATE_RED) {
                     // if other signal red, then set to yellow
                     STATE_YELLOW
@@ -387,9 +387,9 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
 
         fun clearAllRoutes() {
             routes.forEach { it.clear() }
-         }
+        }
 
-        fun update(chan : Int, data : Int) {
+        fun update(chan: Int, data: Int) {
             for (rt in routes) {
                 if (rt.id == chan) {
                     rt.updateData(data)

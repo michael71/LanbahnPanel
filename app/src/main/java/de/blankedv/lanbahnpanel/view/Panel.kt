@@ -9,6 +9,7 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import de.blankedv.lanbahnpanel.R
 import de.blankedv.lanbahnpanel.util.LPaints
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication
 import de.blankedv.lanbahnpanel.elements.RouteButtonElement
@@ -16,6 +17,7 @@ import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.pSett
 import de.blankedv.lanbahnpanel.loco.LocoControlArea
 import de.blankedv.lanbahnpanel.util.LPaints.paintControlAreaBG
+import de.blankedv.lanbahnpanel.util.LPaints.panelNamePaint
 
 
 /**
@@ -49,7 +51,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
     private var time0 = System.currentTimeMillis() - 10001
 
     // Bitmap.Config.ARGB_4444 is deprecated and not used for SDK-version >= kitkat
-    private var mBitmap = Bitmap.createBitmap(2800, 1400,
+    private var mBitmap = Bitmap.createBitmap(2200, 1300,
             Bitmap.Config.ARGB_8888)
     private var mCanvas = Canvas(mBitmap)
 
@@ -111,10 +113,10 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                     mPosX = 0f
                     mPosY = 0f
                     //if (DEBUG)  Log.d(TAG,"ACTION_DOWN - (scaled) mX="+mX+"  mY"+mY);
-                    Log.d(TAG,"ACTION_DOWN - (abs) x=$x  y=$y");
+                    Log.d(TAG, "ACTION_DOWN - (abs) x=$x  y=$y");
                     mActivePointerId = event.getPointerId(0)
                     //if (!mScaleDetector.isInProgress) {
-                    //  locoControlArea?.checkIncrDecrSpeed(x, y)
+                    //  locoControlArea?.checkIncrDecrSpeed(xint topLeft = mHeight/8;, y)
                     //}
                 }
 
@@ -245,8 +247,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
     fun doDraw(canvas: Canvas) {
 
-        canvas.drawColor(LPaints.BG_COLOR)
-
+        canvas.drawColor(LPaints.BG_COLOR)   // empty canvas
         // draw Panel and scale with zoom
         //if (USS == true)
         mBitmap.eraseColor(Color.TRANSPARENT) // Color.DKGRAY);
@@ -286,7 +287,8 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
         if (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)) {
             canvas.drawRect(controlAreaRect, paintControlAreaBG);
-            locoControlArea?.draw(canvas); // not scaled with zoom
+            locoControlArea?.draw(canvas); // NOT scaled !
+
         }
 
     }

@@ -81,11 +81,10 @@
         android:title="@string/power"
         app:showAsAction="always" />
     <item
-        android:id="@+id/action_space"
+        android:id="@+id/action_routing"
         android:layout_width="wrap_content"
-        android:icon="@drawable/trans_48"
         android:orderInCategory="48"
-        android:title="@string/power"
+        android:title="-"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_power"

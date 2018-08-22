@@ -32,7 +32,6 @@ var configFileVersion = ""
 var panelStyle = ""
 
 var saveStates: Boolean = false
-var enableDiscoverTurnouts = false
 var enableFiveViews = false
 lateinit var prefs : SharedPreferences
 
@@ -53,16 +52,14 @@ val sendQ: BlockingQueue<String> = ArrayBlockingQueue(400)
 @Volatile
 var connString = ""
 
-public const val DIRECTORY = "/lanbahnpanel/"
+const val DIRECTORY = "/lanbahnpanel/"
 // with leading and trailing slash !!
 
 var configFilename = "lb-panel1.xml"
 
-const val DEMO_FILE = "demo-panel.xml" // demo data in raw
-// assets dir.
+const val DEMO_FILE = "demo-panel.xml" // demo data in assets dir
 
-var configHasChanged = false // store info whether config
-// has changed
+var configHasChanged = false // store info whether config has changed
 // if true, then a new config file is written at the end of the Activity
 
 @Volatile var selQuadrant = 0  // TODO move away from global scope
@@ -80,6 +77,6 @@ var cmdStationConnection = CMD_STATION_UNKNOWN
 
 var panelRect : Rect = Rect(0,0,100,100)
 
-var controlAreaRect: Rect? = null   // public needed for java
+var controlAreaRect: Rect? = null
 @Volatile var selectedLoco : Loco? = null
 var locoListName = "?"
