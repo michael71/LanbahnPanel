@@ -1,5 +1,12 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <layout-config filename="lb-panel4.xml">
+<locolist name="demo-loco-list">
+<loco adr="97" name="SchoenBB" mass="2" vmax="100" />
+<loco adr="44" name="CSX4416" mass="4" vmax="160" />
+<loco adr="27" name="ET423-1" mass="2" vmax="160" />
+<loco adr="51" name="E 151" mass="3" vmax="100" />
+<loco adr="44" name="ET440" mass="3" vmax="100" />
+</locolist>
 <panel name="Lonstoke West" protocol="sx" style="UK">
 <track x="3" y="20" x2="320" y2="20" />
 <track x="3" y="40" x2="320" y2="40" />
