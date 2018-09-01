@@ -29,7 +29,7 @@
     <string name="exit_confirm">Do you really want to stop the program?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="adresse">Adresse</string>
+    <string name="adresse">Address</string>
     <string name="sel_loco_prompt">Loco Auswahl</string>
     <string name="sel_style">Select Display Style</string>
     <string name="sel_style_default">US</string>
@@ -83,6 +83,7 @@
     <string name="store_changes">Store changes?</string>
     <string name="add_new_loco">Add new Loco?</string>
     <string name="selectloco">select Loco</string>
+    <string name="select">Select</string>
     <string name="no_locos">No Locos</string>
     <string name="locodb">Loco DB</string>
     <string name="error_enter_address_first">ERROR: please enter loco ADDRESS first!</string>
@@ -97,4 +98,5 @@
     <string name="pref_header_loco">Loco Control</string>
     <string name="discover_turnouts">Discover new Turnouts</string>
     <string name="routing_active">Routing ON</string>
+    <string name="save">Save</string>
 </resources>

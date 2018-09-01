@@ -3,7 +3,6 @@ package de.blankedv.lanbahnpanel.view
 import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.NumberPicker
 import de.blankedv.lanbahnpanel.R
 import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import android.content.DialogInterface
@@ -11,12 +10,10 @@ import de.blankedv.lanbahnpanel.elements.PanelElement
 import de.blankedv.lanbahnpanel.loco.Loco
 
 import android.content.ContentValues.TAG
+import android.content.res.Resources
 import android.util.Log
-import android.widget.EditText
-import android.widget.AdapterView
+import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
-import android.widget.ArrayAdapter
-import android.widget.Spinner
 import de.blankedv.lanbahnpanel.model.*
 
 
@@ -41,6 +38,7 @@ object Dialogs {
                 R.layout.alert_dialog_sel_address, null)
         val address = selAddressView
                 .findViewById<View>(R.id.picker1) as NumberPicker
+        val inverted = selAddressView.findViewById<View>(R.id.cbInverted) as CheckBox
 
         address.minValue = MIN_ADDR
         address.maxValue = MAX_ADDR
@@ -50,18 +48,25 @@ object Dialogs {
         val e = el as ActivePanelElement
         val msg: String
         address.value = e.adr
-        msg = "Adresse?"
+        inverted.isActivated = (e.invert == DISP_INVERTED)
+        val res = appContext?.resources
+        msg = res!!.getString(R.string.address) + "?"
         val addrDialog = AlertDialog.Builder(appContext)
                 .setMessage(msg)
                 .setCancelable(false)
                 .setView(selAddressView)
-                .setPositiveButton("Speichern"
+                .setPositiveButton(res.getString(R.string.save)
                 ) { dialog, id ->
                     // Toast.makeText(appContext,"Adresse "+sxAddress.getCurrent()
                     // +"/"+sxBit.getCurrent()+" wurde selektiert",
                     // Toast.LENGTH_SHORT)
                     // .show();
                     e.adr = address.value
+                    if (inverted.isActivated) {
+                        e.invert = DISP_INVERTED
+                    } else {
+                        e.invert = DISP_STANDARD
+                    }
                     configHasChanged = true // flag for saving the
                     // configuration
                     // later when
@@ -69,7 +74,7 @@ object Dialogs {
                     // activity
                     dialog.dismiss()
                 }
-                .setNegativeButton("Zurück"
+                .setNegativeButton(res.getString(R.string.back)
                 ) { dialog, id ->
                     // dialog.cancel();
                     dialog.dismiss()
@@ -128,13 +133,14 @@ object Dialogs {
             }
         }); funktioniert nicht wie erwartet */
 
+        val res = appContext?.resources
 
         val sxDialog = AlertDialog.Builder(appContext)
                 //, R.style.Animations_GrowFromBottom ) => does  not work
                 //.setMessage("Lok auswählen - "+locolist.name)
                 .setCancelable(true)
                 .setView(selSxAddressView)
-                .setPositiveButton("Auswählen", DialogInterface.OnClickListener { dialog, id ->
+                .setPositiveButton(res!!.getString(R.string.select), DialogInterface.OnClickListener { dialog, id ->
                     if (selLocoIndex === NEW_LOCO) {
                         dialog.dismiss()
                         val l = Loco(NEW_LOCO_NAME)
@@ -150,7 +156,7 @@ object Dialogs {
                         dialog.dismiss()
                     }
                 })
-                .setNeutralButton("Edit", DialogInterface.OnClickListener { dialog, id ->
+                .setNeutralButton(res!!.getString(R.string.edit), DialogInterface.OnClickListener { dialog, id ->
                     if (selLocoIndex === NEW_LOCO) {
                         val l = Loco(NEW_LOCO_NAME)
                         locolist.add(l)

@@ -26,7 +26,7 @@
      <string name="exit_confirm">Do you really want to stop the program?</string>
          <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="adresse">Adresse</string>
+    <string name="adresse">Address</string>
     <string name="sel_loco_prompt">Loco Auswahl</string>
     <string name="sel_style">Select Display Style</string>
     <string name="sel_style_default">US</string>
@@ -51,4 +51,8 @@
     <string name="display_five_quadrants">Display 5 views (full + 4 quadrants)</string>
     <string name="discover_turnouts">Discover new Turnouts</string>
     <string name="routing_active">Routing ON</string>
+    <string name="inverted">inverted</string>
+    <string name="yes_inverted">Yes</string>
+    <string name="no_inverted">No</string>
+    <string name="back">Back</string>
 </resources>

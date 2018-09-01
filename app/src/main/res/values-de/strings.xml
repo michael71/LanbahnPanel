@@ -50,5 +50,9 @@
     <string name="title_activity_settings">Einstellungen</string>
     <string name="discover_turnouts">Neue Weichen berechnen</string>
     <string name="routing_active">Fahrstrassenmodus</string>
-
+    <string name="inverted">invertiert</string>
+    <string name="yes_inverted">Ja</string>
+    <string name="no_inverted">Nein</string>
+    <string name="back">Zurück</string>
+    <string name="save">Speichern</string>
 </resources>
