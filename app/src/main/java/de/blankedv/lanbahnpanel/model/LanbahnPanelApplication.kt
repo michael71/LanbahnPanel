@@ -143,20 +143,11 @@ class LanbahnPanelApplication : Application() {
 
     }
 
-    fun saveGenericSettings() {
-        val prefs = PreferenceManager
-                .getDefaultSharedPreferences(this)
+    fun saveCurrentLoco() {
+
         val editor = prefs.edit()
-        Log.d(TAG, "saveGenericSettings")
+        Log.d(TAG, "saveCurrentLoco")
         // generic
-
-        editor.putBoolean(KEY_SAVE_STATES, saveStates)
-
-        // currently used - but these will be stored also for the panel  TODO ??
-        editor.putString(KEY_STYLE_PREF, selectedStyle)
-        editor.putString(KEY_SCALE_PREF, selectedScale)
-        editor.putBoolean(KEY_FIVE_VIEWS_PREF, enableFiveViews)
-        editor.putInt(KEY_QUADRANT, selQuadrant)
 
         if (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)) {
             val adr = selectedLoco?.adr ?: 3
@@ -167,16 +158,17 @@ class LanbahnPanelApplication : Application() {
         editor.apply()
     }
 
+
     fun savePanelSettings() {
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
         val editor = prefs.edit()
         Log.d(TAG, "savePanelSettings")
         // currently used - but these will be stored also for the panel
-        pSett.selStyle = selectedStyle
-        pSett.selScale = selectedScale
-        pSett.fiveViews = enableFiveViews
-        pSett.selQua = selQuadrant
+        pSett.selStyle = prefs.getString(KEY_STYLE_PREF,"US")
+        pSett.selScale = prefs.getString(KEY_SCALE_PREF,"auto")
+        pSett.fiveViews = prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false)
+        pSett.selQua = prefs.getInt(KEY_QUADRANT,0)
 
         // save all panel specific settings
         val serializedObject = Gson().toJson(`pSett`)
@@ -187,32 +179,17 @@ class LanbahnPanelApplication : Application() {
         editor.apply()
     }
 
-    fun loadGenericSettings() {
-        Log.d(TAG, "loadGenericSettings")
-        val prefs = PreferenceManager
-                .getDefaultSharedPreferences(this)
-        // generic
-        saveStates = prefs.getBoolean(KEY_SAVE_STATES, false)
-
-        // read generic settings (which might be overwritten by panel settings)
-        selectedStyle = prefs.getString(KEY_STYLE_PREF, "US")
-        selectedScale = prefs.getString(KEY_SCALE_PREF, "auto")
-        enableFiveViews = prefs.getBoolean(KEY_FIVE_VIEWS_PREF, false)
-        if (enableFiveViews == true) {
-            selQuadrant = prefs.getInt(KEY_QUADRANT, 0)   // currently display selQuadrant
-        } else {
-            selQuadrant = 0  // must be reset, because we only have one view left
-        }
-        // selectedLoc.adr gets loaded when a locos-config.xml file is read
-        LPaints.init(prescale, selectedStyle, applicationContext)
-    }
 
     fun loadPanelSettings() {
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
         Log.d(TAG, "loadPanelSettings panel=$panelName")
-        // init from generic settings
-        pSett = PanelSettings(selectedScale, selectedScale, enableFiveViews, selQuadrant)
+
+        // init pSett from generic settings
+        pSett = PanelSettings(prefs.getString(KEY_STYLE_PREF,"US"),
+                prefs.getString(KEY_SCALE_PREF,"auto"),
+                prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false),
+                prefs.getInt(KEY_QUADRANT, 0) )
 
         if (prefs.contains(KEY_PANEL_SETTINGS + "_" + panelName)) {
             val gson = Gson()
@@ -220,34 +197,26 @@ class LanbahnPanelApplication : Application() {
                     prefs.getString(KEY_PANEL_SETTINGS + "_" + panelName, "??"))
             pSett = gson.fromJson(prefs.getString(KEY_PANEL_SETTINGS + "_" + panelName, ""), pSett.javaClass)
             // overwrite generic settings and store as current values
-            selectedStyle = pSett.selStyle
-            selectedScale = pSett.selScale
-            enableFiveViews = pSett.fiveViews
-            if (enableFiveViews == true) {
-                selQuadrant = pSett.selQua
-            } else {
-                selQuadrant = 0  // must be reset, because we only have one view left
-            }
+
             // save panel specific settings for later use in SettingsActivity
             val editor = prefs.edit()
-            editor.putString(KEY_STYLE_PREF, selectedStyle)
-            editor.putString(KEY_SCALE_PREF, selectedScale)
-            editor.putBoolean(KEY_FIVE_VIEWS_PREF, enableFiveViews)
-            editor.putInt(KEY_QUADRANT, selQuadrant)
+            editor.putString(KEY_STYLE_PREF, pSett.selStyle)
+            editor.putString(KEY_SCALE_PREF, pSett.selScale)
+            editor.putBoolean(KEY_FIVE_VIEWS_PREF, pSett.fiveViews)
+            editor.putInt(KEY_QUADRANT, pSett.selQua)
             // Commit the edits!
             editor.apply()
 
-        } else {
-            // no settings stored so far for this panel, use style from xml-file
-            if (panelStyle != "") {
-                selectedStyle = panelStyle
-            }
         }
 
-        LPaints.init(prescale, selectedStyle, applicationContext)
-        if (!enableFiveViews) {
-            selQuadrant = 0  // must be reset, because we only have one view left
+        LPaints.init(prescale, prefs.getString(KEY_STYLE_PREF,"US"), applicationContext)
+        val editor = prefs.edit()
+        if (pSett.fiveViews == true) {
+            editor.putInt(KEY_QUADRANT, pSett.selQua)
+        } else {
+            editor.putInt(KEY_QUADRANT, 0 ) // must be reset, when we have only one view left
         }
+        editor.apply()
     }
 
 

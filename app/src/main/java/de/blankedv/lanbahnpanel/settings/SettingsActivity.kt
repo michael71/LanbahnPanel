@@ -119,8 +119,8 @@ class SettingsActivity : AppCompatPreferenceActivity() {
      * activity is showing a two-pane settings UI.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    class DisplayPreferenceFragment() : PreferenceFragment(),
-            SharedPreferences.OnSharedPreferenceChangeListener  {
+    class DisplayPreferenceFragment() : PreferenceFragment()  /* ,
+            SharedPreferences.OnSharedPreferenceChangeListener */ {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -149,14 +149,15 @@ class SettingsActivity : AppCompatPreferenceActivity() {
 
         override fun onResume() {
             super.onResume()
-            preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+            //preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
         }
 
         override fun onPause() {
             super.onPause()
-            preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+            //preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
         }
 
+        /* no longer used
         override fun onSharedPreferenceChanged(prefs: SharedPreferences?, key: String?) {
             Log.d(TAG,"CHANGED: pref=$prefs, key=$key")
             // stored panel specific preferences ALSO for the panel
@@ -176,7 +177,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
                 }
                 // quadrant cannot be changed in the SettingsActivity
             }
-        }
+        } */
     }
 
     /**

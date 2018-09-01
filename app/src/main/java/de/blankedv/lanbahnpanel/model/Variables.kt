@@ -1,5 +1,5 @@
 
-// to make constants usable in JAVA via  Constants.GLOBAL_NUMBER for example
+// to make constants usable in JAVA via  Variables.var1234 for example
 @file:JvmName("Variables")
 
 package de.blankedv.lanbahnpanel.model
@@ -17,10 +17,6 @@ import java.util.ArrayList
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingQueue
 
-
-var selectedStyle: String = "UK" // German style or USS style
-var selectedScale: String = "auto" // automatic scaling
-
 var panelElements = ArrayList<PanelElement>()
 var routes = ArrayList<Route>()
 var compRoutes = ArrayList<CompRoute>()
@@ -29,10 +25,8 @@ var locolist = ArrayList<Loco>()
 var panelName = ""
 var panelProtocol = ""
 var configFileVersion = ""
-var panelStyle = ""
 
-var saveStates: Boolean = false
-var enableFiveViews = false
+
 lateinit var prefs : SharedPreferences
 
 var mWidth: Int = 0  // TODO move away from global scope
@@ -61,8 +55,6 @@ const val DEMO_FILE = "demo-panel.xml" // demo data in assets dir
 
 var configHasChanged = false // store info whether config has changed
 // if true, then a new config file is written at the end of the Activity
-
-@Volatile var selQuadrant = 0  // TODO move away from global scope
 
 // enable edit mode for lanbahn addresses in panel.
 

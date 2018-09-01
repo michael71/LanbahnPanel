@@ -132,11 +132,11 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
                         mPosX += dx
                         mPosY += dy
-                        if ((selectedScale == "manual") && mX > 300 && mY > 200) {
-                            pSett.qClip[selQuadrant].xoff += dx
-                            pSett.qClip[selQuadrant].yoff += dy
+                        if ((prefs.getString(KEY_SCALE_PREF,"auto") == "manual") && mX > 300 && mY > 200) {
+                            pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].xoff += dx
+                            pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].yoff += dy
                             scalingTime = System.currentTimeMillis()  // avoid control of SX elements during pan-move
-                            if (DEBUG) Log.d(TAG, "new xoff/yoff (qua=$selQuadrant) - xoff=${pSett.qClip[selQuadrant].xoff} + yoff=${pSett.qClip[selQuadrant].yoff}")
+                            if (DEBUG) Log.d(TAG, "new xoff/yoff (qua=${prefs.getInt(KEY_QUADRANT,0)}) - xoff=${pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].xoff} + yoff=${pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].yoff}")
                         }
                         // invalidate();
                         // if (DEBUG)  Log.d(TAG,"mPosX="+mPosX+" mPosY="+mPosY);
@@ -173,8 +173,10 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                         } else {
 
                             //Log.d(TAG,"ACTION_UP _Checking panel elements at: mlastTouchX="+mLastTouchX+"  mLastTouchY"+mLastTouchY);
-                            val xs = Math.round((mLastTouchX - pSett.qClip[selQuadrant].xoff) / pSett.qClip[selQuadrant].scale / prescale) // reduced by overall dimension scaling factors
-                            val ys = Math.round((mLastTouchY - pSett.qClip[selQuadrant].yoff) / pSett.qClip[selQuadrant].scale / prescale)
+                            val xs = Math.round((mLastTouchX - pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].xoff)
+                                    / pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].scale / prescale) // reduced by overall dimension scaling factors
+                            val ys = Math.round((mLastTouchY - pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].yoff)
+                                    / pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].scale / prescale)
 
                             Log.d(TAG, "ACTION_UP _Checking panel elements at: xs=$xs  ys$ys")
                             for (e in panelElements) {
@@ -239,8 +241,8 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         controlAreaRect = Rect(0, 0, mWidth, mHeight / 8)
         locoControlArea?.recalcGeometry()
 
-        if (selectedScale == "auto") {
-            LanbahnPanelApplication.calcAutoScale(mWidth, mHeight, selQuadrant)
+        if (prefs.getString(KEY_SCALE_PREF,"auto") == "auto") {
+            LanbahnPanelApplication.calcAutoScale(mWidth, mHeight, prefs.getInt(KEY_QUADRANT,0))
         }
     }
 
@@ -252,9 +254,9 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         //if (USS == true)
         mBitmap.eraseColor(Color.TRANSPARENT) // Color.DKGRAY);
 
-        var sc = pSett.qClip[selQuadrant].scale
-        var xo = pSett.qClip[selQuadrant].xoff
-        var yo = pSett.qClip[selQuadrant].yoff
+        var sc = pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].scale
+        var xo = pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].xoff
+        var yo = pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].yoff
 
         if ((DEBUG) and ((System.currentTimeMillis() - time0) > 10000)) {
             //Log.d(TAG, "panelRect x=(" + panelRect.left + "," + panelRect.right + ") y=(" + panelRect.top + "," + panelRect.bottom + ")")
@@ -296,13 +298,13 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
     private inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
-            if (selectedScale == "manual") {
+            if (prefs.getString(KEY_SCALE_PREF,"auto") == "manual") {
                 mScaleFactor *= detector.scaleFactor
 
                 // Don't let the object get too small or too large.
                 mScaleFactor = Math.max(0.5f, Math.min(mScaleFactor, 4.0f))
-                Log.d(TAG, "new scale (qua=$selQuadrant): scale=$mScaleFactor (limited)")
-                pSett.qClip[selQuadrant].scale = mScaleFactor
+                Log.d(TAG, "new scale (qua=${prefs.getInt(KEY_QUADRANT,0)}): scale=$mScaleFactor (limited)")
+                pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].scale = mScaleFactor
                 invalidate()
                 scalingTime = System.currentTimeMillis()
             }

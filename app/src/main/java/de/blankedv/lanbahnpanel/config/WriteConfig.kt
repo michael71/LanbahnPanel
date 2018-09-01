@@ -104,7 +104,7 @@ object WriteConfig {
             serializer.startTag("", "panel")
             serializer.attribute("", "name", panelName)
             serializer.attribute("", "protocol", panelProtocol)
-            serializer.attribute("", "panelStyle", panelStyle)
+            // wird nicht mehr benutzt !! serializer.attribute("", "panelStyle", panelStyle)
             serializer.text("\n")
 
             // now write all panel elements to the file

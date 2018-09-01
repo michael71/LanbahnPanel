@@ -152,7 +152,7 @@ object ReadConfig {
         panelName = parsePanelDescription(items.item(0), "name")
         panelProtocol = parsePanelDescription(items.item(0), "protocol")
         configFileVersion = parsePanelDescription(items.item(0), "version")
-        panelStyle = parsePanelDescription(items.item(0), "style")
+        // wird nicht mehr benutzt !!! panelStyle = parsePanelDescription(items.item(0), "style")
 
         if (panelProtocol.isEmpty()) panelProtocol = "sx"  // make default
 

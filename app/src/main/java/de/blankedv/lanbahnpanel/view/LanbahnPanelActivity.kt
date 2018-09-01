@@ -34,7 +34,6 @@ import de.blankedv.lanbahnpanel.elements.Route
 import de.blankedv.lanbahnpanel.elements.RouteButtonElement
 import de.blankedv.lanbahnpanel.loco.Loco
 import de.blankedv.lanbahnpanel.model.*
-import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.pSett
 import de.blankedv.lanbahnpanel.railroad.Commands
 import de.blankedv.lanbahnpanel.railroad.Railroad
 import de.blankedv.lanbahnpanel.settings.SettingsActivity
@@ -153,8 +152,8 @@ class LanbahnPanelActivity : AppCompatActivity() {
         if (DEBUG)
             Log.d(TAG, "onPause - LanbahnPanelActivity")
 
-        //TODO review settings (application as LanbahnPanelApplication).saveGenericSettings()
-        //(application as LanbahnPanelApplication).savePanelSettings()
+        (application as LanbahnPanelApplication).saveCurrentLoco()
+        (application as LanbahnPanelApplication).savePanelSettings()
         //if (configHasChanged) {
         if (checkStorageWritePermission()) {
             WriteConfig.toXMLFile()
@@ -162,7 +161,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
             toast("ERROR: App has NO WRITE PERMISSION to write a new config file !")
         }
 
-        if (saveStates)
+        if (prefs.getBoolean(KEY_SAVE_STATES, false))
             saveStates()
 
         sendQ.clear()
@@ -189,22 +188,25 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
         sendQ.clear()
 
-        //TODO (application as LanbahnPanelApplication).loadGenericSettings()   // get preferences
-
         setActionBarBackground()  // matching to panel style
         LPaints.init(prescale, prefs.getString(KEY_STYLE_PREF, "US"), applicationContext)
 
         var newPanel = reloadConfigIfPanelFileChanged()
         if (newPanel) {
-            (application as LanbahnPanelApplication).loadPanelSettings()   // get panel preferences
-        }  // reset view
+            // get panel preferences (and override current preferences for scaling, quadrant
+            (application as LanbahnPanelApplication).loadPanelSettings()
+        }
 
 
-        if (DEBUG) Log.d(TAG, "panelName=$panelName enableFiveViews=$enableFiveViews selQuadrant=$selQuadrant")
+        if (DEBUG) Log.d(TAG, "panelName=$panelName enableFiveViews=${prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false)} selQuadrant=${prefs.getInt(KEY_QUADRANT,0)}")
         // set quadrants mode and display selected selQuadrant
 
-        displayQuadrant(selQuadrant)
+        enableForQuadrantButtons(prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false))
+        displayQuadrant(prefs.getInt(KEY_QUADRANT, 0))
         displayLockAndRoutingState()
+
+        setActionBarBackground()  // matching to panel style
+        LPaints.init(prescale, prefs.getString(KEY_STYLE_PREF, "US"), applicationContext)
 
         if (DEBUG) debugLogDisplayMetrics()
 
@@ -214,11 +216,14 @@ class LanbahnPanelActivity : AppCompatActivity() {
             RouteButtonElement.autoReset()  // this will also reset the sensors to STATE_FREE
         }
 
-        if (saveStates) {
+        if (prefs.getBoolean(KEY_SAVE_STATES, false)) {
             loadStates()
         }
 
-        if (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)) initLocoList()
+        if (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)) {
+            // get last loco settings and (re-)init current loco
+            initLocoList()
+        }
 
         LanbahnPanelApplication.expireAllPanelElements()
         LanbahnPanelApplication.requestAllPanelData()
@@ -233,7 +238,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
     private fun setActionBarBackground() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return // does not work for old android versions
 
-        when (selectedStyle) {
+        when (prefs.getString(KEY_STYLE_PREF,"US")) {
             "US" -> supportActionBar?.setBackgroundDrawable(ColorDrawable(-0xff990f)) //Color.BLUE))  // TODO color ??
             "UK" -> supportActionBar?.setBackgroundDrawable(ColorDrawable(-0xdfAAdd))  // kotlin: 0xffff0000.toInt()
             "DE" -> supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.BLUE))
@@ -246,7 +251,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu, menu)
         mOptionsMenu = menu
         setConnectionIcon()
-        enableForQuadrantButtons(enableFiveViews)
+        enableForQuadrantButtons(prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false))
         displayLockAndRoutingState()
         return super.onCreateOptionsMenu(menu)
     }
@@ -266,23 +271,23 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 return true
             }
             R.id.action_q1 -> {
-                if (enableFiveViews) displayQuadrant(1)
+                if (prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false)) displayQuadrant(1)
                 return true
             }
             R.id.action_q2 -> {
-                if (enableFiveViews) displayQuadrant(2)
+                if (prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false)) displayQuadrant(2)
                 return true
             }
             R.id.action_q3 -> {
-                if (enableFiveViews) displayQuadrant(3)
+                if (prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false)) displayQuadrant(3)
                 return true
             }
             R.id.action_q4 -> {
-                if (enableFiveViews) displayQuadrant(4)
+                if (prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false)) displayQuadrant(4)
                 return true
             }
             R.id.action_qall -> {
-                if (enableFiveViews) displayQuadrant(0)
+                if (prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false)) displayQuadrant(0)
                 return true
             }
             R.id.action_power -> {
@@ -420,7 +425,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
             mOptionsMenu?.findItem(R.id.action_q3)?.setIcon(R.drawable.q3_v2_48_gray)
             mOptionsMenu?.findItem(R.id.action_q4)?.setIcon(R.drawable.q4_v2_48_gray)
             mOptionsMenu?.findItem(R.id.action_qall)?.setIcon(R.drawable.qa_v2_48_gray)
-            when (selQuadrant) {  // mark selected quadrant "white"
+            when (prefs.getInt(KEY_QUADRANT, 0)) {  // mark selected quadrant "white"
                 0 -> mOptionsMenu?.findItem(R.id.action_qall)?.setIcon(R.drawable.qa_v2_48)
                 1 -> mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.q1_v2_48)
                 2 -> mOptionsMenu?.findItem(R.id.action_q2)?.setIcon(R.drawable.q2_v2_48)
@@ -457,8 +462,8 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
 
     private fun displayLockAndRoutingState() {
-        if (DEBUG) Log.d(TAG, "selectedScale = $selectedScale")
-        when (selectedScale) {
+        if (DEBUG) Log.d(TAG, "selectedScale = ${prefs.getString(KEY_SCALE_PREF,"auto")}")
+        when (prefs.getString(KEY_SCALE_PREF,"auto")) {
             "auto" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_letter_a)
             "manual" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_lock_open_white_48dp)
             "locked" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_lock_white_48dp)
@@ -471,13 +476,19 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
     private fun displayQuadrant(q: Int) {
         // 0 means "ALL"
-        selQuadrant = q
-        pSett.selQua = q
-
-        if (selectedScale == "auto") {
-            LanbahnPanelApplication.calcAutoScale(mWidth, mHeight, selQuadrant)
+        val editor = prefs.edit()
+        if (prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false) ) {
+            editor.putInt(KEY_QUADRANT, q)
+        } else {
+            // must use "0" !!
+            editor.putInt(KEY_QUADRANT, 0)
         }
-        enableForQuadrantButtons(enableFiveViews)
+        editor.commit()
+        if (prefs.getString(KEY_SCALE_PREF,"auto") == "auto") {
+            LanbahnPanelApplication.calcAutoScale(mWidth, mHeight, prefs.getInt(KEY_QUADRANT,0))
+        }
+        // ??? TODO check if necessary here
+        //  enableForQuadrantButtons(prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false))
 
     }
 
