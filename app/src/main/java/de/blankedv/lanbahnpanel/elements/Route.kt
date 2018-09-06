@@ -96,9 +96,11 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         if (DEBUG)
             Log.d(TAG, rtTurnouts.size.toString() + " turnouts")
 
-        // format for sensors: just a list of addresses, seperated by comma ","
+        // format for sensors: just a list of addresses, separated by comma ","
         val sensorAddresses = allSensors.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+
         for (i in sensorAddresses.indices) {
+            if (id == 2201) Log.d(TAG,"i=$i")
             // add the matching elements turnout sensors list
             for (pe in panelElements) {
                 if (pe is SensorElement) {

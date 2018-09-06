@@ -447,7 +447,8 @@ class LanbahnPanelActivity : AppCompatActivity() {
         val prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
         val allowed = prefs.getBoolean(KEY_ENABLE_POWER_CONTROL, false)
-        if ((client == null) or (!client!!.isConnected())) {
+        if (client == null) return
+        if (!(client!!.isConnected())) {
             toast("ERROR: not connected - cannot set global power state")
         } else if (allowed) {
             when (globalPower) {
