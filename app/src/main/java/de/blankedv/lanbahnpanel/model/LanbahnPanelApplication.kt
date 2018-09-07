@@ -78,7 +78,8 @@ class LanbahnPanelApplication : Application() {
                     TYPE_GENERIC_MSG -> {
                         PanelElement.updateAcc(chan, data)
                         PanelElement.updateSensor(chan, data)
-                        Route.update(chan, data)
+                        // TODO check if this does not imply double setting of turnouts/signals ???
+                        // ?? Route.update(chan, data)
                     }
 
                     TYPE_SX_MSG -> {   // data of 8 (or less) lanbahn channels bundled in a data byte
