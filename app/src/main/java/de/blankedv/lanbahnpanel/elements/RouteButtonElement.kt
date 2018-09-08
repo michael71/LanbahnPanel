@@ -198,7 +198,11 @@ class RouteButtonElement : ActivePanelElement {
                         findRouteButtonByAddress(adrSecondBtn)!!.reset()
 
                         // set the route (i.e. sensors and turnouts)
-                        rt.set()
+                        if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) {
+                            rt.request();
+                        } else {
+                            rt.set()
+                        }
                         break  // no need to search further
                     }
                 }
@@ -214,7 +218,11 @@ class RouteButtonElement : ActivePanelElement {
                         findRouteButtonByAddress(adrSecondBtn)!!.reset()
 
                         // set the route (i.e. sensors and turnouts)
-                        cr.set()
+                        if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) {
+                            cr.request();
+                        } else {
+                            cr.set()
+                        }
                         break  // no need to search further
                     }
                 }

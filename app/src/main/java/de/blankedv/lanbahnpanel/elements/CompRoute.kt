@@ -2,9 +2,7 @@ package de.blankedv.lanbahnpanel.elements
 
 import java.util.ArrayList
 import android.util.Log
-import de.blankedv.lanbahnpanel.model.DEBUG
-import de.blankedv.lanbahnpanel.model.TAG
-import de.blankedv.lanbahnpanel.model.routes
+import de.blankedv.lanbahnpanel.model.*
 
 /**
  * composite route, i.e. a list of routes which build a new route, is only a
@@ -69,20 +67,18 @@ class CompRoute
 
 	} */
 
-    fun clearOffendingRoutes() {
+    fun request() {
         if (DEBUG)
-            Log.d(TAG, "clearing (active) offending Routes")
-        for (rt in myroutes) {
-            rt.clearOffendingRoutes()
-
-        }
+            Log.d(TAG, "requesting comproute id=$id")
+        // request to set this route in central
+        var cmd = "REQ $id 1"    // for other tablets
+        sendQ.add(cmd)
     }
-
     /** set all the single routes which depend on this compound route
      *
      */
     fun set() {
-
+        if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) return; // done in CENTRAL
         if (DEBUG)
             Log.d(TAG, "setting comproute id=$id")
 

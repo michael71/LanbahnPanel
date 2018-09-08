@@ -33,6 +33,7 @@ const val KEY_LOCO_MASS = "locoMassPref"
 const val KEY_LOCO_NAME = "locoNamePref"
 const val KEY_ENABLE_LOCO_CONTROL = "enableLocoControlPref"
 const val KEY_LOCO_SYSTEM = "locoSystemPref"
+const val KEY_CENTRAL_ROUTING = "centralRoutingPref"
 
 /** {@value #N_PANEL_FOR_4Q} = minimum number of panel elements to display the 4 quadrants */
 const val N_PANEL_FOR_4Q = 75

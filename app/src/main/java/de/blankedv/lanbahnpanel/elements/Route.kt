@@ -5,7 +5,10 @@ import java.util.ArrayList
 import android.util.Log
 import de.blankedv.lanbahnpanel.model.*
 
-/** Class Route stores a complete route, which contains sensors, signals and turnouts
+/** starting with rev. 2.5. the setting/clearing of routes is DONE ONLY in the
+ * CENTRAL PC PROGRAM !
+ *
+ * Class Route stores a complete route, which contains sensors, signals and turnouts
  * it is tried to calculate offending routes automatically (defined as all routes which
  * set on of our turnouts. In addition offending routes can also be defined in the
  * config file (needed to crossing routes, which cannot be found automatically)
@@ -150,6 +153,9 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
      *
      */
     fun clear() {
+
+        if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) return; // done in CENTRAL
+
         timeSet = System.currentTimeMillis() // store for resetting
         // automatically
         if (DEBUG)
@@ -187,6 +193,8 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
 
     fun clearOffendingRoutes() {
 
+        if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) return; // done in CENTRAL
+
         if (DEBUG)
             Log.d(TAG, "clearing (active) offending Routes")
         val offRoutes = offendingString.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -205,6 +213,9 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
     }
 
     fun activateSensorsAndTurnouts() {
+
+        if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) return; // done in CENTRAL
+
         // activate sensors => set "inRoute = true"
         for (se in rtSensors) {
             se.inRoute = true
@@ -215,7 +226,18 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         }
     }
 
+    fun request() {
+        if (DEBUG)
+            Log.d(TAG, "requesting route id=$id")
+        // request to set this route in central
+        var cmd = "REQ $id 1"    // for other tablets
+        sendQ.add(cmd)
+    }
+
     fun set() {
+
+        if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) return; // done in CENTRAL
+
         timeSet = System.currentTimeMillis() // store for resetting
         // automatically
 
@@ -354,6 +376,8 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
     companion object {
 
         fun auto() {
+            if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) return; // done in CENTRAL
+
             // check for auto reset of routes
             for (rt in routes) {
                 if (System.currentTimeMillis() - rt.timeSet > 30 * 1000L && rt.isActive) {
@@ -388,10 +412,13 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         }
 
         fun clearAllRoutes() {
+            if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) return; // done in CENTRAL
             routes.forEach { it.clear() }
         }
 
         fun update(chan: Int, data: Int) {
+            if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) return; // done in CENTRAL
+
             for (rt in routes) {
                 if (rt.id == chan) {
                     rt.updateData(data)
