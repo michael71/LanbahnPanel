@@ -44,7 +44,7 @@ class RouteButtonElement : ActivePanelElement {
      * */
     override fun doDraw(canvas: Canvas) {
 
-        if (!prefs.getBoolean(KEY_ROUTES, false)) return
+        if (!prefs.getBoolean(KEY_ROUTING, false)) return
 
         canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 4f * prescale, LPaints.whitePaint)
 
@@ -73,7 +73,7 @@ class RouteButtonElement : ActivePanelElement {
     }
 
     override fun toggle() {
-        if (!prefs.getBoolean(KEY_ROUTES, false)) return  // do not enable route keys if not routes are enabled
+        if (!prefs.getBoolean(KEY_ROUTING, false)) return  // do not enable route keys if not routes are enabled
 
         if (adr == INVALID_INT) return  // do nothing if no address defined.
 
@@ -198,7 +198,7 @@ class RouteButtonElement : ActivePanelElement {
                         findRouteButtonByAddress(adrSecondBtn)!!.reset()
 
                         // set the route (i.e. sensors and turnouts)
-                        if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) {
+                        if (prefs.getBoolean(KEY_ROUTING,true)) {
                             rt.request();
                         } else {
                             rt.set()
@@ -218,7 +218,7 @@ class RouteButtonElement : ActivePanelElement {
                         findRouteButtonByAddress(adrSecondBtn)!!.reset()
 
                         // set the route (i.e. sensors and turnouts)
-                        if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) {
+                        if (prefs.getBoolean(KEY_ROUTING,true)) {
                             cr.request();
                         } else {
                             cr.set()

@@ -31,7 +31,6 @@ import de.blankedv.lanbahnpanel.config.WriteConfig
 import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import de.blankedv.lanbahnpanel.elements.PanelElement
 import de.blankedv.lanbahnpanel.elements.Route
-import de.blankedv.lanbahnpanel.elements.RouteButtonElement
 import de.blankedv.lanbahnpanel.loco.Loco
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.railroad.Commands
@@ -210,11 +209,12 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
         if (DEBUG) debugLogDisplayMetrics()
 
+        /* routing managed centrally by PC application
         if (prefs.getBoolean(KEY_ROUTES, false)) {
             Route.clearAllRoutes()
         } else {
             RouteButtonElement.autoReset()  // this will also reset the sensors to STATE_FREE
-        }
+        } */
 
         if (prefs.getBoolean(KEY_SAVE_STATES, false)) {
             loadStates()
@@ -469,7 +469,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
             "manual" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_lock_open_white_48dp)
             "locked" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_lock_white_48dp)
         }
-        when (prefs.getBoolean(KEY_ROUTES,false)) {
+        when (prefs.getBoolean(KEY_ROUTING,false)) {
             true -> mOptionsMenu?.findItem(R.id.action_routing)?.setIcon(R.drawable.ic_letter_r)
             false -> mOptionsMenu?.findItem(R.id.action_routing)?.setIcon(R.drawable.ic_letter_non_r)
          }
@@ -495,6 +495,8 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
     private fun initLocoList() {
 
+        if(!prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)) return;  // do only when loco control is enabled
+/*
         val lastLocoAddress = prefs.getInt(KEY_LOCO_ADR, 3)
 
         if (locolist == null) {
@@ -523,7 +525,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 selectedLoco?.initFromSX()
             }
             if (DEBUG) Log.d(TAG, "selectedLoco adr=" + selectedLoco?.adr)
-        }
+        } */
     }
 
     fun saveStates() {

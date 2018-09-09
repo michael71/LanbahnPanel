@@ -20,7 +20,8 @@ const val KEY_ENABLE_EDIT = "enableEditPref"
 const val KEY_ENABLE_POWER_CONTROL = "powerControlPref"
 const val KEY_SAVE_STATES = "saveStatesPref"
 const val KEY_DISCOVER_TURNOUTS_PREF = "discoverTurnoutsPref"
-const val KEY_ROUTES = "routesPref"
+//const val KEY_ROUTES = "routesPref"
+const val KEY_ROUTING = "centralRoutingPref"  // managed by PC application
 const val KEY_FLIP = "flipPref"
 const val KEY_IP = "ipPref"
 const val KEY_PORT = "portPref"
@@ -33,7 +34,7 @@ const val KEY_LOCO_MASS = "locoMassPref"
 const val KEY_LOCO_NAME = "locoNamePref"
 const val KEY_ENABLE_LOCO_CONTROL = "enableLocoControlPref"
 const val KEY_LOCO_SYSTEM = "locoSystemPref"
-const val KEY_CENTRAL_ROUTING = "centralRoutingPref"
+
 
 /** {@value #N_PANEL_FOR_4Q} = minimum number of panel elements to display the 4 quadrants */
 const val N_PANEL_FOR_4Q = 75
@@ -65,9 +66,13 @@ const val STATE_NOT_PRESSED = 0
 const val STATE_PRESSED = 1
 
 // sensors
-const val STATE_FREE = 0
-const val STATE_OCCUPIED = 1
+const val STATE_FREE = 0    // bit0, mapped to occupation
+const val STATE_OCCUPIED = 1   // bit0, mapped to occupation
+const val SENSOR_NOT_INROUTE = 2  // bit1, mapped to "ausleuchtung"
+const val SENSOR_INROUTE = 3      // bit1, mapped to "ausleuchtung"
 const val STATE_UNKNOWN = INVALID_INT
+
+
 
 //power
 const val POWER_UNKNOWN = INVALID_INT
@@ -106,6 +111,8 @@ const val TYPE_POWER_MSG = 8
 const val TYPE_CONNECTION_MSG = 9
 const val TYPE_LOCO_MSG = 10
 const val TYPE_SHUTDOWN_MSG = 11
+const val TYPE_ROUTING_MSG = 12
+const val TYPE_ROUTE_INVALID_MSG = 13
 
 
 // fixed prefix for scaling - should be =1 for small displays and =2 for

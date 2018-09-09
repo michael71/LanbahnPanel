@@ -15,6 +15,7 @@ import android.preference.PreferenceManager
 import android.provider.Settings
 import android.support.v4.app.NotificationCompat
 import android.util.Log
+import android.view.Gravity
 import com.google.gson.Gson
 import de.blankedv.lanbahnpanel.R
 import de.blankedv.lanbahnpanel.elements.*
@@ -75,6 +76,19 @@ class LanbahnPanelApplication : Application() {
                             cmdStationConnection = CMD_STATION_ON
                         }
                     }
+                    TYPE_ROUTING_MSG -> {
+                        val editor = prefs.edit()
+                        if (data == 0) {
+                            editor.putBoolean(KEY_ROUTING,false)
+                        } else {
+                            editor.putBoolean(KEY_ROUTING,true)
+                        }
+                        editor.apply()
+                    }
+                    TYPE_ROUTE_INVALID_MSG -> {
+                        if (DEBUG) Log.d(TAG, "route invalid, can not be set")
+                        toast(getString(R.string.route_invalid)).setGravity(Gravity.CENTER_HORIZONTAL or Gravity.TOP, 0,0)
+                    }
                     TYPE_GENERIC_MSG -> {
                         PanelElement.updateAcc(chan, data)
                         PanelElement.updateSensor(chan, data)
@@ -101,7 +115,9 @@ class LanbahnPanelApplication : Application() {
 
                     TYPE_LOCO_MSG -> {
                         //if (DEBUG) Log.d(TAG,"xloco message chan=$chan d=$data")
-                        if ((selectedLoco == null) && (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false))) Log.e(TAG, "no loco selected")
+                        if ((selectedLoco == null) && (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false))) {
+                            Log.e(TAG, "no loco selected")
+                        }
                         if (selectedLoco?.adr == chan) {
                             selectedLoco?.updateLocoFromSX(data)
                         }

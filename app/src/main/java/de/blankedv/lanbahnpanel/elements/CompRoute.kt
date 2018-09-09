@@ -52,18 +52,8 @@ class CompRoute
 
     }//
 
-    /*	no clear for compound routes because single routes are cleared automatically after X seconds
+    /*	no clear for compound routes because the single routes are cleared automatically after X seconds
     public void clear() {
-
-		if (DEBUG)
-			Log.d(TAG, "clearing comproute id=" + id);
-
-		for (Route rt : myroutes) {
-			if (rt.active == true) {
-				rt.clear();
-			}
-
-		}
 
 	} */
 
@@ -78,7 +68,7 @@ class CompRoute
      *
      */
     fun set() {
-        if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) return; // done in CENTRAL
+        if (prefs.getBoolean(KEY_ROUTING,true)) return; // done in CENTRAL
         if (DEBUG)
             Log.d(TAG, "setting comproute id=$id")
 

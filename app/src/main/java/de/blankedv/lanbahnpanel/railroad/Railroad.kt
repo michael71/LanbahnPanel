@@ -109,6 +109,7 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
         m.obj = "no response -> shutting down"
         appHandler.sendMessage(m)  // send data to UI Thread via Message
     }
+
     private fun immediateSend(command: String) {
         if (shutdownFlag) return
         if (out == null) {
@@ -189,15 +190,22 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
                 info = cmd.split("\\s+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
                 // all feedback message have the Format "CMD <adr> <data>" or "CMD <data>"
                 when (info.size) {
-                    0  -> return false
-                    1 -> if (info[0] == "QUIT") { // server has terminated connection
-                        // TODO test
-                        val m = Message.obtain()
-                        m.what = TYPE_CONNECTION_MSG
-                        m.arg2 = 0
-                        appHandler.sendMessage(m)  // send to UI Thread via Message
-                        Thread.sleep(100)
-                        shutdown()
+                    0 -> return false
+                    1 -> {
+                        if (info[0] == "QUIT") { // server has terminated connection
+                            // TODO test
+                            val m = Message.obtain()
+                            m.what = TYPE_CONNECTION_MSG
+                            m.arg2 = 0
+                            appHandler.sendMessage(m)  // send to UI Thread via Message
+                            Thread.sleep(100)
+                            shutdown()
+                        } else if (info[0] == "ROUTE_INVALID") {
+                            val m = Message.obtain()
+                            m.what = TYPE_ROUTE_INVALID_MSG
+                            m.arg2 = 0
+                            appHandler.sendMessage(m)  // send to UI Thread via Message
+                        }
                     }
                     2 -> {
                         if (info[0] == "XPOWER") {
@@ -212,6 +220,13 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
                             if (data == INVALID_INT) return false
                             val m = Message.obtain()
                             m.what = TYPE_CONNECTION_MSG
+                            m.arg2 = data
+                            appHandler.sendMessage(m)  // send to UI Thread via Message
+                        } else if (info[0] == "ROUTING") {
+                            val data = extractDataByteFromString(info[1])
+                            if (data == INVALID_INT) return false
+                            val m = Message.obtain()
+                            m.what = TYPE_ROUTING_MSG
                             m.arg2 = data
                             appHandler.sendMessage(m)  // send to UI Thread via Message
                         }

@@ -10,6 +10,7 @@ import android.util.Log
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.util.LanbahnBitmaps.bitmaps
 import de.blankedv.lanbahnpanel.view.Dialogs
+import kotlinx.coroutines.experimental.selects.select
 
 /**
  * handles the display of the top 20% of the display, the "LOCO CONTROL AREA"
@@ -72,26 +73,31 @@ class LocoControlArea(internal var ctx: Context) {
         leftBtn = LocoButton(0.03f, 0.5f, bitmaps?.get("left")!!, bitmaps?.get("left")!!)
         rightBtn = LocoButton(0.97f, 0.5f, bitmaps?.get("right")!!)
 
-      }
+    }
 
-    private fun drawSlider(canvas : Canvas) {
+    private fun drawSlider(canvas: Canvas) {
 
     }
+
     fun draw(canvas: Canvas) {
 
         // Done in activity regularly
         //        selectedLoco?.updateLocoFromSX()  // to be able to display actual states of this loco
 
         // draw "buttons" and states
-        leftBtn.doDraw(canvas,true)
-        rightBtn.doDraw(canvas,true)
-        addressBtn.doDraw(canvas, "A:"+selectedLoco?.adr!!.toString(), paintLargeTxt)
-        lampBtn.doDraw(canvas, selectedLoco?.lamp_to_be!!)
-        functionBtn.doDraw(canvas, selectedLoco?.function_to_be!!)
-        if (selectedLoco?.speed_act !== 0) {
-            stopBtn.doDraw(canvas, "Stop", paintText)
+        if (selectedLoco != null) {
+            leftBtn.doDraw(canvas, true)
+            rightBtn.doDraw(canvas, true)
+            addressBtn.doDraw(canvas, "A:" + selectedLoco?.adr!!.toString(), paintLargeTxt)
+            lampBtn.doDraw(canvas, selectedLoco?.lamp_to_be!!)
+            functionBtn.doDraw(canvas, selectedLoco?.function_to_be!!)
+            if (selectedLoco?.speed_act !== 0) {
+                stopBtn.doDraw(canvas, "Stop", paintText)
+            } else {
+                stopBtn.doDraw(canvas, "(Stop)", paintTextDisabled)
+            }
         } else {
-            stopBtn.doDraw(canvas, "(Stop)", paintTextDisabled)
+            addressBtn.doDraw(canvas, "??", paintLargeTxt)
         }
         // draw slider for speed selection
         sxmin = (canvas.width * (X_LOCO_MID - X_LOCO_RANGE)).toInt()
@@ -106,39 +112,47 @@ class LocoControlArea(internal var ctx: Context) {
 
         canvasWidth = canvas.width.toFloat()
 
-        xSpeedAct = canvasWidth * sxSpeed()   // grey slider on bottom
-        xSpeedToBe = canvasWidth * speedToBe()  // orange slider on top
-
-        canvas.drawBitmap(bitmaps.get("slider_grey"), xSpeedAct - sliderXoff, ySpeed - sliderYoff, null)
-        canvas.drawBitmap(bitmaps.get("slider"), xSpeedToBe - sliderXoff, ySpeed - sliderYoff, null)
-
-        var xtext = (canvasWidth * (X_LOCO_MID + X_LOCO_RANGE * 0.9f)).toInt()
-        canvas.drawText(locoSpeed(), xtext.toFloat(), ySpeed + 32, paintText)
-        xtext = (canvasWidth * (X_LOCO_MID - X_LOCO_RANGE * 0.9f)).toInt()
-        canvas.drawText(selectedLoco?.longString(), xtext.toFloat(), ySpeed + 32, paintText)
-
+        if (selectedLoco != null) {
+            xSpeedAct = canvasWidth * sxSpeed()   // grey slider on bottom
+            xSpeedToBe = canvasWidth * speedToBe()  // orange slider on top
+            canvas.drawBitmap(bitmaps.get("slider_grey"), xSpeedAct - sliderXoff, ySpeed - sliderYoff, null)
+            canvas.drawBitmap(bitmaps.get("slider"), xSpeedToBe - sliderXoff, ySpeed - sliderYoff, null)
+            var xtext = (canvasWidth * (X_LOCO_MID + X_LOCO_RANGE * 0.9f)).toInt()
+            canvas.drawText(locoSpeed(), xtext.toFloat(), ySpeed + 32, paintText)
+            xtext = (canvasWidth * (X_LOCO_MID - X_LOCO_RANGE * 0.9f)).toInt()
+            canvas.drawText(selectedLoco?.longString(), xtext.toFloat(), ySpeed + 32, paintText)
+        }
 
 
     }
 
     private fun sxSpeed(): Float {
-        val s = selectedLoco?.speed_from_sx
-
-        return X_LOCO_RANGE * s?.toFloat()!! / 31.0f + X_LOCO_MID
+        if (selectedLoco == null) {
+            return 0.toFloat()
+        } else {
+            val s = selectedLoco?.speed_from_sx
+            return X_LOCO_RANGE * s?.toFloat()!! / 31.0f + X_LOCO_MID
+        }
     }
 
     private fun speedToBe(): Float {
+        if (selectedLoco == null) return 0.toFloat()
+
         val s = selectedLoco?.speed_to_be
         return X_LOCO_RANGE * s?.toFloat()!! / 31.0f + X_LOCO_MID
     }
 
     private fun locoSpeed(): String {
+        if (selectedLoco == null) return ""
+
         val s = selectedLoco?.speed_from_sx
         return "" + s
     }
 
 
     fun checkSpeedMove(xt: Float, yt: Float) {
+        if (selectedLoco == null) return
+
         // check slider
         //if (DEBUG) Log.d(TAG,"check slider touch xt="+xt+"  yt="+yt+" xSpeed="+xSpeed+" sliderXoff="+sliderXoff+" ySpeed="+ySpeed+" sliderYoff="+sliderYoff);
 
@@ -162,29 +176,28 @@ class LocoControlArea(internal var ctx: Context) {
      * @param y
      */
     fun checkTouch(x: Float, y: Float) {
-        if (stopBtn.isTouched(x, y)) {
-            selectedLoco?.stopLoco()
-        } else if (lampBtn.isTouched(x, y)) {
-            selectedLoco?.toggleLocoLamp()
-        } else if (functionBtn.isTouched(x, y)) {
-            selectedLoco?.toggleFunc()
-        } else if (addressBtn.isTouched(x, y)) {
-            Dialogs.selectLocoDialog()
-        } else if (leftBtn.isTouched(x, y)) {
-            selectedLoco?.decrLocoSpeed()
-        } else if (rightBtn.isTouched(x, y)) {
-            selectedLoco?.incrLocoSpeed()
-        }
+        if (selectedLoco != null) {
+            if (stopBtn.isTouched(x, y)) {
+                selectedLoco?.stopLoco()
+            } else if (lampBtn.isTouched(x, y)) {
+                selectedLoco?.toggleLocoLamp()
+            } else if (functionBtn.isTouched(x, y)) {
+                selectedLoco?.toggleFunc()
+            } else if (addressBtn.isTouched(x, y)) {
+                Dialogs.selectLocoDialog()
+            } else if (leftBtn.isTouched(x, y)) {
+                selectedLoco?.decrLocoSpeed()
+            } else if (rightBtn.isTouched(x, y)) {
+                selectedLoco?.incrLocoSpeed()
+            }
+        } else {
+            if (addressBtn.isTouched(x, y)) {
+                Dialogs.selectLocoDialog()
+            }
 
-    }
-/*
-    fun checkIncrDecrSpeed(x: Float, y: Float) {
-        if (leftBtn.isTouched(x, y)) {
-            selectedLoco?.startDecrLocoSpeed()
-        } else if (rightBtn.isTouched(x, y)) {
-            selectedLoco?.startIncrLocoSpeed()
         }
-    } */
+    }
+
 
     fun recalcGeometry() {
         stopBtn.recalcXY()
@@ -202,7 +215,6 @@ class LocoControlArea(internal var ctx: Context) {
     }
 
     companion object {
-
 
 
         private val X_LOCO_MID = 0.5f

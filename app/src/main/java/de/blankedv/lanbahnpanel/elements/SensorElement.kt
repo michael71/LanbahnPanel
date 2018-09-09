@@ -14,6 +14,23 @@ class SensorElement : ActivePanelElement {
 
     constructor() : super() {}
 
+    // check bit1 for "INROUTE"
+    fun isInRoute() : Boolean {
+        if ((state and 0x02) != 0) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    // check bit0 for "OCCUPIED"
+    fun isOccupied() : Boolean {
+        if ((state and 0x01) != 0) {
+            return true
+        } else {
+            return false
+        }
+    }
 
     override fun getSensitiveRect(): Rect {
         if (x2 == INVALID_INT) { // dot type sensor
@@ -28,10 +45,10 @@ class SensorElement : ActivePanelElement {
 
         if (x2 != INVALID_INT) {  // draw dashed line as sensor
             // read data from central station and set red/gray dashed line accordingly
-            if (state == STATE_OCCUPIED) {
+            if (isOccupied()) {
                 canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintRedDash)
             } else {
-                if (inRoute) {
+                if (isInRoute()) {
                     canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintDarkYellowDash)
                 } else {
                     canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintGrayDash)
@@ -46,10 +63,10 @@ class SensorElement : ActivePanelElement {
 
             val bmName = StringBuilder("sensor")
 
-            if ((state == STATE_FREE) or (state == STATE_UNKNOWN)) {
-                bmName.append("_off")
-            } else {
+            if (isOccupied()) {
                 bmName.append("_on")
+            } else {
+                bmName.append("_off")
             }
 
             bm = bitmaps[bmName.toString()]

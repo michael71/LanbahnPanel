@@ -133,16 +133,17 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         //		Log.d(TAG, rtOffending.size() + " offending routes in config");
     }//
 
+    // TODO no longer needed
     fun deactivateSensorsAndTurnouts() {
         // deactivate sensors => set "inRoute = false"
         for (se in rtSensors) {
-            se.inRoute = false
+            // TODO no longer needed se.setState(STATE_NOT_INROUTE)
             //  if a route is de-activated, all connected tablets need to set the sensors to inroute = false
             // this is handled via activating and de-activating routes globally
         }
 
         for (rrt in rtTurnouts) {
-            rrt.turnout.inRoute = false
+            // TODO no longer neededrrt.turnout.inRoute = false
             //  if a route is de-activated, all connected tablets need to set the turnouts to inroute = false
             // this is handled via activating and de-activating routes globally
         }
@@ -154,7 +155,7 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
      */
     fun clear() {
 
-        if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) return; // done in CENTRAL
+        if (prefs.getBoolean(KEY_ROUTING,true)) return; // done in CENTRAL
 
         timeSet = System.currentTimeMillis() // store for resetting
         // automatically
@@ -193,7 +194,7 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
 
     fun clearOffendingRoutes() {
 
-        if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) return; // done in CENTRAL
+        if (prefs.getBoolean(KEY_ROUTING,true)) return; // done in CENTRAL
 
         if (DEBUG)
             Log.d(TAG, "clearing (active) offending Routes")
@@ -214,15 +215,15 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
 
     fun activateSensorsAndTurnouts() {
 
-        if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) return; // done in CENTRAL
+        if (prefs.getBoolean(KEY_ROUTING,true)) return; // done in CENTRAL
 
         // activate sensors => set "inRoute = true"
         for (se in rtSensors) {
-            se.inRoute = true
+            // TODO no longer needed se.inRoute = true
         }
         // set and // TODO lock turnouts
         for (rtt in rtTurnouts) {
-            rtt.turnout.inRoute = true
+            // TODO no longer neededrtt.turnout.inRoute = true
         }
     }
 
@@ -236,7 +237,7 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
 
     fun set() {
 
-        if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) return; // done in CENTRAL
+        if (prefs.getBoolean(KEY_ROUTING,true)) return; // done in CENTRAL
 
         timeSet = System.currentTimeMillis() // store for resetting
         // automatically
@@ -376,7 +377,7 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
     companion object {
 
         fun auto() {
-            if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) return; // done in CENTRAL
+            if (prefs.getBoolean(KEY_ROUTING,true)) return; // done in CENTRAL
 
             // check for auto reset of routes
             for (rt in routes) {
@@ -412,12 +413,12 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         }
 
         fun clearAllRoutes() {
-            if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) return; // done in CENTRAL
+            if (prefs.getBoolean(KEY_ROUTING,true)) return; // done in CENTRAL
             routes.forEach { it.clear() }
         }
 
         fun update(chan: Int, data: Int) {
-            if (prefs.getBoolean(KEY_CENTRAL_ROUTING,true)) return; // done in CENTRAL
+            if (prefs.getBoolean(KEY_ROUTING,true)) return; // done in CENTRAL
 
             for (rt in routes) {
                 if (rt.id == chan) {

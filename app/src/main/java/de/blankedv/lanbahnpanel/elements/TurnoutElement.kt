@@ -87,7 +87,7 @@ class TurnoutElement : ActivePanelElement {
     }
 
     override fun toggle() {
-        if (prefs.getBoolean(KEY_ROUTES, false)) return  // do not set turnouts by hand if routes are enabled
+        if (prefs.getBoolean(KEY_ROUTING, false)) return  // do not set turnouts by hand if routes are enabled
 
         if (adr == INVALID_INT) return  // do nothing if no sx address defined.
 

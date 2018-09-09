@@ -4,13 +4,9 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Message
 import android.util.Log
+import de.blankedv.lanbahnpanel.model.*
 
-import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication
 
-
-import de.blankedv.lanbahnpanel.model.DEBUG
-import de.blankedv.lanbahnpanel.model.TAG
-import de.blankedv.lanbahnpanel.model.sendQ
 import de.blankedv.lanbahnpanel.railroad.Commands
 
 
@@ -19,8 +15,6 @@ class Loco {
     var name: String
     var mass: Int = 0    // 1...5 (never == 0 !)
     var vmax = 100   // maximum speed in km/h
-
-    private var sxData = 0   // SX Data byte (if SX is used)
 
     // speed vars used for setting loco speed
     var speed_act: Int = 0        // -31 ... +31, speed currently sent via SXnet
@@ -62,12 +56,10 @@ class Loco {
         }
 
     constructor() {  // dummy loco
-        this.adr = 22
+        this.adr = INVALID_INT
         this.name = "Lok 22"
         this.mass = 3
         lastToggleTime = 0 // no toggle so far
-        // init other data from actual SX bus data
-        initFromSX()
 
     }
 
@@ -76,8 +68,6 @@ class Loco {
         this.name = name
         this.mass = 3
         lastToggleTime = 0 // no toggle so far
-        // init other data from actual SX bus data
-        initFromSX()
     }
 
     constructor(name: String, adr: Int, mass: Int) { // TODO lbm: Bitmap) {
@@ -91,8 +81,6 @@ class Loco {
             this.mass = 3
         }
         lastToggleTime = 0 // no toggle so far
-        // init other data from actual SX bus data
-        initFromSX()
     }
 
     fun getAdr(): String {
@@ -101,6 +89,7 @@ class Loco {
 
 
     fun initFromSX() {
+
         Commands.readLocoData(this.adr)
         resetToBe()
     }

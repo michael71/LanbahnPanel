@@ -28,7 +28,7 @@ open class PanelElement {
     var adr2 = INVALID_INT   // needed for DCC sensors and signals
     var state = STATE_UNKNOWN
     var nbit = 1  // for multi-aspect signals, nbit=2 => 4 possible values 0,1,2,3
-    var inRoute = false
+    // var inRoute = false -> now coded into "state" (bit "INROUTE")
 
     var route = ""
     var invert = DISP_STANDARD     // not inverted
@@ -141,6 +141,7 @@ open class PanelElement {
             }
         }
 
+        // only the value for the primary sensor address "adr" gets updated
         fun updateSensor(addr: Int, data: Int) {
             for (pe in panelElements.filter { it.adr == addr }.filter { it is SensorElement }) {
                 pe.state = data
