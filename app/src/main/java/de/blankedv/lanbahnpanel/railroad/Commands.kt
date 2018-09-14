@@ -18,7 +18,8 @@ class Commands {
 
         fun readMultipleChannels(aArray: ArrayList<Int>) {
             var cmd = "";
-            for (a in aArray) {
+            val aArr = aArray.sorted()
+            for (a in aArr) {
                 if (a != INVALID_INT) {
                     cmd += ";READ $a"
                 }

@@ -22,7 +22,7 @@ object Utils {
     //df.setTimeZone(TimeZone.getTimeZone("PST"));
     val dateTime: String
         get() {
-            val df = SimpleDateFormat("yyyyMMdd_hhmmss")
+            val df = SimpleDateFormat("yyyyMMdd_HHmmss")
             return df.format(Date())
         }
 

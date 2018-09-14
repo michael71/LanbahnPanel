@@ -48,7 +48,7 @@ object Dialogs {
         val e = el as ActivePanelElement
         val msg: String
         address.value = e.adr
-        inverted.isActivated = (e.invert == DISP_INVERTED)
+        inverted.isChecked = (e.invert == DISP_INVERTED)
         val res = appContext?.resources
         msg = res!!.getString(R.string.address) + "?"
         val addrDialog = AlertDialog.Builder(appContext)
@@ -62,7 +62,7 @@ object Dialogs {
                     // Toast.LENGTH_SHORT)
                     // .show();
                     e.adr = address.value
-                    if (inverted.isActivated) {
+                    if (inverted.isChecked) {
                         e.invert = DISP_INVERTED
                     } else {
                         e.invert = DISP_STANDARD

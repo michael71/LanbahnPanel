@@ -32,7 +32,7 @@ object WriteConfig {
 
     fun toXMLFile(): Boolean {
 
-        if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {
+        if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {999
             Log.e(TAG, "external storage not writeable!")
             return false
         }
@@ -50,7 +50,7 @@ object WriteConfig {
             if (DEBUG or DEBUG_WRITE)
                 Log.d(TAG, "Config File $configFilename.$configFileVersion saved! ")
             configHasChanged = false // reset flag
-
+999
             deleteOlderFiles()
 
         } catch (e: Exception) {
@@ -130,6 +130,9 @@ object WriteConfig {
                 }
                 if (pe.adr != INVALID_INT) {
                     serializer.attribute("", "adr", "" + pe.adr)
+                }
+                if (pe.invert != 0) {
+                    serializer.attribute("", "inv", "" + pe.invert)
                 }
 
                 serializer.endTag("", pe.type)
