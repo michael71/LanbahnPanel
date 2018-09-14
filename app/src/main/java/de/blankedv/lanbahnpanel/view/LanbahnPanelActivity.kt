@@ -50,7 +50,6 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
     internal lateinit var builder: Builder
 
-
     internal var mBound = false
     internal lateinit var tv: TextView
     internal lateinit var params: LayoutParams

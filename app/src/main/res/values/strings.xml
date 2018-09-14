@@ -93,11 +93,11 @@
     <string name="inverted">"invert"</string>
     <string name="yes_inverted">Y</string>
     <string name="no_inverted">N</string>
-    <string name="sel_system_type">System auswählen</string>
     <string name="loco_cfg_files">Loco Config File</string>
     <string name="pref_header_loco">Loco Control</string>
     <string name="discover_turnouts">Discover new Turnouts</string>
     <string name="routing_active">Routing ON</string>
     <string name="save">Save</string>
     <string name="route_invalid">Route cannot be set!</string>
+    <string name="sel_system_type">Select Control System Type</string>
 </resources>

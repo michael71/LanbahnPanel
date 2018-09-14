@@ -56,4 +56,5 @@
     <string name="back">Zurück</string>
     <string name="save">Speichern</string>
     <string name="route_invalid">Fahrstraße kann nicht gestellt werden!</string>
+    <string name="sel_system_type">Control System</string>
 </resources>

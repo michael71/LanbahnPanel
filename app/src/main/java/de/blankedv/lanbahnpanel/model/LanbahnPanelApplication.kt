@@ -186,6 +186,7 @@ class LanbahnPanelApplication : Application() {
         pSett.selScale = prefs.getString(KEY_SCALE_PREF,"auto")
         pSett.fiveViews = prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false)
         pSett.selQua = prefs.getInt(KEY_QUADRANT,0)
+        pSett.system = prefs.getString(KEY_CONTROL_SYSTEM,"sx")
 
         // save all panel specific settings
         val serializedObject = Gson().toJson(`pSett`)
@@ -206,7 +207,8 @@ class LanbahnPanelApplication : Application() {
         pSett = PanelSettings(prefs.getString(KEY_STYLE_PREF,"US"),
                 prefs.getString(KEY_SCALE_PREF,"auto"),
                 prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false),
-                prefs.getInt(KEY_QUADRANT, 0) )
+                prefs.getInt(KEY_QUADRANT, 0),
+                prefs.getString(KEY_CONTROL_SYSTEM,"sx"))
 
         if (prefs.contains(KEY_PANEL_SETTINGS + "_" + panelName)) {
             val gson = Gson()
@@ -221,6 +223,7 @@ class LanbahnPanelApplication : Application() {
             editor.putString(KEY_SCALE_PREF, pSett.selScale)
             editor.putBoolean(KEY_FIVE_VIEWS_PREF, pSett.fiveViews)
             editor.putInt(KEY_QUADRANT, pSett.selQua)
+            editor.putString(KEY_CONTROL_SYSTEM,pSett.system)
             // Commit the edits!
             editor.apply()
 
@@ -292,13 +295,22 @@ class LanbahnPanelApplication : Application() {
 
         fun requestAllPanelData() {
             if (DEBUG) Log.d(TAG, "requstAllPanelData() proto=$panelProtocol")
+            val systemFromSettings = prefs.getString(KEY_CONTROL_SYSTEM,"sx")
+            if (DEBUG) Log.d(TAG, "requstAllPanelData() protoFromSettings=$systemFromSettings")
             // request state of all active panel elements
 
+            // send in chunks of 40 reads
+            val addrArray = ArrayList<Int>()
             for (pe in panelElements.filter { it.adr != INVALID_INT && (it.isExpired() == true) }) {
                 if (pe is ActivePanelElement) {
-                    Commands.readChannel(pe.adr, pe.javaClass)
+                    addrArray.add(pe.adr)
+                    if (addrArray.size > 40) {
+                        Commands.readMultipleChannels(addrArray)
+                        addrArray.clear()
+                    }
                 }
             }
+            Commands.readMultipleChannels(addrArray)
 
         }
 

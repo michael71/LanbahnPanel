@@ -4,11 +4,5 @@
         android:defaultValue="false"
         android:key="enableLocoControlPref"
         android:title="Loco Control aktivieren" />
-    <ListPreference
-        android:defaultValue="System SX oder DCC"
-        android:entries="@array/system"
-        android:entryValues="@array/system_values"
-        android:key="locoSystemPref"
-        android:summary="-"
-        android:title="@string/sel_system_type" />
+
  </PreferenceScreen>

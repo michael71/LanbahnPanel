@@ -16,6 +16,20 @@ class Commands {
             }
         }
 
+        fun readMultipleChannels(aArray: ArrayList<Int>) {
+            var cmd = "";
+            for (a in aArray) {
+                if (a != INVALID_INT) {
+                    cmd += ";READ $a"
+                }
+            }
+            if (cmd.isEmpty()) return
+
+            val success = sendQ.offer(cmd)
+            if (!success && DEBUG) {
+                Log.d(TAG, "readChannel failed, queue full")
+            }
+        }
 
         fun setChannel(addr: Int, data: Int, peClass: Class<*> = Object::class.java) {
             if ((addr == INVALID_INT) or (data == INVALID_INT)) return

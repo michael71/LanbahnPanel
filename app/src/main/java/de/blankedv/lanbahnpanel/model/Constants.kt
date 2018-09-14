@@ -33,7 +33,7 @@ const val KEY_LOCO_ADR = "locoAdrPref"
 const val KEY_LOCO_MASS = "locoMassPref"
 const val KEY_LOCO_NAME = "locoNamePref"
 const val KEY_ENABLE_LOCO_CONTROL = "enableLocoControlPref"
-const val KEY_LOCO_SYSTEM = "locoSystemPref"
+const val KEY_CONTROL_SYSTEM = "controlSystemPref"     // 14Sep2018 - NOT USED in Control Connection !! TODO check
 
 
 /** {@value #N_PANEL_FOR_4Q} = minimum number of panel elements to display the 4 quadrants */

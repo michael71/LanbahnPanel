@@ -11,11 +11,8 @@ import de.blankedv.lanbahnpanel.R
 import de.blankedv.lanbahnpanel.model.*
 import java.io.File
 import java.util.ArrayList
-import android.R.attr.key
-import android.content.SharedPreferences
 import android.os.*
 import android.preference.*
-import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.pSett
 
 
 /**
@@ -192,10 +189,14 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             setHasOptionsMenu(true)
 
             val configFilenamePref = preferenceScreen.findPreference(KEY_CONFIG_FILE) as ListPreference
+            // val controlSystemPref = preferenceScreen.findPreference(KEY_CONTROL_SYSTEM) as ListPreference
+
             val entries = matchingXMLFiles()
             if (entries != null) configFilenamePref!!.entries = entries
             if (entries != null) configFilenamePref!!.entryValues = entries
             bindPreferenceSummaryToValue(findPreference(KEY_CONFIG_FILE))
+
+            // bindPreferenceSummaryToValue(findPreference(KEY_CONTROL_SYSTEM))
 
             //configFilenamePref!!.summary = "config loaded from " + prefs.getString(KEY_CONFIG_FILE, "-")!!
 
@@ -261,7 +262,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // updated to reflect the new value, per the Android Design
             // guidelines.
 
-            bindPreferenceSummaryToValue(findPreference(KEY_LOCO_SYSTEM))
+
         }
 
         override fun onOptionsItemSelected(item: MenuItem): Boolean {
