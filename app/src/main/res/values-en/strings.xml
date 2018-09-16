@@ -57,4 +57,5 @@
     <string name="back">Back</string>
     <string name="route_invalid">Route cannot be set!</string>
     <string name="sel_system_type">Control System</string>
+    <string name="adresse2">Addr. 2</string>
 </resources>

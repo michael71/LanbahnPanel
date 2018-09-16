@@ -65,6 +65,15 @@ object Utils {
         return m
     }
 
+    fun min(x: Int, xt: Int, x2: Int, x3: Int): Int {
+        var m = x  // is always defined.
+        if (x == INVALID_INT) Log.e(TAG, "Utils.min: x is undefined.")
+        if (xt != INVALID_INT && xt < m) m = xt
+        if (x2 != INVALID_INT && x2 < m) m = x2
+        if (x3 != INVALID_INT && x3 < m) m = x3
+        return m
+    }
+
     /**
      * calculate maximum of 3 integers, the first one is always a
      * valid number, the other can if INVALID_INT (=>not taken into
@@ -75,6 +84,15 @@ object Utils {
         if (x == INVALID_INT) Log.e(TAG, "Utils.min: x is undefined.")
         if (xt != INVALID_INT && xt > m) m = xt
         if (x2 != INVALID_INT && x2 > m) m = x2
+        return m
+    }
+
+    fun max(x: Int, xt: Int, x2: Int, x3 : Int): Int {
+        var m = x
+        if (x == INVALID_INT) Log.e(TAG, "Utils.min: x is undefined.")
+        if (xt != INVALID_INT && xt > m) m = xt
+        if (x2 != INVALID_INT && x2 > m) m = x2
+        if (x3 != INVALID_INT && x3 > m) m = x3
         return m
     }
 

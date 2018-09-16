@@ -128,11 +128,21 @@ object WriteConfig {
                     serializer.attribute("", "xt", "" + pe.xt)
                     serializer.attribute("", "yt", "" + pe.yt)
                 }
+                // there can be a secondary address - but only if there is a "first" address
                 if (pe.adr != INVALID_INT) {
-                    serializer.attribute("", "adr", "" + pe.adr)
+                    if (pe.adr2 != INVALID_INT) {
+                        serializer.attribute("", "adr", "" + pe.adr + "," + pe.adr2)
+                    } else { // only a single Address
+                        serializer.attribute("", "adr", "" + pe.adr)
+                    }
                 }
-                if (pe.invert != 0) {
-                    serializer.attribute("", "inv", "" + pe.invert)
+                // there can be a secondary invert setting - but only if there is a "first" invert setting
+                if ((pe.invert != 0) || (pe.invert2 != 0)){
+                    if (pe.invert2 != 0) {
+                        serializer.attribute("", "inv", "" + pe.invert + "," +pe.invert2)
+                    } else {
+                        serializer.attribute("", "inv", "" + pe.invert)
+                    }
                 }
 
                 serializer.endTag("", pe.type)

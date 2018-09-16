@@ -30,6 +30,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="adresse">Address</string>
+    <string name="adresse2">Addr.2</string>
     <string name="sel_loco_prompt">Loco Auswahl</string>
     <string name="sel_style">Select Display Style</string>
     <string name="sel_style_default">US</string>

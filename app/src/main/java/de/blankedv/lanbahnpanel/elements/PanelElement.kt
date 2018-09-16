@@ -32,6 +32,7 @@ open class PanelElement {
 
     var route = ""
     var invert = DISP_STANDARD     // not inverted
+    var invert2 = DISP_STANDARD     // ONLY for elements with secondary address
 
     /** get the type-name which is used in the XML panel definition file
      *
@@ -47,7 +48,7 @@ open class PanelElement {
                 "SensorElement" -> return "sensor"
                 "ActivePanelElement" -> return "other"
                 "RouteButtonElement" -> return "routebutton"
-                "DoubleSlipElement" -> return "doubleslip"
+                "DoubleslipElement" -> return "doubleslip"
                 else -> {
                     Log.d(TAG, "could not determine type of panel element")
                     return "error"
@@ -180,6 +181,9 @@ open class PanelElement {
                         pe.y2 += deltaY
                     if (pe.yt != INVALID_INT)
                         pe.yt += deltaY
+                if (pe is DoubleslipElement) {
+                    pe.initDxEtc()
+                }
             }
             panelRect = Rect(0, 0, (rec.right + deltaX + 10) * prescale, (rec.bottom + deltaY + 10) * prescale)
 

@@ -11,6 +11,7 @@ import de.blankedv.lanbahnpanel.loco.Loco
 
 import android.content.ContentValues.TAG
 import android.content.res.Resources
+import android.opengl.Visibility
 import android.util.Log
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
@@ -36,19 +37,45 @@ object Dialogs {
         val factory = LayoutInflater.from(appContext)
         val selAddressView = factory.inflate(
                 R.layout.alert_dialog_sel_address, null)
+
+        val tvAdr2 = selAddressView
+                .findViewById<View>(R.id.tvAddress2) as TextView
+        val tvInv2 = selAddressView
+                .findViewById<View>(R.id.tvInverted2) as TextView
         val address = selAddressView
                 .findViewById<View>(R.id.picker1) as NumberPicker
         val inverted = selAddressView.findViewById<View>(R.id.cbInverted) as CheckBox
 
+        val address2 = selAddressView
+                .findViewById<View>(R.id.picker2) as NumberPicker
+        val inverted2 = selAddressView.findViewById<View>(R.id.cbInverted2) as CheckBox
+
         address.minValue = MIN_ADDR
         address.maxValue = MAX_ADDR
-        // TODO: replace by list of active lanbahn messages
+
+        address2.minValue = MIN_ADDR
+        address2.maxValue = MAX_ADDR
 
         address.setOnLongPressUpdateInterval(100) // faster change for long press
         val e = el as ActivePanelElement
+        if (e.adr2 != INVALID_INT) {
+            address2.visibility = View.VISIBLE
+            inverted2.visibility = View.VISIBLE
+            tvAdr2.visibility = View.VISIBLE
+            tvInv2.visibility = View.VISIBLE
+
+        } else {   // hide second address selection if there is not second address for this PanelElement
+            address2.visibility = View.GONE
+            inverted2.visibility = View.GONE
+            tvAdr2.visibility = View.GONE
+            tvInv2.visibility = View.GONE
+
+        }
         val msg: String
         address.value = e.adr
+        address2.value = e.adr2
         inverted.isChecked = (e.invert == DISP_INVERTED)
+        inverted2.isChecked = (e.invert2 == DISP_INVERTED)
         val res = appContext?.resources
         msg = res!!.getString(R.string.address) + "?"
         val addrDialog = AlertDialog.Builder(appContext)
@@ -67,6 +94,14 @@ object Dialogs {
                     } else {
                         e.invert = DISP_STANDARD
                     }
+                    if (e.adr2 != INVALID_INT) {
+                        e.adr2 = address2.value
+                        if (inverted2.isChecked) {
+                            e.invert2 = DISP_INVERTED
+                        } else {
+                            e.invert2 = DISP_STANDARD
+                        }
+                    }
                     configHasChanged = true // flag for saving the
                     // configuration
                     // later when
@@ -80,7 +115,11 @@ object Dialogs {
                     dialog.dismiss()
                 }.create()
         addrDialog.show()
-        addrDialog.window!!.setLayout(350, 400)
+        if (e.adr2 != INVALID_INT) {
+            addrDialog.window!!.setLayout(700, 400)
+        } else {
+            addrDialog.window!!.setLayout(350, 400)
+        }
     }
 
     fun selectLocoDialog() {

@@ -4,7 +4,7 @@
 
 package de.blankedv.lanbahnpanel.model
 
-const val DEBUG = false // false for release-apk
+const val DEBUG = true // false for release-apk
 const val TAG = "LanbahnPanel"
 
 const val INVALID_INT = -1
@@ -48,6 +48,9 @@ const val LBP_NOTIFICATION_ID = 201 //arbitrary id for notification
 // turnouts
 const val STATE_CLOSED = 0
 const val STATE_THROWN = 1
+
+// doubleslips
+// 4 states from 0 .. 3  (+ "unknown")
 
 
 const val DISP_STANDARD = 0

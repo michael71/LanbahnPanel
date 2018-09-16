@@ -34,7 +34,7 @@ import de.blankedv.lanbahnpanel.util.LinearMath
  */
 object ReadConfig {
 
-    internal val DEBUG_PARSING = false
+    internal val DEBUG_PARSING = true
 
 
     /**
@@ -168,14 +168,21 @@ object ReadConfig {
 
         // look for existing and known turnouts - on top of track
         items = root.getElementsByTagName("turnout")
-        if (DEBUG) Log.d(TAG, "config: " + items.length + " turnouts")
+        if (DEBUG) Log.d(TAG, "config: " + items.length + " turnout(s)")
         for (i in 0 until items.length) {
             pes.add(parseTurnout(items.item(i)))
         }
 
+        // look for doubleslips
+        items = root.getElementsByTagName("doubleslip")
+        if (DEBUG) Log.d(TAG, "config: " + items.length + " doubleslip(s)")
+        for (i in 0 until items.length) {
+            pes.add(parseDoubleslip(items.item(i)))
+        }
+
         // look for signals - on top of track
         items = root.getElementsByTagName("signal")
-        if (DEBUG) Log.d(TAG, "config: " + items.length + " signals")
+        if (DEBUG) Log.d(TAG, "config: " + items.length + " signal(s)")
         for (i in 0 until items.length) {
             pes.add(parseSignal(items.item(i)))
         }
@@ -183,6 +190,7 @@ object ReadConfig {
 
         if (prefs.getBoolean(KEY_DISCOVER_TURNOUTS_PREF,false)) {
             val newTurnouts = discoverTurnouts(pes)
+            if (DEBUG) Log.d(TAG, "config: " + newTurnouts.size + " new tournout(s) discovered")
             for (pe in newTurnouts) pes.add(pe)
         }
 
@@ -190,7 +198,7 @@ object ReadConfig {
         // after tracks and turnouts !! important => on top of track
 
         items = root.getElementsByTagName("sensor")
-        if (DEBUG) Log.d(TAG, "config: " + items.length + " sensors")
+        if (DEBUG) Log.d(TAG, "config: " + items.length + " sensor(s)")
         for (i in 0 until items.length) {
             pes.add(parseSensor(items.item(i)))
         }
@@ -198,7 +206,7 @@ object ReadConfig {
 
         // after all other elements - on top of everything
         items = root.getElementsByTagName("routebutton")
-        if (DEBUG) Log.d(TAG, "config: " + items.length + " routebuttons")
+        if (DEBUG) Log.d(TAG, "config: " + items.length + " route button(s)")
         for (i in 0 until items.length) {
             pes.add(parseRouteButton(items.item(i)))
         }
@@ -271,6 +279,64 @@ object ReadConfig {
 
     }
 
+
+    private fun parseDoubleslip(item: Node): DoubleslipElement {
+        // ticket node can be Incident oder UserRequest
+        val pe = DoubleslipElement()
+
+        val attributes = item.attributes
+
+        for (i in 0 until attributes.length) {
+            val theAttribute = attributes.item(i)
+
+            if (theAttribute.nodeName == "name") {
+                pe.name = theAttribute.nodeValue
+            } else if (theAttribute.nodeName == "x") {
+                pe.x = getIntegerNodeValue(theAttribute)
+            } else if (theAttribute.nodeName == "y") {
+                pe.y = getIntegerNodeValue(theAttribute)
+            } else if (theAttribute.nodeName == "x2") {
+                pe.x2 = getIntegerNodeValue(theAttribute)
+            } else if (theAttribute.nodeName == "y2") {
+                pe.y2 = getIntegerNodeValue(theAttribute)
+            } else if (theAttribute.nodeName == "xt") {
+                pe.xt = getIntegerNodeValue(theAttribute)
+            } else if (theAttribute.nodeName == "yt") {
+                pe.yt = getIntegerNodeValue(theAttribute)
+            } else if (theAttribute.nodeName == "adr") {
+                val adrArray = getIntegerNodeValueArray(theAttribute)
+                if (adrArray.size == 1) {
+                    pe.adr = adrArray[0]
+                } else if (adrArray.size >= 2) {
+                    pe.adr = adrArray[0]
+                    pe.adr2 = adrArray[1]
+                }
+            } else if (theAttribute.nodeName == "inv") {
+                val invArray = getIntegerNodeValueArray(theAttribute)
+                if (invArray.size == 1) {
+                    pe.invert = invArray[0]
+                    pe.invert2 = 0
+                } else if (invArray.size >= 2) {
+                    pe.invert = invArray[0]
+                    pe.invert2 = invArray[1]
+                }
+            } else if (theAttribute.nodeName == "sxadr") {
+                Log.e(TAG,"ERROR doubleslip should not have sxaddress")
+            } else if (theAttribute.nodeName == "sxbit") {
+                Log.e(TAG,"ERROR doubleslip should not have sxbit attribute")
+            } else {
+                if (DEBUG_PARSING)
+                    Log.d(TAG,
+                            "unknown attribute " + theAttribute.nodeName
+                                    + " in config file, <sensor>")
+            }
+        }
+
+        return pe
+
+    }
+
+
     private fun getIntegerNodeValue(a: Node): Int {
         // remove "." first to convert SX addresses like 72.1 to LB addr (=721)
         // remove whitespace also
@@ -324,7 +390,13 @@ object ReadConfig {
             } else if (theAttribute.nodeName == "y2") {
                 pe.y2 = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "adr") {
-                pe.adr = getIntegerNodeValue(theAttribute)
+                val adrArray = getIntegerNodeValueArray(theAttribute)
+                if (adrArray.size == 1) {
+                    pe.adr = adrArray[0]
+                } else if (adrArray.size >= 2) {
+                    pe.adr = adrArray[0]
+                    pe.adr2 = adrArray[1]
+                }
             } else if (theAttribute.nodeName == "sxadr") {
                 sxadr = getIntegerNodeValue(theAttribute)
             } else if (theAttribute.nodeName == "sxbit") {
@@ -341,7 +413,8 @@ object ReadConfig {
         if ((pe.adr == INVALID_INT) and (sxadr != INVALID_INT) and (sxbit != INVALID_INT)) {
             pe.adr = sxadr * 10 + sxbit   // lbaddr gets calculated from sx
         }
-        if (DEBUG_PARSING) Log.d(TAG, "signal x=" + pe.x + " y=" + pe.y + " adr=" + pe.adr)
+        if (DEBUG_PARSING) Log.d(TAG, "signal x=" + pe.x + " y=" + pe.y + " adr=" + pe.adr +
+                " adr2=" + pe.adr2)
         return pe
 
     }
