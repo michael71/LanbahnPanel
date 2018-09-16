@@ -101,14 +101,17 @@ abstract class ActivePanelElement : PanelElement {
         return Rect(l, t,ri,b)
     }
 
-    protected fun doDrawAddresses(canvas: Canvas) {
+    open protected fun doDrawAddresses(canvas: Canvas) {
 
         val bounds = Rect()
-        val txt: String
+        var txt: String
         if (adr == INVALID_INT) {
             txt = "???"
         } else {
             txt = "" + adr
+            if (invert != 0) {
+                txt += "i"
+            }
         }
         LPaints.addressPaint.getTextBounds(txt, 0, txt.length, bounds)
         val text_height = bounds.height()

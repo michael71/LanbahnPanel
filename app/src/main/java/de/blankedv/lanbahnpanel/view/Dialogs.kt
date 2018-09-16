@@ -15,6 +15,7 @@ import android.opengl.Visibility
 import android.util.Log
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
+import de.blankedv.lanbahnpanel.elements.SignalElement
 import de.blankedv.lanbahnpanel.model.*
 
 
@@ -42,6 +43,8 @@ object Dialogs {
                 .findViewById<View>(R.id.tvAddress2) as TextView
         val tvInv2 = selAddressView
                 .findViewById<View>(R.id.tvInverted2) as TextView
+        val tvInv = selAddressView
+                .findViewById<View>(R.id.tvInverted) as TextView
         val address = selAddressView
                 .findViewById<View>(R.id.picker1) as NumberPicker
         val inverted = selAddressView.findViewById<View>(R.id.cbInverted) as CheckBox
@@ -69,7 +72,13 @@ object Dialogs {
             inverted2.visibility = View.GONE
             tvAdr2.visibility = View.GONE
             tvInv2.visibility = View.GONE
-
+        }
+        if (e is SignalElement) {
+            tvInv.visibility = View.GONE
+            inverted.visibility = View.GONE
+        } else {
+            tvInv.visibility = View.VISIBLE
+            inverted.visibility = View.VISIBLE
         }
         val msg: String
         address.value = e.adr

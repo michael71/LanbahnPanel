@@ -9,6 +9,7 @@ import de.blankedv.lanbahnpanel.util.LPaints.linePaint2
 import de.blankedv.lanbahnpanel.util.LPaints.redPaint
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.railroad.Commands
+import de.blankedv.lanbahnpanel.util.LPaints
 import de.blankedv.lanbahnpanel.util.Utils
 
 
@@ -53,10 +54,10 @@ class DoubleslipElement : ActivePanelElement {
 
     override fun getSensitiveRect(): Rect {
         if (dx == INVALID_INT) initDxEtc()
-        val minx = Utils.min(x -dx, x-dx2 , xt, x2) - RASTER / 13
-        val maxx = Utils.max(x -dx, x-dx2 , xt, x2) + RASTER / 13
-        val miny = Utils.min(y -dy, y-dy2 , yt, y2) - RASTER / 13
-        val maxy = Utils.max(y -dy, y-dy2 , yt, y2) + RASTER / 13
+        val minx = Utils.min(x -dx, x-dx2 , xt, x2) - RASTER / 20
+        val maxx = Utils.max(x -dx, x-dx2 , xt, x2) + RASTER / 20
+        val miny = Utils.min(y -dy, y-dy2 , yt, y2) - RASTER / 20
+        val maxy = Utils.max(y -dy, y-dy2 , yt, y2) + RASTER / 20
         return Rect(minx, miny, maxx, maxy)
     }
 
@@ -157,4 +158,37 @@ class DoubleslipElement : ActivePanelElement {
         if (DEBUG) Log.d(TAG, "toggle(adr=$adr) new state=$state")
     }
 
+
+   override fun doDrawAddresses(canvas: Canvas) {
+
+        val bounds = Rect()
+        var txt : String
+        var txt2 : String
+        if (adr == INVALID_INT) {
+            txt = "???"
+        } else {
+            txt = "" + adr
+            if (invert != 0) {
+              txt += "i"
+            }
+        }
+       if (adr2 == INVALID_INT) {
+           txt2 = "???"
+       } else {
+           txt2 = "" + adr2
+           if (invert2 != 0) {
+               txt2 += "i"
+           }
+       }
+        LPaints.addressPaint.getTextBounds(txt, 0, txt.length, bounds)
+        val text_height = bounds.height()
+        val text_width = bounds.width()
+
+        val pre = prescaleRect(getSensitiveRect())
+        canvas.drawRect(pre, LPaints.addressBGPaint) // dark rectangle
+        canvas.drawText(txt, (pre.left + text_width / 8).toFloat(), (pre.top + 3 * text_height / 2).toFloat(), LPaints.addressPaint)
+        canvas.drawText(txt2, (pre.left + text_width / 8).toFloat(), (pre.top + 7 * text_height / 2).toFloat(), LPaints.addressPaint)
+
+
+   }
 }

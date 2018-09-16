@@ -90,8 +90,8 @@ class LanbahnPanelApplication : Application() {
                         toast(getString(R.string.route_invalid)).setGravity(Gravity.CENTER_HORIZONTAL or Gravity.TOP, 0,0)
                     }
                     TYPE_GENERIC_MSG -> {
-                        PanelElement.updateAcc(chan, data)
-                        PanelElement.updateSensor(chan, data)
+                        PanelElement.updateAcc(chan, data)  // turnout, signal, doubleslip
+                        PanelElement.updateSensor(chan, data)  // special handling
                         // TODO check if this does not imply double setting of turnouts/signals ???
                         // ?? Route.update(chan, data)
                     }
