@@ -78,43 +78,50 @@ class DoubleslipElement : ActivePanelElement {
             canvas.drawLine(((x-dx) * prescale).toFloat(), ((y-dy) * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), linePaint2)
         } else {
 
-            // TODO
-            if (state == 0) {  // == STATE_CLOSED
-                if (invert == DISP_STANDARD) {
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), bgPaint)
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaint2)
-                } else {
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), bgPaint)
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), linePaint2)
-                }
-            } else if (state == 1) {
-                if (invert == DISP_STANDARD) {
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), bgPaint)
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), linePaint2)
-                } else {
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), bgPaint)
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaint2)
-                }
-            } else if (state == 2) {
-                if (invert == DISP_STANDARD) {
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), bgPaint)
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaint2)
-                } else {
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), bgPaint)
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), linePaint2)
-                }
-            } else if (state == 3) {
-                if (invert == DISP_STANDARD) {
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), bgPaint)
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), linePaint2)
-                } else {
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), bgPaint)
-                    canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaint2)
-                }
-                // TODO END
-            } else if (state == STATE_UNKNOWN) {
+
+            if (state == STATE_UNKNOWN) {
                 canvas.drawLine(((x-dx) * prescale).toFloat(), ((y-dy) * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), bgPaint)
                 canvas.drawLine(((x-dx2) * prescale).toFloat(), ((y-dy2) * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), bgPaint)
+            } else {
+
+                val bit0 = state and 0x01
+                val bit1 = (state.shr(1) and 0x01)
+
+                if (bit0 == 0) {  // == STATE_CLOSED
+                    if (invert == DISP_STANDARD) {
+                        canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), bgPaint)
+                        canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaint2)
+                    } else {
+                        canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), bgPaint)
+                        canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), linePaint2)
+                    }
+                } else {  // bit0 == 1
+                    if (invert == DISP_STANDARD) {
+                        canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), bgPaint)
+                        canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), linePaint2)
+                    } else {
+                        canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (xt * prescale).toFloat(), (yt * prescale).toFloat(), bgPaint)
+                        canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaint2)
+                    }
+                }
+                if (bit1 == 0) {  // == STATE_CLOSED
+                    if (invert2 == DISP_STANDARD) {
+                        canvas.drawLine(((x-dx) * prescale).toFloat(), ((y-dy) * prescale).toFloat(), (x * prescale).toFloat(), (y * prescale).toFloat(), bgPaint)
+                        canvas.drawLine(((x-dx2) * prescale).toFloat(), ((y-dy2) * prescale).toFloat(), (x * prescale).toFloat(), (y * prescale).toFloat(), linePaint2)
+                    } else {
+                        canvas.drawLine(((x-dx2) * prescale).toFloat(), ((y-dy2) * prescale).toFloat(), (x * prescale).toFloat(), (y * prescale).toFloat(), bgPaint)
+                        canvas.drawLine(((x-dx) * prescale).toFloat(), ((y-dy) * prescale).toFloat(), (x * prescale).toFloat(), (y * prescale).toFloat(),linePaint2)
+                    }
+                } else {  // bit0 == 1
+                    if (invert2 == DISP_STANDARD) {
+                        canvas.drawLine(((x-dx2) * prescale).toFloat(), ((y-dy2) * prescale).toFloat(), (x * prescale).toFloat(), (y * prescale).toFloat(), bgPaint)
+                        canvas.drawLine(((x-dx) * prescale).toFloat(), ((y-dy) * prescale).toFloat(), (x * prescale).toFloat(), (y * prescale).toFloat(), linePaint2)
+                    } else {
+                        canvas.drawLine(((x-dx) * prescale).toFloat(), ((y-dy) * prescale).toFloat(), (x * prescale).toFloat(), (y * prescale).toFloat(), bgPaint)
+                        canvas.drawLine(((x-dx2) * prescale).toFloat(), ((y-dy2) * prescale).toFloat(), (x * prescale).toFloat(), (y * prescale).toFloat(), linePaint2)
+                    }
+                }
+
             }
 
         }
