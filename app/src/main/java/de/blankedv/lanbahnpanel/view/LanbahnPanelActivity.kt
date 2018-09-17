@@ -402,8 +402,8 @@ class LanbahnPanelActivity : AppCompatActivity() {
         // https://stackoverflow.com/questions/38660735/how-bind-android-databinding-to-menu
         setConnectionIcon()
         setPowerStateIcon()
-        //displayLockAndRoutingState()
-        Route.auto()
+        displayLockAndRoutingState()   // routing state can be changed by a lanbahn message anytime
+        // now done centrally: Route.auto()
 
         /* TODO check which frequency is needed */
         if ((counter.rem(4) == 0) and (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)) and (selectedLoco != null)) {

@@ -16,20 +16,15 @@ class SensorElement : ActivePanelElement {
 
     // check bit1 for "INROUTE"
     fun isInRoute() : Boolean {
-        if ((state and 0x02) != 0) {
-            return true
-        } else {
-            return false
-        }
+        if (state == STATE_UNKNOWN) return false
+
+        return ((state and 0x02) != 0)  // bit1 is set
     }
 
     // check bit0 for "OCCUPIED"
     fun isOccupied() : Boolean {
-        if ((state and 0x01) != 0) {
-            return true
-        } else {
-            return false
-        }
+        if (state == STATE_UNKNOWN) return false
+        return ((state and 0x01) != 0)  // bit0 is set
     }
 
     override fun getSensitiveRect(): Rect {

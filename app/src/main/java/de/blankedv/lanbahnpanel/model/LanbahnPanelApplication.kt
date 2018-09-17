@@ -58,7 +58,6 @@ class LanbahnPanelApplication : Application() {
             override fun handleMessage(msg: Message) {
                 val what = msg.what
                 val chan = msg.arg1
-                //if (DEBUG) Log.d(TAG,"received msg for chan= "+chan);
                 val data = msg.arg2
                 timeOfLastReceivedMessage = System.currentTimeMillis()
                 when (what) {
