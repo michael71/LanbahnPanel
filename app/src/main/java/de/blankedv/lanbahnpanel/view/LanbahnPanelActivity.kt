@@ -30,8 +30,6 @@ import de.blankedv.lanbahnpanel.config.Download
 import de.blankedv.lanbahnpanel.config.WriteConfig
 import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import de.blankedv.lanbahnpanel.elements.PanelElement
-import de.blankedv.lanbahnpanel.elements.Route
-import de.blankedv.lanbahnpanel.loco.Loco
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.railroad.Commands
 import de.blankedv.lanbahnpanel.railroad.Railroad
@@ -199,7 +197,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         if (DEBUG) Log.d(TAG, "panelName=$panelName enableFiveViews=${prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false)} selQuadrant=${prefs.getInt(KEY_QUADRANT,0)}")
         // set quadrants mode and display selected selQuadrant
 
-        enableForQuadrantButtons(prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false))
+        updateForQuadrantButtons()
         displayQuadrant(prefs.getInt(KEY_QUADRANT, 0))
         displayLockAndRoutingState()
 
@@ -250,7 +248,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu, menu)
         mOptionsMenu = menu
         setConnectionIcon()
-        enableForQuadrantButtons(prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false))
+        updateForQuadrantButtons()
         displayLockAndRoutingState()
         return super.onCreateOptionsMenu(menu)
     }
@@ -414,11 +412,10 @@ class LanbahnPanelActivity : AppCompatActivity() {
         mHandler.postDelayed({ updateUI() }, 500)
     }
 
-    private fun enableForQuadrantButtons(yes: Boolean) {
+    private fun updateForQuadrantButtons() {
         if (mOptionsMenu == null) return
 
-        if (DEBUG) Log.d(TAG, "enableForQuadrantButtons($yes)")
-        if (yes) {
+        if (prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false)) {
             mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.q1_v2_48_gray)
             mOptionsMenu?.findItem(R.id.action_q2)?.setIcon(R.drawable.q2_v2_48_gray)
             mOptionsMenu?.findItem(R.id.action_q3)?.setIcon(R.drawable.q3_v2_48_gray)
@@ -431,9 +428,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 3 -> mOptionsMenu?.findItem(R.id.action_q3)?.setIcon(R.drawable.q3_v2_48)
                 4 -> mOptionsMenu?.findItem(R.id.action_q4)?.setIcon(R.drawable.q4_v2_48)
             }
-
-
-        } else {
+      } else {
             mOptionsMenu?.findItem(R.id.action_q1)?.setIcon(R.drawable.trans_48)
             mOptionsMenu?.findItem(R.id.action_q2)?.setIcon(R.drawable.trans_48)
             mOptionsMenu?.findItem(R.id.action_q3)?.setIcon(R.drawable.trans_48)
@@ -487,8 +482,8 @@ class LanbahnPanelActivity : AppCompatActivity() {
         if (prefs.getString(KEY_SCALE_PREF,"auto") == "auto") {
             LanbahnPanelApplication.calcAutoScale(mWidth, mHeight, prefs.getInt(KEY_QUADRANT,0))
         }
-        // ??? TODO check if necessary here
-        //  enableForQuadrantButtons(prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false))
+        //
+        updateForQuadrantButtons()
 
     }
 
