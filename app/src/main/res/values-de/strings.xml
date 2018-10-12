@@ -58,4 +58,5 @@
     <string name="route_invalid">Fahrstraße kann nicht gestellt werden!</string>
     <string name="sel_system_type">Control System</string>
     <string name="adresse2">Adr. 2</string>
+    <string name="display_five_quadrants">Display 5 views (full + 4 quadrants)</string>
 </resources>

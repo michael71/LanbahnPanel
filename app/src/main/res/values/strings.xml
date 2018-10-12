@@ -101,4 +101,5 @@
     <string name="save">Save</string>
     <string name="route_invalid">Route cannot be set!</string>
     <string name="sel_system_type">Select Control System Type</string>
+    <string name="display_five_quadrants">Display 5 views (full + 4 quadrants)</string>
 </resources>

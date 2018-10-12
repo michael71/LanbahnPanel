@@ -9,7 +9,8 @@ import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import de.blankedv.lanbahnpanel.R
+
+import de.blankedv.lanbahnpanel.elements.DoubleslipElement
 import de.blankedv.lanbahnpanel.util.LPaints
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication
 import de.blankedv.lanbahnpanel.elements.RouteButtonElement
@@ -17,7 +18,7 @@ import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.model.LanbahnPanelApplication.Companion.pSett
 import de.blankedv.lanbahnpanel.loco.LocoControlArea
 import de.blankedv.lanbahnpanel.util.LPaints.paintControlAreaBG
-import de.blankedv.lanbahnpanel.util.LPaints.panelNamePaint
+
 
 
 /**
@@ -279,7 +280,9 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         matrix.postScale(sc, sc)
         matrix.postTranslate(xo, yo)
         for (e in panelElements) {
-            e.doDraw(mCanvas)
+            //if (e !is DoubleslipElement) {
+                e.doDraw(mCanvas)
+            //}
         }
         //debugDraw(mCanvas)
 

@@ -457,7 +457,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
 
     private fun displayLockAndRoutingState() {
-        if (DEBUG) Log.d(TAG, "selectedScale = ${prefs.getString(KEY_SCALE_PREF,"auto")}")
+        //if (DEBUG) Log.d(TAG, "selectedScale = ${prefs.getString(KEY_SCALE_PREF,"auto")}")
         when (prefs.getString(KEY_SCALE_PREF,"auto")) {
             "auto" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_letter_a)
             "manual" -> mOptionsMenu?.findItem(R.id.action_lock_state)?.setIcon(R.drawable.ic_lock_open_white_48dp)

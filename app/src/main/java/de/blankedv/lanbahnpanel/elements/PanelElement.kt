@@ -137,7 +137,8 @@ open class PanelElement {
         }
 
         fun updateAcc(addr: Int, data: Int) {
-            for (pe in panelElements.filter { it.adr == addr }.filter { (it is SignalElement) or (it is TurnoutElement) or (it is DoubleslipElement) }) {
+            for (pe in panelElements.filter { it.adr == addr }
+                    .filter { (it is SignalElement) or (it is TurnoutElement) or (it is DoubleslipElement) }) {
                 pe.state = data
             }
         }

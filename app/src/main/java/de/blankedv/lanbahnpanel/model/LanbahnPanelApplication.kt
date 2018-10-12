@@ -95,6 +95,7 @@ class LanbahnPanelApplication : Application() {
                         // ?? Route.update(chan, data)
                     }
 
+                    /* IGNORED
                     TYPE_SX_MSG -> {   // data of 8 (or less) lanbahn channels bundled in a data byte
                         for (i in 1..8) {   // sxbit 1..8
                             val lbChan = chan * 10 + i
@@ -110,7 +111,7 @@ class LanbahnPanelApplication : Application() {
                             }
                             // there should be no routes in the SX address range !!!
                         }
-                    }
+                    }  */
 
                     TYPE_LOCO_MSG -> {
                         //if (DEBUG) Log.d(TAG,"xloco message chan=$chan d=$data")

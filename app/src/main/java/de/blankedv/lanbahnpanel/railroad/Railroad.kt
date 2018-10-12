@@ -239,7 +239,7 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
                         m.arg1 = addr
                         m.arg2 = data
                         when (info[0]) {
-                            "X" -> m.what = TYPE_SX_MSG
+                            //"X" -> m.what = TYPE_SX_MSG   -> ignore, using only lanbahn messages
                             "XL" -> m.what = TYPE_GENERIC_MSG
                             "XLOCO" -> m.what = TYPE_LOCO_MSG
                             else -> m.what = INVALID_INT
