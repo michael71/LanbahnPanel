@@ -466,7 +466,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         when (prefs.getBoolean(KEY_ROUTING,false)) {
             true -> mOptionsMenu?.findItem(R.id.action_routing)?.setIcon(R.drawable.ic_letter_r)
             false -> mOptionsMenu?.findItem(R.id.action_routing)?.setIcon(R.drawable.ic_letter_non_r)
-         }
+        }
     }
 
     private fun displayQuadrant(q: Int) {

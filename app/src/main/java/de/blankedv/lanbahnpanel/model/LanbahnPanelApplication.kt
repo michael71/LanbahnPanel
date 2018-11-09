@@ -79,8 +79,10 @@ class LanbahnPanelApplication : Application() {
                         val editor = prefs.edit()
                         if (data == 0) {
                             editor.putBoolean(KEY_ROUTING,false)
+                            Log.d(TAG,"Routing false")
                         } else {
                             editor.putBoolean(KEY_ROUTING,true)
+                            Log.d(TAG, "Routing true")
                         }
                         editor.apply()
                     }
