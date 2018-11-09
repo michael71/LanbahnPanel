@@ -188,14 +188,14 @@ object Dialogs {
                 //.setMessage("Lok auswählen - "+locolist.name)
                 .setCancelable(true)
                 .setView(selSxAddressView)
-                .setPositiveButton(res!!.getString(R.string.select), DialogInterface.OnClickListener { dialog, id ->
-                    if (selLocoIndex === NEW_LOCO) {
+                .setPositiveButton(res!!.getString(R.string.select), { dialog, id ->
+                    if (selLocoIndex == NEW_LOCO) {
                         dialog.dismiss()
                         val l = Loco(NEW_LOCO_NAME)
                         locolist.add(l)
                         selectedLoco = l
                         openEditDialog()
-                    } else if (selLocoIndex !== NOTHING) {
+                    } else if (selLocoIndex != NOTHING) {
                         //Toast.makeText(appContext,"Loco-index="+selLocoIndex
                         //		+" wurde selektiert", Toast.LENGTH_SHORT)
                         //		.show();
@@ -204,12 +204,12 @@ object Dialogs {
                         dialog.dismiss()
                     }
                 })
-                .setNeutralButton(res!!.getString(R.string.edit), DialogInterface.OnClickListener { dialog, id ->
-                    if (selLocoIndex === NEW_LOCO) {
+                .setNeutralButton(res!!.getString(R.string.edit), { dialog, id ->
+                    if (selLocoIndex == NEW_LOCO) {
                         val l = Loco(NEW_LOCO_NAME)
                         locolist.add(l)
                         selectedLoco = l
-                    } else if (selLocoIndex !== NOTHING) {
+                    } else if (selLocoIndex != NOTHING) {
                         //Toast.makeText(appContext,"Loco-index="+selLocoIndex
                         //		+" wurde selektiert", Toast.LENGTH_SHORT)
                         //		.show();
@@ -239,15 +239,17 @@ object Dialogs {
         mass.minValue = 1
         mass.maxValue = 5
         val vmax = selSxAddressView.findViewById(R.id.vmax_picker) as NumberPicker
-        vmax.minValue = 30
-        vmax.maxValue = 300
-
-
-        val newLoco = selectedLoco?.name.equals(NEW_LOCO_NAME)
+        val vValues = arrayOf("30","60","90","120","160","200","250","300")
+        vmax.displayedValues = vValues
+        vmax.value = 160
+        vmax.minValue = 0
+        vmax.maxValue = vValues.size - 1
+        //val newLoco = selectedLoco?.name.equals(NEW_LOCO_NAME)
 
         sxAddress.value = selectedLoco?.adr   ?: 1
         mass.value = selectedLoco?.mass  ?: 1
         lName.setText(selectedLoco?.name)
+        vmax.value = selectedLoco?.vmax  ?: 160
 
         val sxDialog = AlertDialog.Builder(appContext)
                 //.setMessage("")
@@ -260,18 +262,19 @@ object Dialogs {
                     selectedLoco?.adr = sxAddress.value
                     selectedLoco?.mass = mass.value
                     selectedLoco?.name = lName.text.toString()
-                    selectedLoco?.vmax = 10 * (vmax.value / 10)
+                    selectedLoco?.vmax = vmax.value.toInt()
                     configHasChanged = true
                     selectedLoco?.initFromSX()
                     dialog.dismiss()
                 })
                 .setNeutralButton("Löschen", DialogInterface.OnClickListener { dialog, id ->
-                    if (selLocoIndex !== NOTHING) {
+                    if (selLocoIndex != NOTHING) {
                         //Toast.makeText(appContext,"Loco-index="+selLocoIndex
                         //		+" wurde selektiert", Toast.LENGTH_SHORT)
                         //		.show();
                         openDeleteDialog(selLocoIndex)
                         selLocoIndex = 0  // reset to an existing value
+                        configHasChanged = true
                     }
                     dialog.dismiss()
                 })

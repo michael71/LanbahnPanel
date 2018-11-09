@@ -39,16 +39,23 @@ object WriteConfig {
 
         var fWriter: FileWriter? = null
         try {
+            val oldFile = File(Environment.getExternalStorageDirectory().toString()
+                    + DIRECTORY + configFilename )
             configFileVersion = Utils.dateTime
+
+            oldFile.copyTo(File(Environment.getExternalStorageDirectory().toString()
+                    + DIRECTORY + configFilename + "." + configFileVersion), true)
+
+
             fWriter = FileWriter(
                     Environment.getExternalStorageDirectory().toString()
-                            + DIRECTORY + configFilename + "." + configFileVersion)
+                            + DIRECTORY + configFilename)
 
             fWriter.write(writeXml())
             fWriter.flush()
 
             if (DEBUG or DEBUG_WRITE)
-                Log.d(TAG, "Config File $configFilename.$configFileVersion saved! ")
+                Log.d(TAG, "Config File $configFilename saved! ")
             configHasChanged = false // reset flag
 999
             deleteOlderFiles()
