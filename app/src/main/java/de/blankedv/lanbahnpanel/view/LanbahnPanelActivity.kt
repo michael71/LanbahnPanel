@@ -30,6 +30,7 @@ import de.blankedv.lanbahnpanel.config.Download
 import de.blankedv.lanbahnpanel.config.WriteConfig
 import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import de.blankedv.lanbahnpanel.elements.PanelElement
+import de.blankedv.lanbahnpanel.loco.Loco
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.railroad.Commands
 import de.blankedv.lanbahnpanel.railroad.Railroad
@@ -490,7 +491,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
     private fun initLocoList() {
 
         if(!prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)) return;  // do only when loco control is enabled
-/*
+
         val lastLocoAddress = prefs.getInt(KEY_LOCO_ADR, 3)
 
         if (locolist == null) {
@@ -514,12 +515,12 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 // as a default use a "dummy loco"
                 val locoMass = Integer
                         .parseInt(prefs.getString(KEY_LOCO_MASS, "3")!!)
-                val locoName = prefs.getString(KEY_LOCO_NAME, "default loco 22")
+                val locoName = prefs.getString(KEY_LOCO_NAME, "DEFAULT")
                 selectedLoco = Loco(locoName, lastLocoAddress, locoMass)
                 selectedLoco?.initFromSX()
             }
             if (DEBUG) Log.d(TAG, "selectedLoco adr=" + selectedLoco?.adr)
-        } */
+        }
     }
 
     fun saveStates() {

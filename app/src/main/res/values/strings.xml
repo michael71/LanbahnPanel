@@ -37,7 +37,7 @@
     <string name="aboutString">"LanbahnPanel is free software - you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3. LanbahnPanel is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  For details about the GNU General Public License see http://www.gnu.org/licenses "</string>
     <string name="copyright_string" translatable="false">Copyright 2014-2018 - Michael Blank - mblank@bawue.de</string>
     <string name="usageString">to be used with SX3-PC program (SELECTRIX) or LbServer (FREMO, LocoNet)</string>
-    <string name="moreInfoString">more info on http://www.oscale.net/android</string>
+    <string name="moreInfoString">more info on https://opensx.net/lanbahnpanel</string>
     <string name="lanbahnpanelTitleString" translatable="false">LanbahnPanel</string>
     <string name="versionUnknown">version x.x</string>
     <string name="unknown">-?-</string>
@@ -55,8 +55,8 @@
     <string name="default_notification_channel_name" translatable="false">Lanbahn</string>
     <string name="check_service" translatable="false">Check Service</string>
     <string name="panel_cfg_files" translatable="false">Panel XML Config File</string>
-    <string name="server_ip" translatable="false">Server IP address</string>
-    <string name="server_port" translatable="false">Server port</string>
+    <string name="server_ip">Server IP address</string>
+    <string name="server_port">Server port</string>
     <string name="not_connected" translatable="false">currently not connected to a server</string>
     <string name="get_panel_from_server">Download panel file from server</string>
     <string name="enableAutoscale">Automatic scale</string>

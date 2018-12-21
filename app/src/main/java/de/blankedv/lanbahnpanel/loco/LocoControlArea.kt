@@ -61,8 +61,8 @@ class LocoControlArea(internal var ctx: Context) {
         green.color = GREEN
         white.color = WHITE
 
-        addressBtn = LocoButton(0.11f, 0.5f)  // only text.
-        stopBtn = LocoButton(0.20f, 0.5f)  // only text
+        addressBtn = LocoButton(0.09f, 0.5f)  // only text.
+        stopBtn = LocoButton(0.18f, 0.5f)  // only text
         lampBtn = LocoButton(0.848f, 0.5f,
                 bitmaps?.get("lamp1")!!,     // bitmap for "on" state
                 bitmaps?.get("lamp0")!!)     // bitmap for "off" state
@@ -92,9 +92,9 @@ class LocoControlArea(internal var ctx: Context) {
             lampBtn.doDraw(canvas, selectedLoco?.lamp_to_be!!)
             functionBtn.doDraw(canvas, selectedLoco?.function_to_be!!)
             if (selectedLoco?.speed_act !== 0) {
-                stopBtn.doDraw(canvas, "Stop", paintText)
+                stopBtn.doDraw(canvas, "STOP", paintText)
             } else {
-                stopBtn.doDraw(canvas, "(Stop)", paintTextDisabled)
+                stopBtn.doDraw(canvas, "(stop)", paintTextDisabled)
             }
         } else {
             addressBtn.doDraw(canvas, "??", paintLargeTxt)
@@ -120,7 +120,7 @@ class LocoControlArea(internal var ctx: Context) {
             var xtext = (canvasWidth * (X_LOCO_MID + X_LOCO_RANGE * 0.9f)).toInt()
             canvas.drawText(locoSpeed(), xtext.toFloat(), ySpeed + 32, paintText)
             xtext = (canvasWidth * (X_LOCO_MID - X_LOCO_RANGE * 0.9f)).toInt()
-            canvas.drawText(selectedLoco?.longString(), xtext.toFloat(), ySpeed + 32, paintText)
+            canvas.drawText(selectedLoco?.shortString(), xtext.toFloat(), ySpeed + 32, paintText)
         }
 
 

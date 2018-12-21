@@ -97,8 +97,10 @@ class LanbahnPanelApplication : Application() {
                         // ?? Route.update(chan, data)
                     }
 
-                    /* IGNORED
+
                     TYPE_SX_MSG -> {   // data of 8 (or less) lanbahn channels bundled in a data byte
+                        // example  X 85 5  => bits 1 and 3 set of SX-addr 85 => set 851 to 1 and 853 to 1
+                        //                                  others to zero (only if we have matching lanbahn addresses)
                         for (i in 1..8) {   // sxbit 1..8
                             val lbChan = chan * 10 + i
                             val allMatchingPEs = PanelElement.getAllPesByAddress(lbChan)
@@ -113,7 +115,11 @@ class LanbahnPanelApplication : Application() {
                             }
                             // there should be no routes in the SX address range !!!
                         }
-                    }  */
+                        // there can be also loco addresses in the X messages
+                        if (selectedLoco?.adr == chan) {
+                            selectedLoco?.updateLocoFromSX(data)
+                        }
+                    }
 
                     TYPE_LOCO_MSG -> {
                         //if (DEBUG) Log.d(TAG,"xloco message chan=$chan d=$data")

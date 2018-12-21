@@ -78,12 +78,8 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
                 }
             }
 
-            // send a command at least every 30 secs
+            // check if we are still receiving messages
             if (System.currentTimeMillis() - timeElapsed > LIFECHECK_SECONDS * 1000) {
-                if (isConnected()) {
-                    Commands.readPower()
-                    countNoResponse++
-                }
                 timeElapsed = System.currentTimeMillis()  // reset
                 if (!isConnected() or (countNoResponse > 2)) {
                     Log.e(TAG, "Railroad - connection lost?")
@@ -92,7 +88,6 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
                     sendShutdownMessage()
                     threadSleep(200)
                     shutdownFlag = true
-
                 }
             }
             threadSleep(10)
@@ -239,7 +234,7 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
                         m.arg1 = addr
                         m.arg2 = data
                         when (info[0]) {
-                            //"X" -> m.what = TYPE_SX_MSG   -> ignore, using only lanbahn messages
+                            "X" -> m.what = TYPE_SX_MSG
                             "XL" -> m.what = TYPE_GENERIC_MSG
                             "XLOCO" -> m.what = TYPE_LOCO_MSG
                             else -> m.what = INVALID_INT
@@ -275,7 +270,7 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
     }
 
     /** convert address string to integer and
-     *  check if address (=channel) is in valid range for selectrix
+     *  check if address (=channel) is in valid range for selectrix or lanbahn
      */
     private fun extractChannelFromString(s: String): Int {
 
@@ -297,8 +292,7 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
         var `in`: BufferedReader? = null
 
         fun isValidAddress(a: Int): Boolean {
-            //TODO
-            return true;
+            return ((a >= 0) and (a <= LBMAX))
         }
     }
 }

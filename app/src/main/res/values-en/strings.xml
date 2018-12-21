@@ -31,7 +31,7 @@
     <string name="sel_style">Select Display Style</string>
     <string name="sel_style_default">US</string>
     <string name="aboutString">"LanbahnPanel is free software - you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3. LanbahnPanel is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  For details about the GNU General Public License see http://www.gnu.org/licenses "</string>
-    <string name="moreInfoString">more info on http://www.oscale.net/android</string>
+    <string name="moreInfoString">more info on https://opensx.net/lanbahnpanel</string>
     <string name="versionUnknown">version x.x</string>
     <string name="unknown">-?-</string>
     <string name="wifi_disconnected">No Wifi !</string>
@@ -58,4 +58,9 @@
     <string name="route_invalid">Route cannot be set!</string>
     <string name="sel_system_type">Control System</string>
     <string name="adresse2">Addr. 2</string>
+    <string name="save">Save</string>
+    <string name="select">Select</string>
+    <string name="selectloco">select Loco</string>
+    <string name="server_ip">Server IP address</string>
+    <string name="server_port">Server port</string>
 </resources>

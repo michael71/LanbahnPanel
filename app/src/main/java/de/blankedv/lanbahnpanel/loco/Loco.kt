@@ -284,5 +284,9 @@ class Loco {
         return "$name ($adr)(m=$mass)"
     }
 
+    fun shortString(): String {
+        return "$name"
+    }
+
 
 }
