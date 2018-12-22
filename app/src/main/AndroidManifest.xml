@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.blankedv.lanbahnpanel"
     android:exported="true"
-    android:versionCode="38"
-    android:versionName="2.5.7 (KT) - 21 Dec 2018">
+    android:versionCode="39"
+    android:versionName="2.5.8 (KT) - 22 Dec 2018">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />

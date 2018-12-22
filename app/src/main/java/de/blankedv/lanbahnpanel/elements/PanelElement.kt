@@ -28,7 +28,9 @@ open class PanelElement {
     var adr2 = INVALID_INT   // needed for DCC sensors and signals
     var state = STATE_UNKNOWN
     var nbit = 1  // for multi-aspect signals, nbit=2 => 4 possible values 0,1,2,3
-    // var inRoute = false -> now coded into "state" (bit "INROUTE")
+    var inRoute = false      // handled separately because sensors often have
+         // 2 different addresses, one covering a real SX address (=occupied) and a second
+         // virtual (lanbahn) address with the inroute info
 
     var route = ""
     var invert = DISP_STANDARD     // not inverted
@@ -143,11 +145,15 @@ open class PanelElement {
             }
         }
 
-        // only the value for the primary sensor address "adr" gets updated
+        // both the value for the primary sensor address "adr" and the secondary "adr2" are updated
         fun updateSensor(addr: Int, data: Int) {
             for (pe in panelElements.filter { it.adr == addr }.filter { it is SensorElement }) {
-                pe.state = data
+                pe.state = data   // used for "occupied" info
             }
+            for (pe in panelElements.filter { it.adr2 == addr }.filter { it is SensorElement }) {
+                pe.inRoute = data != 0   // used for "inRoute" info
+            }
+
         }
 
         /** relocate panel origin for better fit on display and for possible "upside down"

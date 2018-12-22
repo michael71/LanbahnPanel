@@ -94,7 +94,7 @@ class LanbahnPanelApplication : Application() {
                         PanelElement.updateAcc(chan, data)  // turnout, signal, doubleslip
                         PanelElement.updateSensor(chan, data)  // special handling
                         // TODO check if this does not imply double setting of turnouts/signals ???
-                        // ?? Route.update(chan, data)
+                        // ?? No longer used, administrated centrally Route.update(chan, data)
                     }
 
 
@@ -107,6 +107,7 @@ class LanbahnPanelApplication : Application() {
                             for (pe in allMatchingPEs) {
                                 var d: Int
                                 if (pe.nbit == 2) { // check if nbit is != 1
+                                    // can be multi aspect signal
                                     d = data.shr(i - 1) and 0x03
                                 } else {
                                     d = data.shr(i - 1) and 0x01

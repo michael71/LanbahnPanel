@@ -14,13 +14,6 @@ class SensorElement : ActivePanelElement {
 
     constructor() : super() {}
 
-    // check bit1 for "INROUTE"
-    fun isInRoute() : Boolean {
-        if (state == STATE_UNKNOWN) return false
-
-        return ((state and 0x02) != 0)  // bit1 is set
-    }
-
     // check bit0 for "OCCUPIED"
     fun isOccupied() : Boolean {
         if (state == STATE_UNKNOWN) return false
@@ -43,7 +36,7 @@ class SensorElement : ActivePanelElement {
             if (isOccupied()) {
                 canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintRedDash)
             } else {
-                if (isInRoute()) {
+                if (inRoute) {
                     canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintDarkYellowDash)
                 } else {
                     canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintGrayDash)
