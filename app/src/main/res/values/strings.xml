@@ -35,8 +35,8 @@
     <string name="sel_style">Select Display Style</string>
     <string name="sel_style_default">US</string>
     <string name="aboutString">"LanbahnPanel is free software - you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3. LanbahnPanel is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  For details about the GNU General Public License see http://www.gnu.org/licenses "</string>
-    <string name="copyright_string" translatable="false">Copyright 2014-2018 - Michael Blank - mblank@bawue.de</string>
-    <string name="usageString">to be used with SX3-PC program (SELECTRIX) or LbServer (FREMO, LocoNet)</string>
+    <string name="copyright_string" translatable="false">Copyright 2014-2019 - Michael Blank - mblank@bawue.de</string>
+    <string name="usageString">to be used with SX4 program or SX3-PC program (SELECTRIX) or LbServer (FREMO, LocoNet)</string>
     <string name="moreInfoString">more info on https://opensx.net/lanbahnpanel</string>
     <string name="lanbahnpanelTitleString" translatable="false">LanbahnPanel</string>
     <string name="versionUnknown">version x.x</string>

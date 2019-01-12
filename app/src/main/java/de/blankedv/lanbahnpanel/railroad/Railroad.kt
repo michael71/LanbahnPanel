@@ -228,7 +228,7 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
                     }
                     3 -> {
                         val addr = extractChannelFromString(info[1])
-                        val data = extractDataByteFromString(info[2])
+                        val data = extractDataFromString(info[2])
                         if ((addr == INVALID_INT) or (data == INVALID_INT)) return false
                         val m = Message.obtain()
                         m.arg1 = addr
@@ -237,7 +237,8 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
                             "X" -> m.what = TYPE_SX_MSG
                             "XL" -> m.what = TYPE_GENERIC_MSG
                             "XLOCO" -> m.what = TYPE_LOCO_MSG
-                            else -> m.what = INVALID_INT
+                            "XTRAIN" -> m.what = TYPE_TRAIN_MSG
+                             else -> m.what = INVALID_INT
                         }
                         if (m.what != INVALID_INT) {
                             //Log.d(TAG,"what=${m.what} a=${m.arg1} d=${m.arg2}")
@@ -269,6 +270,23 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
         return data!!
     }
 
+    /** convert data string to integer and
+     *  check if data is in valid range 0..9999 ( train numbers for example
+     */
+    private fun extractDataFromString(s: String): Int {
+        // converts String to integer between 0 and 9999 (maximum data range)
+        var data: Int? = INVALID_INT
+        try {
+            data = Integer.parseInt(s)
+            if (data < 0 || data > 9999) {
+                data = INVALID_INT
+            }
+        } catch (e: Exception) {
+            data = INVALID_INT
+        }
+
+        return data!!
+    }
     /** convert address string to integer and
      *  check if address (=channel) is in valid range for selectrix or lanbahn
      */

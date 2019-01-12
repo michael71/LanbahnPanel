@@ -96,7 +96,10 @@ class LanbahnPanelApplication : Application() {
                         // TODO check if this does not imply double setting of turnouts/signals ???
                         // ?? No longer used, administrated centrally Route.update(chan, data)
                     }
-
+                    TYPE_TRAIN_MSG -> {
+                        //Log.d(TAG,"chan=$chan data=$data")
+                        PanelElement.updateSensorTrain(chan, data)  // special handling
+                    }
 
                     TYPE_SX_MSG -> {   // data of 8 (or less) lanbahn channels bundled in a data byte
                         // example  X 85 5  => bits 1 and 3 set of SX-addr 85 => set 851 to 1 and 853 to 1

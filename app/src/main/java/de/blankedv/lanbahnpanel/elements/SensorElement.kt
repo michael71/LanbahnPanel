@@ -35,7 +35,13 @@ class SensorElement : ActivePanelElement {
             // read data from central station and set red/gray dashed line accordingly
             if (isOccupied()) {
                 canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintRedDash)
+                if ((train != INVALID_INT) && ( !prefs.getBoolean(KEY_DRAW_ADR2, false))){
+                    // draw train number on sensor
+                    doDrawTrainNumber(canvas)
+                }
             } else {
+                // reset train number if no longer occupied
+                train = INVALID_INT
                 if (inRoute) {
                     canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintDarkYellowDash)
                 } else {

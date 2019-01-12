@@ -124,6 +124,26 @@ abstract class ActivePanelElement : PanelElement {
 
     }
 
+    open protected fun doDrawTrainNumber(canvas: Canvas) {
+
+        val bounds = Rect()
+        var txt: String
+        if (train == INVALID_INT) {
+            txt = "???"
+        } else {
+            txt = "" + train
+        }
+        LPaints.addressPaint.getTextBounds(txt, 0, txt.length, bounds)
+        val textHeight = bounds.height()
+        val textWidth = bounds.width()
+
+        val pre = prescaleRect(getSensitiveRect())
+        canvas.drawRect(pre, LPaints.addressBGPaint) // dark rectangle
+        canvas.drawText(txt, (pre.left + textWidth / 8).toFloat(), (pre.top + 3 * textHeight / 2).toFloat(), LPaints.addressPaint) // the
+        // numbers
+
+    }
+
     override fun setExpired() {
         lastUpdateTime = System.currentTimeMillis() - 21 * 1000
     }

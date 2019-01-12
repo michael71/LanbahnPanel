@@ -116,6 +116,7 @@ const val TYPE_LOCO_MSG = 10
 const val TYPE_SHUTDOWN_MSG = 11
 const val TYPE_ROUTING_MSG = 12
 const val TYPE_ROUTE_INVALID_MSG = 13
+const val TYPE_TRAIN_MSG = 14
 
 
 // fixed prefix for scaling - should be =1 for small displays and =2 for

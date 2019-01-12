@@ -27,6 +27,7 @@ open class PanelElement {
     var adr = INVALID_INT
     var adr2 = INVALID_INT   // needed for DCC sensors and signals
     var state = STATE_UNKNOWN
+    var train = INVALID_INT   // train number displayed on track or sensor
     var nbit = 1  // for multi-aspect signals, nbit=2 => 4 possible values 0,1,2,3
     var inRoute = false      // handled separately because sensors often have
          // 2 different addresses, one covering a real SX address (=occupied) and a second
@@ -154,6 +155,12 @@ open class PanelElement {
                 pe.inRoute = data != 0   // used for "inRoute" info
             }
 
+        }
+
+        fun updateSensorTrain(addr: Int, data: Int) {
+            for (pe in panelElements.filter { it.adr == addr }.filter { it is SensorElement }) {
+                pe.train = data   // used for train info
+            }
         }
 
         /** relocate panel origin for better fit on display and for possible "upside down"
