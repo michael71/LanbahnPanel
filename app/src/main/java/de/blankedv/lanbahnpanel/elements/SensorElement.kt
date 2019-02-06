@@ -40,8 +40,6 @@ class SensorElement : ActivePanelElement {
                     doDrawTrainNumber(canvas)
                 }
             } else {
-                // reset train number if no longer occupied
-                train = INVALID_INT
                 if (inRoute) {
                     canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), linePaintDarkYellowDash)
                 } else {

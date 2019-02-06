@@ -69,13 +69,7 @@ const val STATE_NOT_PRESSED = 0
 const val STATE_PRESSED = 1
 
 // sensors
-const val STATE_FREE = 0    // bit0, mapped to occupation
-const val STATE_OCCUPIED = 1   // bit0, mapped to occupation
-const val SENSOR_NOT_INROUTE = 2  // bit1, mapped to "ausleuchtung"
-const val SENSOR_INROUTE = 3      // bit1, mapped to "ausleuchtung"
 const val STATE_UNKNOWN = INVALID_INT
-
-
 
 //power
 const val POWER_UNKNOWN = INVALID_INT
@@ -88,20 +82,13 @@ const val CMD_STATION_OFF = 0
 
 const val SXMIN = 0
 const val SXMAX = 111   // highest channel number for selectrix (lowest is 0)
-const val LIFECHECK_SECONDS = 10  // every 10 seconds check if server connection is alive
+const val LIFECHECK_SECONDS = 15  // every 15 seconds check if server connection is alive
+                                 // (=received a msg during the last 15 secs)
 
 const val DEFAULT_SXNET_PORT = "4104"  // string
 const val DEFAULT_SXNET_IP = "192.168.178.29"  // string
 const val LBMIN = 1 // minimum sx channel number
 const val LBMAX = 9999 // maximum lanbahn channel number
-
-// type of communication (Accessory, Sensor, Loco etc)
-
-const val TYPE_NONE = 0
-const val TYPE_SENSOR = 1
-const val TYPE_ACCESSORY = 2
-const val TYPE_LISSY = 3
-const val TYPE_LOCO = 4
 
 // Message Types for UI Thread
 const val TYPE_SX_MSG = 2

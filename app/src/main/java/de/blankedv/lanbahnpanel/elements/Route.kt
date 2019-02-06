@@ -133,22 +133,6 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         //		Log.d(TAG, rtOffending.size() + " offending routes in config");
     }//
 
-    // TODO no longer needed
-    fun deactivateSensorsAndTurnouts() {
-        // deactivate sensors => set "inRoute = false"
-        for (se in rtSensors) {
-            // TODO no longer needed se.setState(STATE_NOT_INROUTE)
-            //  if a route is de-activated, all connected tablets need to set the sensors to inroute = false
-            // this is handled via activating and de-activating routes globally
-        }
-
-        for (rrt in rtTurnouts) {
-            // TODO no longer neededrrt.turnout.inRoute = false
-            //  if a route is de-activated, all connected tablets need to set the turnouts to inroute = false
-            // this is handled via activating and de-activating routes globally
-        }
-
-    }
 
     /** clear a route, set sensors to free and signals to RED
      *
@@ -161,8 +145,6 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         // automatically
         if (DEBUG)
             Log.d(TAG, "clearing route id=$id")
-
-        deactivateSensorsAndTurnouts()
 
         // set signals turnout red
         for (rs in rtSignals) {
@@ -192,41 +174,6 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         sendQ.add(cmd)
     }
 
-    fun clearOffendingRoutes() {
-
-        if (prefs.getBoolean(KEY_ROUTING,true)) return; // done in CENTRAL
-
-        if (DEBUG)
-            Log.d(TAG, "clearing (active) offending Routes")
-        val offRoutes = offendingString.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        for (i in offRoutes.indices) {
-            for (rt in routes) {
-                try {
-                    val offID = Integer.parseInt(offRoutes[i])
-                    if (rt.id == offID && rt.isActive) {
-                        rt.clear()
-                    }
-                } catch (e: NumberFormatException) {
-                }
-
-            }
-        }
-    }
-
-    fun activateSensorsAndTurnouts() {
-
-        if (prefs.getBoolean(KEY_ROUTING,true)) return; // done in CENTRAL
-
-        // activate sensors => set "inRoute = true"
-        for (se in rtSensors) {
-            // TODO no longer needed se.inRoute = true
-        }
-        // set and // TODO lock turnouts
-        for (rtt in rtTurnouts) {
-            // TODO no longer neededrtt.turnout.inRoute = true
-        }
-    }
-
     fun request() {
         if (DEBUG)
             Log.d(TAG, "requesting route id=$id")
@@ -250,10 +197,6 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         var cmd = "SET $id 1"    // for other tablets
         sendQ.add(cmd)
         isActive = true
-
-        clearOffendingRoutes()
-
-        activateSensorsAndTurnouts()
 
         // set signals
         for (rs in rtSignals) {
@@ -309,123 +252,9 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         }
     }
 
-    fun updateDependencies() {
-        // update signals which have a dependency from another signal
-        // set signals
-        for (rs in rtSignals) {
-            if (rs.depFrom != INVALID_INT) {
-                if (rs.signal.state != rs.dynamicValueToSetForRoute()) {
-                    rs.signal.state = rs.dynamicValueToSetForRoute()
-                    val cmd = "SET " + rs.signal.adr + " " + rs.signal.state
-                    if (DEBUG)
-                        Log.d(TAG, "setting route signal dep.(" + rs.depFrom + ") " + cmd)
-                    sendQ.add(cmd)
-                }
-            }
-        }
-
-    }
-
     class RouteTurnout internal constructor(internal var turnout: TurnoutElement, internal var valueToSetForRoute: Int)
 
-    /**
-     * this route was activated or deactivated by a different device we need the
-     * status of this route, but we are not actively managing it.
-     *
-     * @param data
-     */
-    fun updateData(data: Int) {
-        if (data == 0) {
-            isActive = false
-            deactivateSensorsAndTurnouts()
-            timeSet = System.currentTimeMillis()
-        } else if (data == 1) {
-            isActive = true
-            activateSensorsAndTurnouts()
-            timeSet = System.currentTimeMillis()
-        }
-    }
-
-    fun addOffending(rt2: Route) {
-        // check if not already contained in offending string
-        if (!rtOffending.contains(rt2))
-            rtOffending.add(rt2)
-    }
 
 
-    fun getOffendString(): String {
-
-
-        val sb = StringBuilder("")
-        for (r in rtOffending) {
-            if (sb.length == 0) {
-                sb.append(r.id)
-            } else {
-                sb.append(",")
-                sb.append(r.id)
-            }
-        }
-        /*		if (sb.length() == 0)
-            Log.d(TAG, "route id=" + id + " has no offending routes.");
-        else
-            Log.d(TAG, "route id=" + id + " has offending routes with ids="
-                    + sb.toString()); */
-        return sb.toString()
-
-    }
-
-    companion object {
-
-        fun auto() {
-            if (prefs.getBoolean(KEY_ROUTING,true)) return; // done in CENTRAL
-
-            // check for auto reset of routes
-            for (rt in routes) {
-                if (System.currentTimeMillis() - rt.timeSet > 30 * 1000L && rt.isActive) {
-                    rt.clear()
-                }
-                // update dependencies
-                if (rt.isActive) rt.updateDependencies()
-            }
-        }
-
-        fun calcOffendingRoutes() {
-
-            for (rt in routes) {
-                for (t in rt.rtTurnouts) {
-                    // iterate over all turnouts of rt and check, if another route
-                    // activates the same turnout to a different position
-                    for (rt2 in routes) {
-                        if (rt.id != rt2.id) {
-                            for (t2 in rt2.rtTurnouts) {
-                                if (t.turnout.adr == t2.turnout.adr && t.valueToSetForRoute != t2.valueToSetForRoute) {
-                                    rt.addOffending(rt2)
-                                    break
-                                }
-
-                            }
-                        }
-                    }
-                }
-                rt.offendingString = rt.getOffendString()
-            }
-
-        }
-
-        fun clearAllRoutes() {
-            if (prefs.getBoolean(KEY_ROUTING,true)) return; // done in CENTRAL
-            routes.forEach { it.clear() }
-        }
-
-        fun update(chan: Int, data: Int) {
-            if (prefs.getBoolean(KEY_ROUTING,true)) return; // done in CENTRAL
-
-            for (rt in routes) {
-                if (rt.id == chan) {
-                    rt.updateData(data)
-                }
-            }
-        }
-    }
 }
 

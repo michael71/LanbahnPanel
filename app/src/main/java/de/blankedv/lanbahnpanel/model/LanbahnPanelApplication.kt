@@ -30,8 +30,6 @@ import org.jetbrains.anko.toast
 
 class LanbahnPanelApplication : Application() {
 
-    var timeOfLastReceivedMessage = 0L
-
     //@SuppressLint("HandlerLeak")
     @SuppressLint("HandlerLeak")
     override fun onCreate() {
@@ -59,7 +57,6 @@ class LanbahnPanelApplication : Application() {
                 val what = msg.what
                 val chan = msg.arg1
                 val data = msg.arg2
-                timeOfLastReceivedMessage = System.currentTimeMillis()
                 when (what) {
                     TYPE_POWER_MSG -> {
                         if (data == 0) {
@@ -97,7 +94,7 @@ class LanbahnPanelApplication : Application() {
                         // ?? No longer used, administrated centrally Route.update(chan, data)
                     }
                     TYPE_TRAIN_MSG -> {
-                        //Log.d(TAG,"chan=$chan data=$data")
+                        Log.d(TAG,"train-msg chan=$chan data=$data")
                         PanelElement.updateSensorTrain(chan, data)  // special handling
                     }
 

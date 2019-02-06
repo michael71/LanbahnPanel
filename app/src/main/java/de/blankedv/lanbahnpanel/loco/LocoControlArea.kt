@@ -10,7 +10,6 @@ import android.util.Log
 import de.blankedv.lanbahnpanel.model.*
 import de.blankedv.lanbahnpanel.util.LanbahnBitmaps.bitmaps
 import de.blankedv.lanbahnpanel.view.Dialogs
-import kotlinx.coroutines.experimental.selects.select
 
 /**
  * handles the display of the top 20% of the display, the "LOCO CONTROL AREA"

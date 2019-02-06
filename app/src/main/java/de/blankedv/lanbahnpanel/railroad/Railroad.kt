@@ -26,7 +26,7 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
 
     private var countNoResponse = 0
     private var connectionActive = false  // determined with time out counter
-    private var timeElapsed: Long = 0
+    private var lastReceived: Long = 0
 
     private val TAG = "Railroad_Thread"
 
@@ -42,6 +42,7 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
             connString = connResult
             if (DEBUG) Log.d(TAG, "connected to: " + connResult)
             connectionActive = true
+            lastReceived = System.currentTimeMillis()
         } else { // the connection could not be established, send Error Message to UI
             connString = "NOT CONNECTED"
             if (DEBUG) Log.d(TAG, "NOT Connected")
@@ -59,8 +60,7 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
                     val in1 = `in`!!.readLine()
                     if (DEBUG) Log.d(TAG, "read: $in1")
                     handleReceive(in1.toUpperCase())
-                    countNoResponse = 0 // reset timeout counter.
-                    connectionActive = true
+                    lastReceived = System.currentTimeMillis()
                 }
             } catch (e: IOException) {
                 Log.e(TAG, "ERROR: reading from socket - " + e.message)
@@ -79,17 +79,15 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
             }
 
             // check if we are still receiving messages
-            if (System.currentTimeMillis() - timeElapsed > LIFECHECK_SECONDS * 1000) {
-                timeElapsed = System.currentTimeMillis()  // reset
-                if (!isConnected() or (countNoResponse > 2)) {
+            if ((System.currentTimeMillis() - lastReceived) > LIFECHECK_SECONDS * 1000) {
+                lastReceived = System.currentTimeMillis()  // reset
                     Log.e(TAG, "Railroad - connection lost?")
                     countNoResponse = 0
                     connectionActive = false
                     sendShutdownMessage()
                     threadSleep(200)
                     shutdownFlag = true
-                }
-            }
+             }
             threadSleep(10)
         }
 

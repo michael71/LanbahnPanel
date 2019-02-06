@@ -118,7 +118,6 @@ object ReadConfig {
             PanelElement.relocatePanelOrigin()
             routes = parseRoutes(doc) // can be done only after all panel
             // elements have been read
-            Route.calcOffendingRoutes() // calculate offending routes
             compRoutes = parseCompRoutes(doc) // can be done only after routes
             // have been read
 

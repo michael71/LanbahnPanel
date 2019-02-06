@@ -158,9 +158,13 @@ open class PanelElement {
         }
 
         fun updateSensorTrain(addr: Int, data: Int) {
+            var found = false
             for (pe in panelElements.filter { it.adr == addr }.filter { it is SensorElement }) {
                 pe.train = data   // used for train info
+                if (DEBUG) Log.d(TAG,"pe(adr=${pe.adr}) set to train=$data")
+                found = true
             }
+            if (!found) Log.d(TAG, "pe(adr=${addr}) not found in sensors")
         }
 
         /** relocate panel origin for better fit on display and for possible "upside down"
