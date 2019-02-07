@@ -181,14 +181,12 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
                             Log.d(TAG, "ACTION_UP _Checking panel elements at: xs=$xs  ys$ys")
                             for (e in panelElements) {
-                                var sel = false
-                                if (prefs.getBoolean(KEY_ROUTING, false)) {
-                                    // check route buttons only (!!) when routing is enabled
-                                    if (e is RouteButtonElement) {
-                                        sel = e.isSelected(xs, ys)
+                                var sel = e.isSelected(xs, ys)
+                                if (!prefs.getBoolean(KEY_ROUTING, false)) {
+                                    // ignore route buttons when routing is disabled
+                                     if (e is RouteButtonElement) {
+                                        sel = false
                                     }
-                                } else {
-                                    sel = e.isSelected(xs, ys)
                                 }
                                 if (sel) { //mLastTouchX, mLastTouchY)) {
                                     if (prefs.getBoolean(KEY_ENABLE_EDIT, false)) {
