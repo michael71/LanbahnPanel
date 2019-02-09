@@ -87,7 +87,34 @@ class RouteButtonElement : ActivePanelElement {
         if ((state == STATE_NOT_PRESSED) or (state == STATE_UNKNOWN)) {
             state = STATE_PRESSED
             timeSet = System.currentTimeMillis()
-            checkForRoute(adr)
+            // check first if this is the first button of a currently active route
+            // if this is the case then clear this route
+            var clearing = false
+            for (rt in routes) {
+                if (DEBUG) Log.d(TAG, "checking for route clear")
+                if (rt.isActive && rt.btn1 == adr) {
+                    if (DEBUG) Log.d(TAG, "found route matching to btn. requesting to clear route=" + rt.id)
+                    // we found a route with this button, new clear it
+                    // now set
+                    rt.clearRequest()
+                    clearing = true
+                    state == STATE_NOT_PRESSED   // reset !!!
+                }
+            }
+            for (crt in compRoutes) {
+                if (DEBUG) Log.d(TAG, "checking for route clear")
+                if (crt.isActive && crt.btn1 == adr) {
+                    if (DEBUG) Log.d(TAG, "found COMP route matching to btn. requesting to clear COMP route=" + crt.id)
+                    // we found a route with this button, new clear it
+                    // now set
+                    crt.clearRequest()
+                    clearing = true
+                    state == STATE_NOT_PRESSED   // reset !!!
+                }
+            }
+            if (!clearing) {
+                checkForRoute(adr)
+            }
 
         } else {
             state = STATE_NOT_PRESSED
@@ -141,27 +168,8 @@ class RouteButtonElement : ActivePanelElement {
 
         fun checkForRoute(adrSecondBtn: Int): Boolean {
 
-
             if (DEBUG) Log.d(TAG, "checkForRoute called, adrSecondBtn=$adrSecondBtn")
             // check if a route needs to be cleared first
-            if (clearRouteButtonActive) {
-                if (DEBUG) Log.d(TAG, "clearRouteButtonActive:true")
-                // find route with adrSecondBtn and clear it
-                for (rt in routes) {
-                    if (DEBUG) Log.d(TAG, "checking route id=" + rt.id)
-                    if (rt.isActive && (rt.btn1 == adrSecondBtn || rt.btn2 == adrSecondBtn)) {
-                        if (DEBUG) Log.d(TAG, "found route matching to btn. clearing route=" + rt.id)
-                        // we found a route with this button, new clear it
-                        // now set
-                        rt.clear()
-                    } else {
-                        if (DEBUG) Log.d(TAG, "route not active route for btn=$adrSecondBtn")
-                    }
-                }
-                clearRouteButtonActive = false
-                findRouteButtonByAddress(adrSecondBtn)!!.reset()  // clear the button also
-                return true
-            }
 
             var nPressed = 0
             var adrFirstBtn = 0
@@ -200,8 +208,6 @@ class RouteButtonElement : ActivePanelElement {
                         // set the route (i.e. sensors and turnouts)
                         if (prefs.getBoolean(KEY_ROUTING,true)) {
                             rt.request();
-                        } else {
-                            rt.set()
                         }
                         break  // no need to search further
                     }
@@ -220,8 +226,6 @@ class RouteButtonElement : ActivePanelElement {
                         // set the route (i.e. sensors and turnouts)
                         if (prefs.getBoolean(KEY_ROUTING,true)) {
                             cr.request();
-                        } else {
-                            cr.set()
                         }
                         break  // no need to search further
                     }
@@ -247,15 +251,6 @@ class RouteButtonElement : ActivePanelElement {
             return true
         }
 
-        fun autoReset() {
-            for (pe in panelElements) {
-                if (pe is RouteButtonElement) {
-                    if ((pe.state == STATE_PRESSED) && (System.currentTimeMillis() - pe.timeSet > 20 * 1000L)) {
-                        pe.state = STATE_NOT_PRESSED
-                    }
-                }
-            }
 
-        }
     }
 }

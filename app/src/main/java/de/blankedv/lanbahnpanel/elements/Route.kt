@@ -134,46 +134,6 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
     }//
 
 
-    /** clear a route, set sensors to free and signals to RED
-     *
-     */
-    fun clear() {
-
-        if (prefs.getBoolean(KEY_ROUTING,true)) return; // done in CENTRAL
-
-        timeSet = System.currentTimeMillis() // store for resetting
-        // automatically
-        if (DEBUG)
-            Log.d(TAG, "clearing route id=$id")
-
-        // set signals turnout red
-        for (rs in rtSignals) {
-            if (rs.signal.state != STATE_RED) {
-                rs.signal.state = STATE_RED
-
-                val cmd = "SET " + rs.signal.adr + " " + STATE_RED
-                if (!sendQ.contains(cmd)) {
-                    sendQ.add(cmd)
-                }
-            }
-        }
-
-
-        // TODO unlock turnouts
-        /*
-     * for (RouteTurnout to : rtTurnouts) {
-     *     String cmd = "U " + to.turnout.adr;
-     *     sendQ.add(cmd);
-     * }
-     */
-
-        isActive = false
-        // notify that route was cleared
-        // route id's are unique, the standard number space is used
-        val cmd = "SET $id 0"    // this is used by other tablets to set sensors to "not in Route"
-        sendQ.add(cmd)
-    }
-
     fun request() {
         if (DEBUG)
             Log.d(TAG, "requesting route id=$id")
@@ -182,38 +142,12 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         sendQ.add(cmd)
     }
 
-    fun set() {
-
-        if (prefs.getBoolean(KEY_ROUTING,true)) return; // done in CENTRAL
-
-        timeSet = System.currentTimeMillis() // store for resetting
-        // automatically
-
+    fun clearRequest() {
         if (DEBUG)
-            Log.d(TAG, "setting route id=$id")
-
-        // notify that route is set
-        // route id's are unique, the standard number space is used
-        var cmd = "SET $id 1"    // for other tablets
+            Log.d(TAG, "requesting CLEAR route id=$id")
+        // request to set this route in central
+        var cmd = "REQ $id 0"    // for other tablets
         sendQ.add(cmd)
-        isActive = true
-
-        // set signals
-        for (rs in rtSignals) {
-            rs.signal.state = rs.dynamicValueToSetForRoute()
-            cmd = "SET " + rs.signal.adr + " " + rs.dynamicValueToSetForRoute()
-            if (DEBUG)
-                Log.d(TAG, "setting route signal $cmd")
-            sendQ.add(cmd)
-
-        }
-        // set and // TODO lock turnouts
-        for (rtt in rtTurnouts) {
-            rtt.turnout.state = rtt.valueToSetForRoute
-            cmd = "SET " + rtt.turnout.adr + " " + rtt.valueToSetForRoute
-            sendQ.add(cmd)
-        }
-
     }
 
     class RouteSignal {
@@ -254,7 +188,24 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
 
     class RouteTurnout internal constructor(internal var turnout: TurnoutElement, internal var valueToSetForRoute: Int)
 
+    companion object {
 
+
+        /**
+         * check if we need to update the route state "isActive = true" when
+         * data==1 and " = false" when data==0
+         *
+         */
+        fun update ( addr : Int, data : Int) {
+            for (rt in routes) {
+                if (rt.id == addr) {
+                    rt.isActive = ( data != 0 )
+                    if (DEBUG)
+                        Log.d(TAG, "route id=${rt.id} isActive=${rt.isActive}")
+                }
+            }
+        }
+    }
 
 }
 

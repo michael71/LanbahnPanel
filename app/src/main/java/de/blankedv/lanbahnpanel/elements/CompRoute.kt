@@ -23,6 +23,8 @@ class CompRoute
 
     // route is comprised of a list of routes
     private val myroutes = ArrayList<Route>()
+    var isActive = false
+
 
     init {
 
@@ -64,16 +66,36 @@ class CompRoute
         var cmd = "REQ $id 1"    // for other tablets
         sendQ.add(cmd)
     }
-    /** set all the single routes which depend on this compound route
-     *
-     */
-    fun set() {
-        if (prefs.getBoolean(KEY_ROUTING,true)) return; // done in CENTRAL
-        if (DEBUG)
-            Log.d(TAG, "setting comproute id=$id")
 
-        for (rt in myroutes) {
-            rt.set()
+    fun clearRequest() {
+        if (DEBUG)
+            Log.d(TAG, "requesting CLEAR comproute id=$id")
+        // request to set this route in central
+        var cmd = "REQ $id 0"    // for other tablets
+        sendQ.add(cmd)
+    }
+
+
+    companion object {
+
+        /**
+         * check if we need to update the comp route state "isActive = true" when
+         * data = 1, and the depending "simple routes"
+         *
+         */
+        fun update ( addr : Int, data : Int) {
+            for (crt in compRoutes) {
+                if (crt.id == addr) {
+                    crt.isActive = (data != 0)
+                    if (DEBUG)
+                        Log.d(TAG, "route id=${crt.id} isActive=${crt.isActive}")
+                    for (rt in crt.myroutes) {
+                        rt.isActive = (data != 0)
+                        if (DEBUG)
+                            Log.d(TAG, "route id=${rt.id} isActive=${rt.isActive}")
+                    }
+                }
+            }
         }
     }
 

@@ -91,7 +91,8 @@ class LanbahnPanelApplication : Application() {
                         PanelElement.updateAcc(chan, data)  // turnout, signal, doubleslip
                         PanelElement.updateSensor(chan, data)  // special handling
                         // TODO check if this does not imply double setting of turnouts/signals ???
-                        // ?? No longer used, administrated centrally Route.update(chan, data)
+                        Route.update(chan, data)
+                        CompRoute.update(chan, data)
                     }
                     TYPE_TRAIN_MSG -> {
                         Log.d(TAG,"train-msg chan=$chan data=$data")
