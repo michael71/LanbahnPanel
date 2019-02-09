@@ -2,8 +2,10 @@ package de.blankedv.lanbahnpanel.elements
 
 import android.graphics.Canvas
 import android.util.Log
+import android.widget.Toast
 import de.blankedv.lanbahnpanel.util.LPaints
 import de.blankedv.lanbahnpanel.model.*
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 
 /**  button for selecting routes
@@ -18,7 +20,7 @@ class RouteButtonElement : ActivePanelElement {
 
     var blink = System.currentTimeMillis()
     var toggleBlink = false
-    private var timeSet: Long = 0
+    //private var timeSet: Long = 0
 
     /**
      *
@@ -85,35 +87,36 @@ class RouteButtonElement : ActivePanelElement {
         lastToggle = System.currentTimeMillis()  // reset toggle timer
 
         if ((state == STATE_NOT_PRESSED) or (state == STATE_UNKNOWN)) {
-            state = STATE_PRESSED
-            timeSet = System.currentTimeMillis()
+            //timeSet = System.currentTimeMillis()
             // check first if this is the first button of a currently active route
             // if this is the case then clear this route
             var clearing = false
+            if (DEBUG) Log.d(TAG, "checking for route and compRoute clear")
             for (rt in routes) {
-                if (DEBUG) Log.d(TAG, "checking for route clear")
                 if (rt.isActive && rt.btn1 == adr) {
                     if (DEBUG) Log.d(TAG, "found route matching to btn. requesting to clear route=" + rt.id)
                     // we found a route with this button, new clear it
                     // now set
                     rt.clearRequest()
                     clearing = true
-                    state == STATE_NOT_PRESSED   // reset !!!
+                    state = STATE_NOT_PRESSED   // reset btn
                 }
             }
             for (crt in compRoutes) {
-                if (DEBUG) Log.d(TAG, "checking for route clear")
-                if (crt.isActive && crt.btn1 == adr) {
+                 if (crt.isActive && crt.btn1 == adr) {
                     if (DEBUG) Log.d(TAG, "found COMP route matching to btn. requesting to clear COMP route=" + crt.id)
                     // we found a route with this button, new clear it
                     // now set
                     crt.clearRequest()
                     clearing = true
-                    state == STATE_NOT_PRESSED   // reset !!!
+                    state = STATE_NOT_PRESSED   // reset btn
                 }
             }
             if (!clearing) {
+                state = STATE_PRESSED
                 checkForRoute(adr)
+            } else {
+                appContext!!.longToast("Fahrstraße gelöscht!")
             }
 
         } else {
