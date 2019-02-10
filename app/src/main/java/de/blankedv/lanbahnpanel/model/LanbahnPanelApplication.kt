@@ -48,6 +48,9 @@ class LanbahnPanelApplication : Application() {
 
         prefs = PreferenceManager
                 .getDefaultSharedPreferences(this)
+        val editor = prefs.edit()
+        editor.putBoolean(KEY_ROUTING,false)   // always have routing switched off at start (i.e. without Server)
+        editor.commit()
 
         // handler for receiving sxnet/loconet messages
         // this must be done in the "Application" (not activity) to keep track of changes

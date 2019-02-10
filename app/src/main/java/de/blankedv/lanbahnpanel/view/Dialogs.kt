@@ -26,7 +26,7 @@ import de.blankedv.lanbahnpanel.model.*
  */
 object Dialogs {
 
-    private val MAX_ADDR = 999
+    private val MAX_ADDR = 9999
     private val MIN_ADDR = 1
 
     private var selLocoIndex: Int = 0
@@ -97,12 +97,14 @@ object Dialogs {
                     // +"/"+sxBit.getCurrent()+" wurde selektiert",
                     // Toast.LENGTH_SHORT)
                     // .show();
+                    // TODO check address for validity
                     e.adr = address.value
                     if (inverted.isChecked) {
                         e.invert = DISP_INVERTED
                     } else {
                         e.invert = DISP_STANDARD
                     }
+                    // TODO check address2 for validity
                     if (e.adr2 != INVALID_INT) {
                         e.adr2 = address2.value
                         if (inverted2.isChecked) {
