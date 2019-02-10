@@ -156,9 +156,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                     if (DEBUG) Log.d(TAG, "ACTION_UP")
                     mActivePointerId = INVALID_INT
 
-                    // do SX control only when NOT scaling (and wait 1 sec after scaling
-                    val deltaT = System.currentTimeMillis() - scalingTime
-                    if (!mScaleDetector.isInProgress) { //&& (deltaT > SCALING_WAIT)) {
+                    if (!mScaleDetector.isInProgress) {
                         // assuming control area is always at the top !!
                         var controlAreaBottom = 0
                         if (prefs.getBoolean(KEY_ENABLE_LOCO_CONTROL, false)) {
@@ -180,23 +178,28 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                                     / pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].scale / prescale)
 
                             Log.d(TAG, "ACTION_UP _Checking panel elements at: xs=$xs  ys$ys")
-                            for (e in panelElements) {
-                                var sel = e.isSelected(xs, ys)
-                                if (!prefs.getBoolean(KEY_ROUTING, false)) {
-                                    // ignore route buttons when routing is disabled
-                                     if (e is RouteButtonElement) {
-                                        sel = false
-                                    }
+                            if (prefs.getBoolean(KEY_ROUTING, false)) {
+                                // check route buttons first when routing is enabled
+                                for (e in panelElements.filter{ es -> (es is RouteButtonElement)} ) {
+                                        if (e.isSelected(xs, ys)) {
+                                            e.toggle()
+                                            if (toneEnabled) {
+                                                toneG.startTone(ToneGenerator.TONE_CDMA_ABBR_INTERCEPT, 100)
+                                            }
+                                            return true
+                                        }
                                 }
-                                if (sel) { //mLastTouchX, mLastTouchY)) {
+                            }
+                            for (e in panelElements.filter{ es -> !(es is RouteButtonElement)}) {
+                                // check other panel elements
+                                if (e.isSelected(xs, ys)) { //mLastTouchX, mLastTouchY)) {
                                     if (prefs.getBoolean(KEY_ENABLE_EDIT, false)) {
                                         Dialogs.selectAddressDialog(e) //
                                     } else {
                                         e.toggle()
-                                        // vibrate(500L)
-                                        if (toneEnabled) {
-                                            toneG?.startTone(ToneGenerator.TONE_CDMA_ABBR_INTERCEPT, 100)
-                                            //TONE_CDMA_PIP) //TONE_CDMA_KEYPAD_VOLUME_KEY_LITE)
+
+                                        if (toneEnabled) { // vibrate(500L)
+                                            toneG.startTone(ToneGenerator.TONE_CDMA_ABBR_INTERCEPT, 100)
                                         }
                                     }
                                     break // only 1 can be selected with one touch

@@ -14,6 +14,9 @@ class SignalElement : ActivePanelElement {
 
     // for signals which can be interactivly set from panel
 
+    private val radius = 3f * prescale
+    private val radiusL = 3.5f *prescale
+
     constructor(x: Int, y: Int, name: String, adr: Int) : super(x, y, name, adr) {}
 
     constructor() {
@@ -31,18 +34,18 @@ class SignalElement : ActivePanelElement {
         // draw a line and not a bitmap
         canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), signalLine)
         canvas.drawLine((x2 * prescale).toFloat(), (y2 - 2.5f) * prescale, (x2 * prescale).toFloat(), (y2 + 2.5f) * prescale, signalLine)
-        canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3f * prescale, whitePaint)
+        canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, whitePaint)
         if (prefs.getBoolean(KEY_ENABLE_EDIT, false) || adr == INVALID_INT) {
-            canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3f * prescale, whitePaint)
+            canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, whitePaint)
         } else {
             if (state == STATE_RED) {
-                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3.5f * prescale, redSignal)
+                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radiusL, redSignal)
             } else if (state == STATE_GREEN) {
-                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3.5f * prescale, greenSignal)
+                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radiusL, greenSignal)
             } else if (state == STATE_YELLOW || state == STATE_YELLOW_FEATHER) {
-                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3.5f * prescale, yellowSignal)
+                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radiusL, yellowSignal)
             } else if (state == STATE_UNKNOWN) {
-                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3.5f * prescale, whitePaint)
+                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radiusL, whitePaint)
             }
 
         }
@@ -76,10 +79,10 @@ class SignalElement : ActivePanelElement {
 
     override fun isSelected(xs: Int, ys: Int): Boolean {
         // for signal check radius = RASTER/5 around signal center
-        val minx = x - RASTER / 5
-        val maxx = x + RASTER / 5
-        val miny = y - RASTER / 5
-        val maxy = y + RASTER / 5
+        val minx = x - radiusL
+        val maxx = x + radiusL
+        val miny = y - radiusL
+        val maxy = y + radiusL
 
         // the touchpoint should be within rectangle of panel element
         if (xs >= minx && xs <= maxx && ys >= miny && ys <= maxy) {

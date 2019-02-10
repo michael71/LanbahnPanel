@@ -22,6 +22,11 @@ class RouteButtonElement : ActivePanelElement {
     var toggleBlink = false
     //private var timeSet: Long = 0
 
+    private val radius = 3f * prescale
+    private val radiusL = 4f *prescale
+
+
+
     /**
      *
      * @return true if the button is currently pressed, else false
@@ -48,10 +53,10 @@ class RouteButtonElement : ActivePanelElement {
 
         if (!prefs.getBoolean(KEY_ROUTING, false)) return
 
-        canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 4f * prescale, LPaints.whitePaint)
+        canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radiusL, LPaints.whitePaint)
 
         if (prefs.getBoolean(KEY_ENABLE_EDIT, false) || adr == INVALID_INT) {
-            canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3f * prescale, LPaints.btn0Paint)
+            canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, LPaints.btn0Paint)
         } else {
             if (state == STATE_PRESSED) {
                 if (System.currentTimeMillis() - blink > 500) {
@@ -59,14 +64,14 @@ class RouteButtonElement : ActivePanelElement {
                     blink = System.currentTimeMillis()
                 }
                 if (toggleBlink) {
-                    canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3f * prescale, LPaints.btn1Paint)
+                    canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, LPaints.btn1Paint)
                 } else {
-                    canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3f * prescale, LPaints.btn0Paint)
+                    canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, LPaints.btn0Paint)
                 }
             } else if (state == STATE_NOT_PRESSED) {
-                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3f * prescale, LPaints.btn0Paint)
+                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, LPaints.btn0Paint)
             } else if (state == STATE_UNKNOWN) {
-                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), 3f * prescale, LPaints.btn0Paint)
+                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, LPaints.btn0Paint)
             }
 
         }
@@ -133,10 +138,11 @@ class RouteButtonElement : ActivePanelElement {
      */
     override fun isSelected(xs: Int, ys: Int): Boolean {
         // for route button check radius = RASTER/3 around center	!! slightly larger than for turnout/signal
-        val minx = x - RASTER / 3
-        val maxx = x + RASTER / 3
-        val miny = y - RASTER / 3
-        val maxy = y + RASTER / 3
+        val rad = radiusL  // was: RASTER / 3 = 20 * prescale / 3
+        val minx = x - rad
+        val maxx = x + rad
+        val miny = y - rad
+        val maxy = y + rad
 
         // the touchpoint should be within rectangle of panel element
         if (xs >= minx && xs <= maxx && ys >= miny && ys <= maxy) {
