@@ -5,4 +5,9 @@
         android:key="enableLocoControlPref"
         android:title="Loco Control aktivieren" />
 
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="enableLocalLocolistPref"
+        android:title="Lokale Loco List verwenden" />
+
  </PreferenceScreen>

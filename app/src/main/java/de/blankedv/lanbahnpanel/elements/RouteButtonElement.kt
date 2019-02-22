@@ -55,7 +55,7 @@ class RouteButtonElement : ActivePanelElement {
 
         canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radiusL, LPaints.whitePaint)
 
-        if (prefs.getBoolean(KEY_ENABLE_EDIT, false) || adr == INVALID_INT) {
+        if (adr == INVALID_INT) {
             canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, LPaints.btn0Paint)
         } else {
             if (state == STATE_PRESSED) {

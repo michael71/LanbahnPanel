@@ -99,6 +99,52 @@ object ReadConfig {
 
     }
 
+    fun readLocosConfigFromFile(context: Context): String {
+
+        val result: String
+
+        if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {
+            // We cannot read/write the media
+            Log.e(TAG, "external storage not available or not writeable")
+            Toast.makeText(context, "ERROR:External storage not readable",
+                    Toast.LENGTH_LONG).show()
+            return "ERROR:External storage not readable"
+        }
+
+
+        try {
+            val f = File(Environment.getExternalStorageDirectory().toString()
+                    + DIRECTORY + FNAME_LOCOS_FILE)
+            // auf dem Nexus 7 unter /mnt/shell/emulated/0/lanbahnpanel
+            val fis: FileInputStream
+            if (!f.exists()) {
+                Log.e(TAG, "config file=" + FNAME_LOCOS_FILE +"not found, using locos from panel file")
+
+                // create the folder for later use (if it does not exist already)
+                val f2 = File(Environment.getExternalStorageDirectory().toString()
+                        + "/" + DIRECTORY + "/")
+                if (!f2.exists()) {
+                    f2.mkdirs()
+                    Log.e(TAG, "creating 'lanbahnpanel' folder")
+                }
+                return ""
+            } else {
+                fis = FileInputStream(f)
+                Log.d(TAG, "loaded local file "+ FNAME_LOCOS_FILE)
+                result = readLocosXMLConfigFile(fis)
+            }
+            return result
+        } catch (e: FileNotFoundException) {
+            Log.e(TAG, "FileNotFound " + e.message)
+            return "FileNotFound " + e.message
+        } catch (e: IOException) {
+            Log.e(TAG, "IOException " + e.message)
+            return "IOException " + e.message
+        }
+
+    }
+
+
     private fun readXMLConfigFile(fis: InputStream): String {
         val factory = DocumentBuilderFactory.newInstance()
         val builder: DocumentBuilder
@@ -139,6 +185,38 @@ object ReadConfig {
 
         return ""
     }
+
+    private fun readLocosXMLConfigFile(fis: InputStream): String {
+        val factory = DocumentBuilderFactory.newInstance()
+        val builder: DocumentBuilder
+
+        try {
+            builder = factory.newDocumentBuilder()
+        } catch (e1: ParserConfigurationException) {
+            Log.e(TAG, "ParserConfigException Exception - " + e1.message)
+            return "ParserConfigException"
+        }
+
+        val doc: Document
+        try {
+            doc = builder.parse(fis)
+            locolist = parseDocForLocos(doc)
+            Log.d(TAG, "local locolist: " + locolist.size + " locos, name=$locoListName")
+
+        } catch (e: SAXException) {
+            Log.e(TAG, "SAX Exception - " + e.message)
+            return "SAX Exception - " + e.message
+        } catch (e: IOException) {
+            Log.e(TAG, "IO Exception - " + e.message)
+            return "IO Exception - " + e.message
+        } catch (e: Exception) {
+            Log.e(TAG, "other Exception - " + e.message)
+            return "other Exception - " + e.message
+        }
+
+        return ""
+    }
+
 
     private fun parsePanelElements(doc: Document): ArrayList<PanelElement> {
         // assemble new ArrayList of tickets.
@@ -186,12 +264,6 @@ object ReadConfig {
             pes.add(parseSignal(items.item(i)))
         }
 
-
-        if (prefs.getBoolean(KEY_DISCOVER_TURNOUTS_PREF,false)) {
-            val newTurnouts = discoverTurnouts(pes)
-            if (DEBUG) Log.d(TAG, "config: " + newTurnouts.size + " new tournout(s) discovered")
-            for (pe in newTurnouts) pes.add(pe)
-        }
 
         // look for sensors
         // after tracks and turnouts !! important => on top of track
@@ -705,66 +777,6 @@ object ReadConfig {
 
     }
 
-    private fun discoverTurnouts(pes: ArrayList<PanelElement>): ArrayList<PanelElement> {
-        // check for intersection of track, if new, add a turnout with unknown
-        // lanbahn address
-
-        val newPe = ArrayList<PanelElement>()
-
-        for (i in pes.indices) {
-            val p = pes[i]
-
-            for (j in i + 1 until pes.size) {
-                val q = pes[j]
-
-                val panelelement = LinearMath.trackIntersect(p, q)
-
-                if (panelelement != null) {
-                    if (panelelement.type == "doubleslip") {
-                        // do nothing in the meantime
-                        // TODO implement for doubleslip a similar method as
-                        // with turnout
-                        // TODO currently doubleslip are two turnouts, separated
-                        // by a single pixel
-                        if (DEBUG_PARSING)
-                            Log.d(TAG, "(i,j)=(" + i + "," + j
-                                    + ") new? doubleslip found at x="
-                                    + panelelement.x + " y=" + panelelement.y)
-
-                    } else {
-                        // there is an intersection with a turnout => make new
-                        // turnout
-                        if (DEBUG_PARSING)
-                            Log.d(TAG, "(i,j)=(" + i + "," + j
-                                    + ") new? turnout found at x="
-                                    + panelelement.x + " y=" + panelelement.y
-                                    + " xc=" + panelelement.x2 + " yc="
-                                    + panelelement.y2 + " xt="
-                                    + panelelement.xt + " yt="
-                                    + panelelement.yt)
-
-                        // check whether this turnout is already known
-                        var known = false
-                        for (e in pes) {
-                            if (e.type == "turnout"
-                                    && e.x == panelelement.x
-                                    && e.y == panelelement.y) {
-                                // at same position => match
-                                known = true
-                                break
-                            }
-                        }
-                        if (!known) {
-                            configHasChanged = true
-                            newPe.add(TurnoutElement(panelelement))
-                        }
-                    }
-                }
-
-            }
-        }
-        return newPe
-    }
 
     private fun parseDocForLocos(doc: Document): ArrayList<Loco> {
         //ArrayList<Loco> ls = new ArrayList<Loco>();

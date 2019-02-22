@@ -20,7 +20,6 @@ import de.blankedv.lanbahnpanel.loco.LocoControlArea
 import de.blankedv.lanbahnpanel.util.LPaints.paintControlAreaBG
 
 
-
 /**
  * the main panel of the application is comprised of two parts: a (small height) CONTROL area
  * at the top and the larger part with the main SWITCH PANEL at the bottom, handles all touch events
@@ -133,11 +132,11 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
                         mPosX += dx
                         mPosY += dy
-                        if ((prefs.getString(KEY_SCALE_PREF,"auto") == "manual") && mX > 300 && mY > 200) {
-                            pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].xoff += dx
-                            pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].yoff += dy
+                        if ((prefs.getString(KEY_SCALE_PREF, "auto") == "manual") && mX > 300 && mY > 200) {
+                            pSett.qClip[prefs.getInt(KEY_QUADRANT, 0)].xoff += dx
+                            pSett.qClip[prefs.getInt(KEY_QUADRANT, 0)].yoff += dy
                             scalingTime = System.currentTimeMillis()  // avoid control of SX elements during pan-move
-                            if (DEBUG) Log.d(TAG, "new xoff/yoff (qua=${prefs.getInt(KEY_QUADRANT,0)}) - xoff=${pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].xoff} + yoff=${pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].yoff}")
+                            if (DEBUG) Log.d(TAG, "new xoff/yoff (qua=${prefs.getInt(KEY_QUADRANT, 0)}) - xoff=${pSett.qClip[prefs.getInt(KEY_QUADRANT, 0)].xoff} + yoff=${pSett.qClip[prefs.getInt(KEY_QUADRANT, 0)].yoff}")
                         }
                         // invalidate();
                         // if (DEBUG)  Log.d(TAG,"mPosX="+mPosX+" mPosY="+mPosY);
@@ -147,9 +146,6 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
                     mLastTouchX = x
                     mLastTouchY = y
-                    if (prefs.getBoolean(KEY_ENABLE_EDIT, false)) {
-                        //selSxAddress.dismiss();
-                    }
                 }
 
                 MotionEvent.ACTION_UP -> {
@@ -172,35 +168,30 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
                         } else {
 
                             //Log.d(TAG,"ACTION_UP _Checking panel elements at: mlastTouchX="+mLastTouchX+"  mLastTouchY"+mLastTouchY);
-                            val xs = Math.round((mLastTouchX - pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].xoff)
-                                    / pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].scale / prescale) // reduced by overall dimension scaling factors
-                            val ys = Math.round((mLastTouchY - pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].yoff)
-                                    / pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].scale / prescale)
+                            val xs = Math.round((mLastTouchX - pSett.qClip[prefs.getInt(KEY_QUADRANT, 0)].xoff)
+                                    / pSett.qClip[prefs.getInt(KEY_QUADRANT, 0)].scale / prescale) // reduced by overall dimension scaling factors
+                            val ys = Math.round((mLastTouchY - pSett.qClip[prefs.getInt(KEY_QUADRANT, 0)].yoff)
+                                    / pSett.qClip[prefs.getInt(KEY_QUADRANT, 0)].scale / prescale)
 
                             Log.d(TAG, "ACTION_UP _Checking panel elements at: xs=$xs  ys$ys")
                             if (prefs.getBoolean(KEY_ROUTING, false)) {
                                 // check route buttons first when routing is enabled
-                                for (e in panelElements.filter{ es -> (es is RouteButtonElement)} ) {
-                                        if (e.isSelected(xs, ys)) {
-                                            e.toggle()
-                                            if (toneEnabled) {
-                                                toneG.startTone(ToneGenerator.TONE_CDMA_ABBR_INTERCEPT, 100)
-                                            }
-                                            return true
-                                        }
-                                }
-                            }
-                            for (e in panelElements.filter{ es -> !(es is RouteButtonElement)}) {
-                                // check other panel elements
-                                if (e.isSelected(xs, ys)) { //mLastTouchX, mLastTouchY)) {
-                                    if (prefs.getBoolean(KEY_ENABLE_EDIT, false)) {
-                                        Dialogs.selectAddressDialog(e) //
-                                    } else {
+                                for (e in panelElements.filter { es -> (es is RouteButtonElement) }) {
+                                    if (e.isSelected(xs, ys)) {
                                         e.toggle()
-
-                                        if (toneEnabled) { // vibrate(500L)
+                                        if (toneEnabled) {
                                             toneG.startTone(ToneGenerator.TONE_CDMA_ABBR_INTERCEPT, 100)
                                         }
+                                        return true
+                                    }
+                                }
+                            }
+                            for (e in panelElements.filter { es -> !(es is RouteButtonElement) }) {
+                                // check other panel elements
+                                if (e.isSelected(xs, ys)) { //mLastTouchX, mLastTouchY)) {
+                                    e.toggle()
+                                    if (toneEnabled) { // vibrate(500L)
+                                        toneG.startTone(ToneGenerator.TONE_CDMA_ABBR_INTERCEPT, 100)
                                     }
                                     break // only 1 can be selected with one touch
                                 }
@@ -243,8 +234,8 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         controlAreaRect = Rect(0, 0, mWidth, mHeight / 8)
         locoControlArea?.recalcGeometry()
 
-        if (prefs.getString(KEY_SCALE_PREF,"auto") == "auto") {
-            LanbahnPanelApplication.calcAutoScale(mWidth, mHeight, prefs.getInt(KEY_QUADRANT,0))
+        if (prefs.getString(KEY_SCALE_PREF, "auto") == "auto") {
+            LanbahnPanelApplication.calcAutoScale(mWidth, mHeight, prefs.getInt(KEY_QUADRANT, 0))
         }
     }
 
@@ -256,9 +247,9 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         //if (USS == true)
         mBitmap.eraseColor(Color.TRANSPARENT) // Color.DKGRAY);
 
-        var sc = pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].scale
-        var xo = pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].xoff
-        var yo = pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].yoff
+        var sc = pSett.qClip[prefs.getInt(KEY_QUADRANT, 0)].scale
+        var xo = pSett.qClip[prefs.getInt(KEY_QUADRANT, 0)].xoff
+        var yo = pSett.qClip[prefs.getInt(KEY_QUADRANT, 0)].yoff
 
         if ((DEBUG) and ((System.currentTimeMillis() - time0) > 10000)) {
             //Log.d(TAG, "panelRect x=(" + panelRect.left + "," + panelRect.right + ") y=(" + panelRect.top + "," + panelRect.bottom + ")")
@@ -282,7 +273,7 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
         matrix.postTranslate(xo, yo)
         for (e in panelElements) {
             //if (e !is DoubleslipElement) {
-                e.doDraw(mCanvas)
+            e.doDraw(mCanvas)
             //}
         }
         //debugDraw(mCanvas)
@@ -302,13 +293,13 @@ class Panel(context: Context) : SurfaceView(context), SurfaceHolder.Callback {
 
     private inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
-            if (prefs.getString(KEY_SCALE_PREF,"auto") == "manual") {
+            if (prefs.getString(KEY_SCALE_PREF, "auto") == "manual") {
                 mScaleFactor *= detector.scaleFactor
 
                 // Don't let the object get too small or too large.
                 mScaleFactor = Math.max(0.5f, Math.min(mScaleFactor, 4.0f))
-                Log.d(TAG, "new scale (qua=${prefs.getInt(KEY_QUADRANT,0)}): scale=$mScaleFactor (limited)")
-                pSett.qClip[prefs.getInt(KEY_QUADRANT,0)].scale = mScaleFactor
+                Log.d(TAG, "new scale (qua=${prefs.getInt(KEY_QUADRANT, 0)}): scale=$mScaleFactor (limited)")
+                pSett.qClip[prefs.getInt(KEY_QUADRANT, 0)].scale = mScaleFactor
                 invalidate()
                 scalingTime = System.currentTimeMillis()
             }

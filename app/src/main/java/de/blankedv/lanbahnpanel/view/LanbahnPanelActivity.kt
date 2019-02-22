@@ -154,6 +154,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         //if (configHasChanged) {
         if (checkStorageWritePermission()) {
             WriteConfig.toXMLFile()
+            WriteConfig.locosToXMLFile()
         } else {
             toast("ERROR: App has NO WRITE PERMISSION to write a new config file !")
         }
@@ -639,6 +640,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     // finally, we got the permission, write updated config file NOW
                     WriteConfig.toXMLFile()
+                    WriteConfig.locosToXMLFile()
                 } else {
                     // permission denied, boo! Disable the functionality that depends on this permission.
                     toast("cannot write log to File without permissions")
@@ -667,6 +669,10 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 Log.d(TAG, "onResume - reloading panel config.")
             }
             ReadConfig.readConfigFromFile(this) // reload config File with relocate of origin
+            if (prefs.getBoolean(KEY_LOCAL_LOCO_LIST, false)) {
+                // if enabled, overwrite loco list from panel file with a local loco list
+                ReadConfig.readLocosConfigFromFile(this)
+            }
             result = true
         }
         return result

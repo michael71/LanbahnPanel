@@ -35,7 +35,7 @@ class SignalElement : ActivePanelElement {
         canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), signalLine)
         canvas.drawLine((x2 * prescale).toFloat(), (y2 - 2.5f) * prescale, (x2 * prescale).toFloat(), (y2 + 2.5f) * prescale, signalLine)
         canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, whitePaint)
-        if (prefs.getBoolean(KEY_ENABLE_EDIT, false) || adr == INVALID_INT) {
+        if (adr == INVALID_INT) {
             canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, whitePaint)
         } else {
             if (state == STATE_RED) {

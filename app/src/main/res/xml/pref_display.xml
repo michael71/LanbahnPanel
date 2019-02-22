@@ -23,10 +23,6 @@
         android:defaultValue="false"
         android:key="flipPref"
         android:title="@string/flipUpsideDown" />
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="enableEditPref"
-        android:title="@string/enableEdit" />
 
     <ListPreference
         android:defaultValue="@string/sel_style_default"

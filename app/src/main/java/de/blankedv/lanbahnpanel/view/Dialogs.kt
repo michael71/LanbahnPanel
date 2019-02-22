@@ -18,7 +18,6 @@ import android.widget.AdapterView.OnItemSelectedListener
 import de.blankedv.lanbahnpanel.elements.SignalElement
 import de.blankedv.lanbahnpanel.model.*
 
-
 /**
  * predefined dialogs
  *
@@ -31,8 +30,9 @@ object Dialogs {
 
     private var selLocoIndex: Int = 0
     private val NOTHING = 99999
-    private val NEW_LOCO_NAME = "+ NEUE LOK (3)"
+    private val NEW_LOCO_NAME = "+ Neue Lok"
 
+    // nicht mehr benutzt, da bevorzugt ein Server-Panel-File benutzt werden soll
     internal fun selectAddressDialog(el: PanelElement) {
 
         val factory = LayoutInflater.from(appContext)
@@ -228,7 +228,7 @@ object Dialogs {
     }
 
 
-    fun openEditDialog() {
+    private fun openEditDialog() {
 
         val factory = LayoutInflater.from(appContext)
         val selSxAddressView = factory.inflate(R.layout.alert_dialog_edit, null)
@@ -289,7 +289,7 @@ object Dialogs {
     }
 
 
-    fun openDeleteDialog(index: Int) {
+    private fun openDeleteDialog(index: Int) {
 
         Log.d(TAG, "lok löschen Ja/nein $index")
 
@@ -323,8 +323,5 @@ object Dialogs {
         deleteDialog.show()
         return
     }
-
-
-
 
 }

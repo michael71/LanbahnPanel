@@ -16,10 +16,10 @@ const val KEY_STYLE_PREF = "selectStylePref"
 //const val KEY_ENABLE_ZOOM = "enableZoomPref"
 //const val KEY_ENABLE_AUTOSCALE = "enableAutoscalePref"
 const val KEY_SCALE_PREF = "selectScalePref"
-const val KEY_ENABLE_EDIT = "enableEditPref"
+//const val KEY_ENABLE_EDIT = "enableEditPref"
 const val KEY_ENABLE_POWER_CONTROL = "powerControlPref"
 const val KEY_SAVE_STATES = "saveStatesPref"
-const val KEY_DISCOVER_TURNOUTS_PREF = "discoverTurnoutsPref"
+//const val KEY_DISCOVER_TURNOUTS_PREF = "discoverTurnoutsPref"
 //const val KEY_ROUTES = "routesPref"
 const val KEY_ROUTING = "centralRoutingPref"  // managed by PC application
 const val KEY_FLIP = "flipPref"
@@ -33,6 +33,7 @@ const val KEY_LOCO_ADR = "locoAdrPref"
 const val KEY_LOCO_MASS = "locoMassPref"
 const val KEY_LOCO_NAME = "locoNamePref"
 const val KEY_ENABLE_LOCO_CONTROL = "enableLocoControlPref"
+const val KEY_LOCAL_LOCO_LIST = "enableLocalLocolistPref"
 const val KEY_CONTROL_SYSTEM = "controlSystemPref"     // 14Sep2018 - NOT USED in Control Connection !! TODO check
 
 
@@ -41,7 +42,7 @@ const val N_PANEL_FOR_4Q = 75
 
 const val FNAME_FROM_SERVER = "from_server.xml"
 
-const val DEMO_LOCOS_FILE = "locos-demo.xml"
+const val FNAME_LOCOS_FILE = "locos.xml"
 
 const val LBP_NOTIFICATION_ID = 201 //arbitrary id for notification
 

@@ -21,8 +21,5 @@
         android:defaultValue="false"
         android:key="powerControlPref"
         android:title="@string/enable_power_control" />
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="discoverTurnoutsPref"
-        android:title="@string/discover_turnouts" />
+
 </PreferenceScreen>
