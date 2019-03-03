@@ -2,7 +2,6 @@ package de.blankedv.lanbahnpanel.elements
 
 import android.graphics.Canvas
 import android.util.Log
-import android.widget.Toast
 import de.blankedv.lanbahnpanel.util.LPaints
 import de.blankedv.lanbahnpanel.model.*
 import org.jetbrains.anko.longToast
@@ -22,8 +21,8 @@ class RouteButtonElement : ActivePanelElement {
     var toggleBlink = false
     //private var timeSet: Long = 0
 
-    private val radius = 3f * prescale
-    private val radiusL = 4f *prescale
+    private val radius = 8f * prescale
+   // private val radiusL = 5.5f * prescale
 
 
 
@@ -37,7 +36,7 @@ class RouteButtonElement : ActivePanelElement {
         return (state == STATE_PRESSED)
     }
 
-    constructor(x: Int, y: Int, name: String, adr: Int) : super(x, y, name, adr) {}
+    constructor(x: Int, y: Int, name: String, adr: Int) : super(x, y, name, adr)
 
     constructor() {
         adr = INVALID_INT
@@ -53,7 +52,7 @@ class RouteButtonElement : ActivePanelElement {
 
         if (!prefs.getBoolean(KEY_ROUTING, false)) return
 
-        canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radiusL, LPaints.whitePaint)
+        //canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radiusL, LPaints.whitePaint)
 
         if (adr == INVALID_INT) {
             canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, LPaints.btn0Paint)
@@ -99,7 +98,7 @@ class RouteButtonElement : ActivePanelElement {
             if (DEBUG) Log.d(TAG, "checking for route and compRoute clear")
             for (rt in routes) {
                 if (rt.isActive && rt.btn1 == adr) {
-                    if (DEBUG) Log.d(TAG, "found route matching to btn. requesting to clear route=" + rt.id)
+                    if (DEBUG) Log.d(TAG, "found route matching to btn. requesting to clear route=" + rt.adr)
                     // we found a route with this button, new clear it
                     // now set
                     rt.clearRequest()
@@ -109,7 +108,7 @@ class RouteButtonElement : ActivePanelElement {
             }
             for (crt in compRoutes) {
                  if (crt.isActive && crt.btn1 == adr) {
-                    if (DEBUG) Log.d(TAG, "found COMP route matching to btn. requesting to clear COMP route=" + crt.id)
+                    if (DEBUG) Log.d(TAG, "found COMP route matching to btn. requesting to clear COMP route=" + crt.adr)
                     // we found a route with this button, new clear it
                     // now set
                     crt.clearRequest()
@@ -138,7 +137,7 @@ class RouteButtonElement : ActivePanelElement {
      */
     override fun isSelected(xs: Int, ys: Int): Boolean {
         // for route button check radius = RASTER/3 around center	!! slightly larger than for turnout/signal
-        val rad = radiusL  // was: RASTER / 3 = 20 * prescale / 3
+        val rad = radius * 1.3  // was: RASTER / 3 = 20 * prescale / 3
         val minx = x - rad
         val maxx = x + rad
         val miny = y - rad
@@ -204,12 +203,12 @@ class RouteButtonElement : ActivePanelElement {
                 if (DEBUG) Log.d(TAG, "checking for a route from btn-$adrFirstBtn turnout btn-$adrSecondBtn")
                 var routeFound = false
                 for (rt in routes) {
-                    if (DEBUG) Log.d(TAG, "checking route id=" + rt.id)
+                    if (DEBUG) Log.d(TAG, "checking route adr=" + rt.adr)
                     if (rt.btn1 == adrFirstBtn && rt.btn2 == adrSecondBtn) {
                         // we found a route connecting these buttons,
                         // now set
                         routeFound = true
-                        if (DEBUG) Log.d(TAG, "found the route with id=" + rt.id)
+                        if (DEBUG) Log.d(TAG, "found the route with adr=" + rt.adr)
                         // reset buttons
                         findRouteButtonByAddress(adrFirstBtn)!!.reset()
                         findRouteButtonByAddress(adrSecondBtn)!!.reset()
@@ -222,12 +221,12 @@ class RouteButtonElement : ActivePanelElement {
                     }
                 }
                 for (cr in compRoutes) {
-                    if (DEBUG) Log.d(TAG, "checking composite route id=" + cr.id)
+                    if (DEBUG) Log.d(TAG, "checking composite route adr=" + cr.adr)
                     if (cr.btn1 == adrFirstBtn && cr.btn2 == adrSecondBtn) {
                         // we found a route connecting these buttons,
                         // now set
                         routeFound = true
-                        if (DEBUG) Log.d(TAG, "found the composite route with id=" + cr.id)
+                        if (DEBUG) Log.d(TAG, "found the composite route with adr=" + cr.adr)
                         // reset buttons
                         findRouteButtonByAddress(adrFirstBtn)!!.reset()
                         findRouteButtonByAddress(adrSecondBtn)!!.reset()

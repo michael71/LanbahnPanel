@@ -146,17 +146,17 @@ object LPaints {
         whitePaint.strokeCap = Paint.Cap.ROUND
 
         btn0Paint.color = Color.GRAY
-        btn0Paint.strokeWidth = 6f * prescale
+        btn0Paint.strokeWidth = 7f * prescale
         btn0Paint.isAntiAlias = true
         btn0Paint.isDither = true
-        btn0Paint.style = Paint.Style.STROKE
+        btn0Paint.style = Paint.Style.FILL
         btn0Paint.strokeCap = Paint.Cap.ROUND
 
         btn1Paint.color = Color.WHITE
-        btn1Paint.strokeWidth = 6f * prescale
+        btn1Paint.strokeWidth = 7f * prescale
         btn1Paint.isAntiAlias = true
         btn1Paint.isDither = true
-        btn1Paint.style = Paint.Style.STROKE
+        btn1Paint.style = Paint.Style.FILL
         btn1Paint.strokeCap = Paint.Cap.ROUND
 
         bgPaint.color = BG_COLOR

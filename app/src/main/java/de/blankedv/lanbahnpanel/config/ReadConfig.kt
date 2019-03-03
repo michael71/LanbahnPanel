@@ -23,7 +23,6 @@ import android.widget.Toast
 import de.blankedv.lanbahnpanel.elements.*
 import de.blankedv.lanbahnpanel.loco.Loco
 import de.blankedv.lanbahnpanel.model.*
-import de.blankedv.lanbahnpanel.util.LinearMath
 
 
 /**
@@ -34,7 +33,7 @@ import de.blankedv.lanbahnpanel.util.LinearMath
  */
 object ReadConfig {
 
-    internal val DEBUG_PARSING = true
+    internal val DEBUG_PARSING = false
 
 
     /**
@@ -51,7 +50,7 @@ object ReadConfig {
      *
      * @return true, if succeeds - false, if not.
      */
-    fun readConfigFromFile(context: Context): String {
+    fun readConfigFromFile(context: Context, localLocos : Boolean = false): String {
 
         val result: String
 
@@ -73,7 +72,7 @@ object ReadConfig {
                 Log.e(TAG, "config file=$configFilename not found, using demo data.")
                 val demoIs = context.assets.open(DEMO_FILE)
                 configHasChanged = true
-                result = readXMLConfigFile(demoIs)
+                result = readXMLConfigFile(demoIs, localLocos)
                 demoIs.close()
 
                 // create the folder for later use (if it does not exist already)
@@ -85,7 +84,7 @@ object ReadConfig {
                 }
             } else {
                 fis = FileInputStream(f)
-                result = readXMLConfigFile(fis)
+                result = readXMLConfigFile(fis, localLocos)
 
             }
             return result
@@ -99,7 +98,7 @@ object ReadConfig {
 
     }
 
-    fun readLocosConfigFromFile(context: Context): String {
+    fun readLocalLocosFile(context: Context): String {
 
         val result: String
 
@@ -118,7 +117,7 @@ object ReadConfig {
             // auf dem Nexus 7 unter /mnt/shell/emulated/0/lanbahnpanel
             val fis: FileInputStream
             if (!f.exists()) {
-                Log.e(TAG, "config file=" + FNAME_LOCOS_FILE +"not found, using locos from panel file")
+                Log.e(TAG, "local loco config file=" + FNAME_LOCOS_FILE +"not found")
 
                 // create the folder for later use (if it does not exist already)
                 val f2 = File(Environment.getExternalStorageDirectory().toString()
@@ -145,7 +144,7 @@ object ReadConfig {
     }
 
 
-    private fun readXMLConfigFile(fis: InputStream): String {
+    private fun readXMLConfigFile(fis: InputStream, localLocos : Boolean): String {
         val factory = DocumentBuilderFactory.newInstance()
         val builder: DocumentBuilder
 
@@ -169,8 +168,10 @@ object ReadConfig {
 
             Log.d(TAG, "a total of " + panelElements.size + " panel Elements have been read")
 
-            locolist = parseDocForLocos(doc)
-            Log.d(TAG, "locolist: " + locolist.size + " locos, name=$locoListName")
+            if (!localLocos) {
+                locolist = parseDocForLocos(doc)
+                Log.d(TAG, "config: ${locolist.size} locos")
+            }
 
         } catch (e: SAXException) {
             Log.e(TAG, "SAX Exception - " + e.message)
@@ -201,7 +202,7 @@ object ReadConfig {
         try {
             doc = builder.parse(fis)
             locolist = parseDocForLocos(doc)
-            Log.d(TAG, "local locolist: " + locolist.size + " locos, name=$locoListName")
+            Log.d(TAG, "local config: ${locolist.size} locos")
 
         } catch (e: SAXException) {
             Log.e(TAG, "SAX Exception - " + e.message)
@@ -248,13 +249,6 @@ object ReadConfig {
         if (DEBUG) Log.d(TAG, "config: " + items.length + " turnout(s)")
         for (i in 0 until items.length) {
             pes.add(parseTurnout(items.item(i)))
-        }
-
-        // look for doubleslips
-        items = root.getElementsByTagName("doubleslip")
-        if (DEBUG) Log.d(TAG, "config: " + items.length + " doubleslip(s)")
-        for (i in 0 until items.length) {
-            pes.add(parseDoubleslip(items.item(i)))
         }
 
         // look for signals - on top of track
@@ -351,63 +345,6 @@ object ReadConfig {
     }
 
 
-    private fun parseDoubleslip(item: Node): DoubleslipElement {
-        // ticket node can be Incident oder UserRequest
-        val pe = DoubleslipElement()
-
-        val attributes = item.attributes
-
-        for (i in 0 until attributes.length) {
-            val theAttribute = attributes.item(i)
-
-            if (theAttribute.nodeName == "name") {
-                pe.name = theAttribute.nodeValue
-            } else if (theAttribute.nodeName == "x") {
-                pe.x = getIntegerNodeValue(theAttribute)
-            } else if (theAttribute.nodeName == "y") {
-                pe.y = getIntegerNodeValue(theAttribute)
-            } else if (theAttribute.nodeName == "x2") {
-                pe.x2 = getIntegerNodeValue(theAttribute)
-            } else if (theAttribute.nodeName == "y2") {
-                pe.y2 = getIntegerNodeValue(theAttribute)
-            } else if (theAttribute.nodeName == "xt") {
-                pe.xt = getIntegerNodeValue(theAttribute)
-            } else if (theAttribute.nodeName == "yt") {
-                pe.yt = getIntegerNodeValue(theAttribute)
-            } else if (theAttribute.nodeName == "adr") {
-                val adrArray = getIntegerNodeValueArray(theAttribute)
-                if (adrArray.size == 1) {
-                    pe.adr = adrArray[0]
-                } else if (adrArray.size >= 2) {
-                    pe.adr = adrArray[0]
-                    pe.adr2 = adrArray[1]
-                }
-            } else if (theAttribute.nodeName == "inv") {
-                val invArray = getIntegerNodeValueArray(theAttribute)
-                if (invArray.size == 1) {
-                    pe.invert = invArray[0]
-                    pe.invert2 = 0
-                } else if (invArray.size >= 2) {
-                    pe.invert = invArray[0]
-                    pe.invert2 = invArray[1]
-                }
-            } else if (theAttribute.nodeName == "sxadr") {
-                Log.e(TAG,"ERROR doubleslip should not have sxaddress")
-            } else if (theAttribute.nodeName == "sxbit") {
-                Log.e(TAG,"ERROR doubleslip should not have sxbit attribute")
-            } else {
-                if (DEBUG_PARSING)
-                    Log.d(TAG,
-                            "unknown attribute " + theAttribute.nodeName
-                                    + " in config file, <sensor>")
-            }
-        }
-
-        return pe
-
-    }
-
-
     private fun getIntegerNodeValue(a: Node): Int {
         // remove "." first to convert SX addresses like 72.1 to LB addr (=721)
         // remove whitespace also
@@ -467,6 +404,9 @@ object ReadConfig {
                 } else if (adrArray.size >= 2) {
                     pe.adr = adrArray[0]
                     pe.adr2 = adrArray[1]
+                    if ((pe.adr +1) == pe.adr2) {
+                        pe.nbit = 2   // signal with 4 aspects
+                    }
                 }
             } else if (theAttribute.nodeName == "sxadr") {
                 sxadr = getIntegerNodeValue(theAttribute)
@@ -543,7 +483,7 @@ object ReadConfig {
 
         var sxadr = INVALID_INT
         var sxbit = INVALID_INT
-        var nbit = INVALID_INT
+        // var nbit = INVALID_INT
 
         for (i in 0 until attributes.length) {
             val theAttribute = attributes.item(i)
@@ -652,7 +592,7 @@ object ReadConfig {
 
     private fun parseRoute(item: Node): Route? {
         // ticket node can be Incident oder UserRequest
-        var id = INVALID_INT
+        var adr = INVALID_INT
         var btn1 = INVALID_INT
         var btn2 = INVALID_INT
         var route: String? = null
@@ -664,8 +604,8 @@ object ReadConfig {
             val theAttribute = attributes.item(i)
             // if (DEBUG_PARSING) Log.d(TAG,theAttribute.getNodeName() + "=" +
             // theAttribute.getNodeValue());
-            if (theAttribute.nodeName == "id") {
-                id = getValue(theAttribute.nodeValue)
+            if ((theAttribute.nodeName == "adr") || (theAttribute.nodeName == "adr")) {
+                adr = getValue(theAttribute.nodeValue)
             } else if (theAttribute.nodeName == "btn1") {
                 btn1 = getValue(theAttribute.nodeValue)
             } else if (theAttribute.nodeName == "btn2") {
@@ -686,9 +626,9 @@ object ReadConfig {
         }
 
         // check for mandatory and valid input data
-        if (id == INVALID_INT) {
+        if (adr == INVALID_INT) {
             // missing info, log error
-            Log.e(TAG, "missing id= info in route definition")
+            Log.e(TAG, "missing adr= (old 'id=') info in route definition")
             return null
         } else if (btn1 == INVALID_INT) {
             Log.e(TAG, "missing btn1= info in route definition")
@@ -705,7 +645,7 @@ object ReadConfig {
         } else {
             // everything is o.k.
 
-            return Route(id, btn1, btn2, route, sensors, offending)
+            return Route(adr, btn1, btn2, route, sensors, offending)
         }
 
     }
@@ -730,7 +670,7 @@ object ReadConfig {
 
     private fun parseCompRoute(item: Node): CompRoute? {
         //
-        var id = INVALID_INT
+        var adr = INVALID_INT
         var btn1 = INVALID_INT
         var btn2 = INVALID_INT
         var routes: String? = null
@@ -740,8 +680,8 @@ object ReadConfig {
             val theAttribute = attributes.item(i)
             // if (DEBUG_PARSING) Log.d(TAG,theAttribute.getNodeName() + "=" +
             // theAttribute.getNodeValue());
-            if (theAttribute.nodeName == "id") {
-                id = getValue(theAttribute.nodeValue)
+            if ((theAttribute.nodeName == "adr") || (theAttribute.nodeName == "adr")) {
+                adr = getValue(theAttribute.nodeValue)
             } else if (theAttribute.nodeName == "btn1") {
                 btn1 = getValue(theAttribute.nodeValue)
             } else if (theAttribute.nodeName == "btn2") {
@@ -756,9 +696,9 @@ object ReadConfig {
         }
 
         // check for mandatory and valid input data
-        if (id == INVALID_INT) {
+        if (adr == INVALID_INT) {
             // missing info, log error
-            Log.e(TAG, "missing id= info in route definition")
+            Log.e(TAG, "missing adr= (old 'id=') info in route definition")
             return null
         } else if (btn1 == INVALID_INT) {
             Log.e(TAG, "missing btn1= info in route definition")
@@ -772,7 +712,7 @@ object ReadConfig {
         } else {
             // everything is o.k.
 
-            return CompRoute(id, btn1, btn2, routes)
+            return CompRoute(adr, btn1, btn2, routes)
         }
 
     }
@@ -784,16 +724,11 @@ object ReadConfig {
         var items: NodeList
         val root = doc.documentElement
 
-        items = root.getElementsByTagName("locolist")
-        if ((items == null) or (items.length == 0)) {
-            locoListName = "noName"
-        } else {
-            locoListName = parsePanelDescription(items.item(0), "name")
-        }
         // look for Locos
         items = root.getElementsByTagName("loco")
-        if (DEBUG)
+        if (DEBUG) {
             Log.d(TAG, "config: " + items.length + " locos")
+        }
         for (i in 0 until items.length) {
             val l = parseLoco(items.item(i))
             if (l != null) {
@@ -851,7 +786,7 @@ object ReadConfig {
                                     + " in config file")
             }
         }
-        return if (l.adr !== INVALID_INT) {
+        return if (l.adr != INVALID_INT) {
             l
         } else {
             null

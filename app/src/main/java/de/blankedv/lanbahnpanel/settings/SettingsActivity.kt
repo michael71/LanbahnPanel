@@ -160,7 +160,7 @@ class SettingsActivity : AppCompatPreferenceActivity() {
             // stored panel specific preferences ALSO for the panel
             when (key) {
                 KEY_STYLE_PREF -> {
-                    selectedStyle = prefs!!.getString(KEY_STYLE_PREF,"US")
+                    selectedStyle = prefs!!.getString(KEY_STYLE_PREF,DEFAULT_STYLE)
                     pSett.selStyle = selectedStyle
                     Log.d(TAG,"CHANGED: style=${pSett.selStyle} $selectedStyle")
                 }

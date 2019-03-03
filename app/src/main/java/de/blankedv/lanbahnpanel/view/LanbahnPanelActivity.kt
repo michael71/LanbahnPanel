@@ -153,8 +153,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
         (application as LanbahnPanelApplication).savePanelSettings()
         //if (configHasChanged) {
         if (checkStorageWritePermission()) {
-            WriteConfig.toXMLFile()
-            WriteConfig.locosToXMLFile()
+              WriteConfig.locosToXMLFile()
         } else {
             toast("ERROR: App has NO WRITE PERMISSION to write a new config file !")
         }
@@ -186,15 +185,11 @@ class LanbahnPanelActivity : AppCompatActivity() {
 
         sendQ.clear()
 
-        setActionBarBackground()  // matching to panel style
-        LPaints.init(prescale, prefs.getString(KEY_STYLE_PREF, "US"), applicationContext)
-
         var newPanel = reloadConfigIfPanelFileChanged()
         if (newPanel) {
             // get panel preferences (and override current preferences for scaling, quadrant
             (application as LanbahnPanelApplication).loadPanelSettings()
         }
-
 
         if (DEBUG) Log.d(TAG, "panelName=$panelName enableFiveViews=${prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false)} selQuadrant=${prefs.getInt(KEY_QUADRANT,0)}")
         // set quadrants mode and display selected selQuadrant
@@ -204,16 +199,9 @@ class LanbahnPanelActivity : AppCompatActivity() {
         displayLockAndRoutingState()
 
         setActionBarBackground()  // matching to panel style
-        LPaints.init(prescale, prefs.getString(KEY_STYLE_PREF, "US"), applicationContext)
+        LPaints.init(prescale, prefs.getString(KEY_STYLE_PREF, DEFAULT_STYLE), applicationContext)
 
         if (DEBUG) debugLogDisplayMetrics()
-
-        /* routing managed centrally by PC application
-        if (prefs.getBoolean(KEY_ROUTES, false)) {
-            Route.clearAllRoutes()
-        } else {
-            RouteButtonElement.autoReset()  // this will also reset the sensors to STATE_FREE
-        } */
 
         if (prefs.getBoolean(KEY_SAVE_STATES, false)) {
             loadStates()
@@ -237,7 +225,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
     private fun setActionBarBackground() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return // does not work for old android versions
 
-        when (prefs.getString(KEY_STYLE_PREF,"US")) {
+        when (prefs.getString(KEY_STYLE_PREF,DEFAULT_STYLE)) {
             "US" -> supportActionBar?.setBackgroundDrawable(ColorDrawable(-0xff990f)) //Color.BLUE))  // TODO color ??
             "UK" -> supportActionBar?.setBackgroundDrawable(ColorDrawable(-0xdfAAdd))  // kotlin: 0xffff0000.toInt()
             "DE" -> supportActionBar?.setBackgroundDrawable(ColorDrawable(Color.BLUE))
@@ -307,7 +295,7 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 return true
             }
 
-            /* R.id.menu_check_service -> {
+            /* R.adr.menu_check_service -> {
                 //TODO int num = mService.getRandomNumber();
                 toast("not implemented")
                 // "number: " + num, Toast.LENGTH_SHORT).show();
@@ -639,7 +627,6 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 // If request is cancelled, the result arrays are empty.
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     // finally, we got the permission, write updated config file NOW
-                    WriteConfig.toXMLFile()
                     WriteConfig.locosToXMLFile()
                 } else {
                     // permission denied, boo! Disable the functionality that depends on this permission.
@@ -668,10 +655,13 @@ class LanbahnPanelActivity : AppCompatActivity() {
             if (DEBUG) {
                 Log.d(TAG, "onResume - reloading panel config.")
             }
-            ReadConfig.readConfigFromFile(this) // reload config File with relocate of origin
+
             if (prefs.getBoolean(KEY_LOCAL_LOCO_LIST, false)) {
                 // if enabled, overwrite loco list from panel file with a local loco list
-                ReadConfig.readLocosConfigFromFile(this)
+                ReadConfig.readConfigFromFile(this, true) // reload config File with relocate of origin
+                ReadConfig.readLocalLocosFile(this)
+            } else {
+                ReadConfig.readConfigFromFile(this) // reload config File with relocate of origin
             }
             result = true
         }

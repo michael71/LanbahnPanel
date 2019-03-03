@@ -25,11 +25,10 @@
         android:title="@string/flipUpsideDown" />
 
     <ListPreference
-        android:defaultValue="@string/sel_style_default"
+        android:defaultValue="DE"
         android:entries="@array/styles"
         android:entryValues="@array/style_values"
         android:key="selectStylePref"
         android:summary="select a Style for dark or white background etc."
         android:title="@string/sel_style" />
-
  </PreferenceScreen>

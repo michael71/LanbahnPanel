@@ -3,14 +3,14 @@
     <string-array name="listEmpty">
         <item>keine passenden Files!</item>
     </string-array>
-   <string-array name="styles">  
-        <item>US (dark background)</item>  
-        <item>DE (white background)</item>  
-        <item>UK (green background)</item>  
+   <string-array name="styles">
+       <item>DE (white background)</item>
+       <item>US (dark background)</item>
+       <item>UK (green background)</item>
    </string-array>
-    <string-array name="style_values">  
-        <item>US</item>  
-        <item>DE</item>  
+    <string-array name="style_values">
+        <item>DE</item>
+        <item>US</item>
         <item>UK</item>  
    </string-array>
     <string-array name="scaling">

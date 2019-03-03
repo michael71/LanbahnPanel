@@ -105,18 +105,25 @@ class LanbahnPanelApplication : Application() {
                     TYPE_SX_MSG -> {   // data of 8 (or less) lanbahn channels bundled in a data byte
                         // example  X 85 5  => bits 1 and 3 set of SX-addr 85 => set 851 to 1 and 853 to 1
                         //                                  others to zero (only if we have matching lanbahn addresses)
+                        Log.d(TAG,"sx-msg chan=$chan data=$data")
                         for (i in 1..8) {   // sxbit 1..8
                             val lbChan = chan * 10 + i
+                            if (lbChan == 765) Log.d(TAG,"lbChan=765 - data=$data")
                             val allMatchingPEs = PanelElement.getAllPesByAddress(lbChan)
                             for (pe in allMatchingPEs) {
                                 var d: Int
                                 if (pe.nbit == 2) { // check if nbit is != 1
                                     // can be multi aspect signal
-                                    d = data.shr(i - 1) and 0x03
+                                    if (i % 2 != 0) {
+                                        d = data.shr(i - 1) and 0x03
+                                        pe.state = d
+                                        if (lbChan == 765) Log.d(TAG,"a=765 - d=$d")
+                                    }
                                 } else {
                                     d = data.shr(i - 1) and 0x01
+                                    pe.state = d
                                 }
-                                pe.state = d
+
                             }
                             // there should be no routes in the SX address range !!!
                         }
@@ -195,7 +202,7 @@ class LanbahnPanelApplication : Application() {
         val editor = prefs.edit()
         Log.d(TAG, "savePanelSettings")
         // currently used - but these will be stored also for the panel
-        pSett.selStyle = prefs.getString(KEY_STYLE_PREF,"US")
+        pSett.selStyle = prefs.getString(KEY_STYLE_PREF,DEFAULT_STYLE)
         pSett.selScale = prefs.getString(KEY_SCALE_PREF,"auto")
         pSett.fiveViews = prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false)
         pSett.selQua = prefs.getInt(KEY_QUADRANT,0)
@@ -217,7 +224,7 @@ class LanbahnPanelApplication : Application() {
         Log.d(TAG, "loadPanelSettings panel=$panelName")
 
         // init pSett from generic settings
-        pSett = PanelSettings(prefs.getString(KEY_STYLE_PREF,"US"),
+        pSett = PanelSettings(prefs.getString(KEY_STYLE_PREF,DEFAULT_STYLE),
                 prefs.getString(KEY_SCALE_PREF,"auto"),
                 prefs.getBoolean(KEY_FIVE_VIEWS_PREF,false),
                 prefs.getInt(KEY_QUADRANT, 0),
@@ -242,7 +249,7 @@ class LanbahnPanelApplication : Application() {
 
         }
 
-        LPaints.init(prescale, prefs.getString(KEY_STYLE_PREF,"US"), applicationContext)
+        LPaints.init(prescale, prefs.getString(KEY_STYLE_PREF,DEFAULT_STYLE), applicationContext)
         val editor = prefs.edit()
         if (pSett.fiveViews == true) {
             editor.putInt(KEY_QUADRANT, pSett.selQua)

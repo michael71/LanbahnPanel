@@ -19,7 +19,7 @@ import de.blankedv.lanbahnpanel.model.*
 /**
  * constructs a route
  *
- * @param id
+ * @param adr
  * unique identifier (int)
  * @param route
  * string for route setting like "770,1;720,2"
@@ -32,7 +32,7 @@ import de.blankedv.lanbahnpanel.model.*
  * @param offending
  * string with offending routes, separated by comma
  */
-class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors: String,
+class Route(var adr: Int, var btn1: Int, var btn2: Int, route: String, allSensors: String,
             offending: String) {
 
     private val blink = System.currentTimeMillis()
@@ -43,7 +43,7 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
 
     var routeString = ""
     var sensorsString = ""
-    var offendingString = "" // comma separated list of id's of offending
+    var offendingString = "" // comma separated list of adr's of offending
 // routes
 
 
@@ -67,7 +67,7 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         this.offendingString = offending
 
         if (DEBUG)
-            Log.d(TAG, "creating route id=$id")
+            Log.d(TAG, "creating route adr=$adr")
 
         // route = "750,1;751,2" => set 750 turnout 1 and 751 turnout value 2
         val routeElements = route.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -103,7 +103,7 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
         val sensorAddresses = allSensors.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
         for (i in sensorAddresses.indices) {
-            if (id == 2201) Log.d(TAG,"i=$i")
+            if (adr == 2201) Log.d(TAG,"i=$i")
             // add the matching elements turnout sensors list
             for (pe in panelElements) {
                 if (pe is SensorElement) {
@@ -121,7 +121,7 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
             for (rt in routes) {
                 try {
                     val offID = Integer.parseInt(offRoutes[i])
-                    if (rt.id == offID && rt.isActive) {
+                    if (rt.adr == offID && rt.isActive) {
                         rtOffending.add(rt)
                     }
                 } catch (e: NumberFormatException) {
@@ -136,17 +136,17 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
 
     fun request() {
         if (DEBUG)
-            Log.d(TAG, "requesting route id=$id")
+            Log.d(TAG, "requesting route adr=$adr")
         // request to set this route in central
-        var cmd = "REQ $id 1"    // for other tablets
+        var cmd = "REQ $adr 1"    // for other tablets
         sendQ.add(cmd)
     }
 
     fun clearRequest() {
         if (DEBUG)
-            Log.d(TAG, "requesting CLEAR route id=$id")
+            Log.d(TAG, "requesting CLEAR route adr=$adr")
         // request to set this route in central
-        var cmd = "REQ $id 0"    // for other tablets
+        var cmd = "REQ $adr 0"    // for other tablets
         sendQ.add(cmd)
     }
 
@@ -198,10 +198,10 @@ class Route(var id: Int, var btn1: Int, var btn2: Int, route: String, allSensors
          */
         fun update ( addr : Int, data : Int) {
             for (rt in routes) {
-                if (rt.id == addr) {
+                if (rt.adr == addr) {
                     rt.isActive = ( data != 0 )
                     if (DEBUG)
-                        Log.d(TAG, "route id=${rt.id} isActive=${rt.isActive}")
+                        Log.d(TAG, "route adr=${rt.adr} isActive=${rt.isActive}")
                 }
             }
         }

@@ -4,7 +4,7 @@
 
 package de.blankedv.lanbahnpanel.model
 
-const val DEBUG = true // false for release-apk
+const val DEBUG = false // false for release-apk
 const val TAG = "LanbahnPanel"
 
 const val INVALID_INT = -1
@@ -13,6 +13,7 @@ const val INVALID_INT = -1
 const val KEY_DRAW_ADR = "drawAddressesPref"
 const val KEY_DRAW_ADR2 = "drawAddressesPref2"
 const val KEY_STYLE_PREF = "selectStylePref"
+const val DEFAULT_STYLE = "DE"
 //const val KEY_ENABLE_ZOOM = "enableZoomPref"
 //const val KEY_ENABLE_AUTOSCALE = "enableAutoscalePref"
 const val KEY_SCALE_PREF = "selectScalePref"
@@ -44,7 +45,7 @@ const val FNAME_FROM_SERVER = "from_server.xml"
 
 const val FNAME_LOCOS_FILE = "locos.xml"
 
-const val LBP_NOTIFICATION_ID = 201 //arbitrary id for notification
+const val LBP_NOTIFICATION_ID = 201 //arbitrary adr for notification
 
 // turnouts
 const val STATE_CLOSED = 0

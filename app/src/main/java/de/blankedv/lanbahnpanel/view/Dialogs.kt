@@ -25,113 +25,9 @@ import de.blankedv.lanbahnpanel.model.*
  */
 object Dialogs {
 
-    private val MAX_ADDR = 9999
-    private val MIN_ADDR = 1
-
     private var selLocoIndex: Int = 0
     private val NOTHING = 99999
     private val NEW_LOCO_NAME = "+ Neue Lok"
-
-    // nicht mehr benutzt, da bevorzugt ein Server-Panel-File benutzt werden soll
-    internal fun selectAddressDialog(el: PanelElement) {
-
-        val factory = LayoutInflater.from(appContext)
-        val selAddressView = factory.inflate(
-                R.layout.alert_dialog_sel_address, null)
-
-        val tvAdr2 = selAddressView
-                .findViewById<View>(R.id.tvAddress2) as TextView
-        val tvInv2 = selAddressView
-                .findViewById<View>(R.id.tvInverted2) as TextView
-        val tvInv = selAddressView
-                .findViewById<View>(R.id.tvInverted) as TextView
-        val address = selAddressView
-                .findViewById<View>(R.id.picker1) as NumberPicker
-        val inverted = selAddressView.findViewById<View>(R.id.cbInverted) as CheckBox
-
-        val address2 = selAddressView
-                .findViewById<View>(R.id.picker2) as NumberPicker
-        val inverted2 = selAddressView.findViewById<View>(R.id.cbInverted2) as CheckBox
-
-        address.minValue = MIN_ADDR
-        address.maxValue = MAX_ADDR
-
-        address2.minValue = MIN_ADDR
-        address2.maxValue = MAX_ADDR
-
-        address.setOnLongPressUpdateInterval(100) // faster change for long press
-        val e = el as ActivePanelElement
-        if (e.adr2 != INVALID_INT) {
-            address2.visibility = View.VISIBLE
-            inverted2.visibility = View.VISIBLE
-            tvAdr2.visibility = View.VISIBLE
-            tvInv2.visibility = View.VISIBLE
-
-        } else {   // hide second address selection if there is not second address for this PanelElement
-            address2.visibility = View.GONE
-            inverted2.visibility = View.GONE
-            tvAdr2.visibility = View.GONE
-            tvInv2.visibility = View.GONE
-        }
-        if (e is SignalElement) {
-            tvInv.visibility = View.GONE
-            inverted.visibility = View.GONE
-        } else {
-            tvInv.visibility = View.VISIBLE
-            inverted.visibility = View.VISIBLE
-        }
-        val msg: String
-        address.value = e.adr
-        address2.value = e.adr2
-        inverted.isChecked = (e.invert == DISP_INVERTED)
-        inverted2.isChecked = (e.invert2 == DISP_INVERTED)
-        val res = appContext?.resources
-        msg = res!!.getString(R.string.address) + "?"
-        val addrDialog = AlertDialog.Builder(appContext)
-                .setMessage(msg)
-                .setCancelable(false)
-                .setView(selAddressView)
-                .setPositiveButton(res.getString(R.string.save)
-                ) { dialog, id ->
-                    // Toast.makeText(appContext,"Adresse "+sxAddress.getCurrent()
-                    // +"/"+sxBit.getCurrent()+" wurde selektiert",
-                    // Toast.LENGTH_SHORT)
-                    // .show();
-                    // TODO check address for validity
-                    e.adr = address.value
-                    if (inverted.isChecked) {
-                        e.invert = DISP_INVERTED
-                    } else {
-                        e.invert = DISP_STANDARD
-                    }
-                    // TODO check address2 for validity
-                    if (e.adr2 != INVALID_INT) {
-                        e.adr2 = address2.value
-                        if (inverted2.isChecked) {
-                            e.invert2 = DISP_INVERTED
-                        } else {
-                            e.invert2 = DISP_STANDARD
-                        }
-                    }
-                    configHasChanged = true // flag for saving the
-                    // configuration
-                    // later when
-                    // pausing the
-                    // activity
-                    dialog.dismiss()
-                }
-                .setNegativeButton(res.getString(R.string.back)
-                ) { dialog, id ->
-                    // dialog.cancel();
-                    dialog.dismiss()
-                }.create()
-        addrDialog.show()
-        if (e.adr2 != INVALID_INT) {
-            addrDialog.window!!.setLayout(700, 400)
-        } else {
-            addrDialog.window!!.setLayout(350, 400)
-        }
-    }
 
     fun selectLocoDialog() {
 
@@ -185,12 +81,12 @@ object Dialogs {
 
         val res = appContext?.resources
 
-        val sxDialog = AlertDialog.Builder(appContext)
+        /* val sxDialog = AlertDialog.Builder(appContext)
                 //, R.style.Animations_GrowFromBottom ) => does  not work
                 //.setMessage("Lok auswählen - "+locolist.name)
                 .setCancelable(true)
                 .setView(selSxAddressView)
-                .setPositiveButton(res!!.getString(R.string.select), { dialog, id ->
+                .setPositiveButton(res!!.getString(R.string.select)) { dialog, id ->
                     if (selLocoIndex == NEW_LOCO) {
                         dialog.dismiss()
                         val l = Loco(NEW_LOCO_NAME)
@@ -205,8 +101,8 @@ object Dialogs {
                         selectedLoco?.initFromSX()
                         dialog.dismiss()
                     }
-                })
-                .setNeutralButton(res!!.getString(R.string.edit), { dialog, id ->
+                }
+                .setNeutralButton(res!!.getString(R.string.edit)) { dialog, id ->
                     if (selLocoIndex == NEW_LOCO) {
                         val l = Loco(NEW_LOCO_NAME)
                         locolist.add(l)
@@ -219,12 +115,12 @@ object Dialogs {
                     }
                     dialog.dismiss()
                     openEditDialog()
-                })
-                .setNegativeButton("Zurück", DialogInterface.OnClickListener { dialog, id ->
-                    //dialog.cancel();
-                })
+                }
+                .setNegativeButton("Zurück") { dialog, id ->     //dialog.cancel();
+                }
 
                 .show()
+                */
     }
 
 

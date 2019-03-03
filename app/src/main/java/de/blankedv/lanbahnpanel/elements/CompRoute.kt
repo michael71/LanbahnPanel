@@ -17,7 +17,7 @@ class CompRoute
  *
  *
  */
-(internal var id: Int // must be unique
+(internal var adr: Int // must be unique
  , internal var btn1: Int, internal var btn2: Int, sRoutes: String) {
     internal var routesString = "" // identical to config string
 
@@ -32,7 +32,7 @@ class CompRoute
         this.routesString = sRoutes
 
         if (DEBUG)
-            Log.d(TAG, "creating comproute id=$id")
+            Log.d(TAG, "creating comproute adr=$adr")
 
         // routes = "12,13": these routes need to be activated.
         val iID = routesString.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
@@ -41,7 +41,7 @@ class CompRoute
             val routeID = Integer.parseInt(iID[i])
             for (rt in routes) {
                 try {
-                    if (rt.id == routeID) {
+                    if (rt.adr == routeID) {
                         myroutes.add(rt)
                     }
                 } catch (e: NumberFormatException) {
@@ -61,17 +61,17 @@ class CompRoute
 
     fun request() {
         if (DEBUG)
-            Log.d(TAG, "requesting comproute id=$id")
+            Log.d(TAG, "requesting comproute adr=$adr")
         // request to set this route in central
-        var cmd = "REQ $id 1"    // for other tablets
+        var cmd = "REQ $adr 1"    // for other tablets
         sendQ.add(cmd)
     }
 
     fun clearRequest() {
         if (DEBUG)
-            Log.d(TAG, "requesting CLEAR comproute id=$id")
+            Log.d(TAG, "requesting CLEAR comproute adr=$adr")
         // request to set this route in central
-        var cmd = "REQ $id 0"    // for other tablets
+        var cmd = "REQ $adr 0"    // for other tablets
         sendQ.add(cmd)
     }
 
@@ -85,14 +85,14 @@ class CompRoute
          */
         fun update ( addr : Int, data : Int) {
             for (crt in compRoutes) {
-                if (crt.id == addr) {
+                if (crt.adr == addr) {
                     crt.isActive = (data != 0)
                     if (DEBUG)
-                        Log.d(TAG, "route id=${crt.id} isActive=${crt.isActive}")
+                        Log.d(TAG, "route adr=${crt.adr} isActive=${crt.isActive}")
                     for (rt in crt.myroutes) {
                         rt.isActive = (data != 0)
                         if (DEBUG)
-                            Log.d(TAG, "route id=${rt.id} isActive=${rt.isActive}")
+                            Log.d(TAG, "route adr=${rt.adr} isActive=${rt.isActive}")
                     }
                 }
             }
