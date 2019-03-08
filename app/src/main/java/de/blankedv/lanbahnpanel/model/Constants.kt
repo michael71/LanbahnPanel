@@ -4,7 +4,7 @@
 
 package de.blankedv.lanbahnpanel.model
 
-const val DEBUG = false // false for release-apk
+const val DEBUG = true  // false for release-apk
 const val TAG = "LanbahnPanel"
 
 const val INVALID_INT = -1
@@ -66,9 +66,10 @@ const val STATE_YELLOW_FEATHER = 3
 const val STATE_SWITCHING = 4
 
 
-// buttons
-const val STATE_NOT_PRESSED = 0
-const val STATE_PRESSED = 1
+// route buttons
+const val BTN_NOT_PRESSED = 0
+const val BTN_PRESSED = 1   // blinking
+const val BTN_MARKED = 2   // YELLOW
 
 // sensors
 const val STATE_UNKNOWN = INVALID_INT

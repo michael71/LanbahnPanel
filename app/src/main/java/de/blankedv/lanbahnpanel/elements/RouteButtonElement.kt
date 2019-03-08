@@ -22,26 +22,24 @@ class RouteButtonElement : ActivePanelElement {
     //private var timeSet: Long = 0
 
     private val radius = 8f * prescale
-   // private val radiusL = 5.5f * prescale
-
+    // private val radiusL = 5.5f * prescale
 
 
     /**
      *
      * @return true if the button is currently pressed, else false
      */
-    fun isPressed(): Boolean
-
-    {
-        return (state == STATE_PRESSED)
+    fun isPressed(): Boolean {
+        return (state == BTN_PRESSED)
     }
 
     constructor(x: Int, y: Int, name: String, adr: Int) : super(x, y, name, adr)
 
     constructor() {
         adr = INVALID_INT
-        state = STATE_UNKNOWN
+        state = BTN_NOT_PRESSED
     }
+
 
     /** draw route buttons  (vector draw
      *
@@ -57,7 +55,7 @@ class RouteButtonElement : ActivePanelElement {
         if (adr == INVALID_INT) {
             canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, LPaints.btn0Paint)
         } else {
-            if (state == STATE_PRESSED) {
+            if (state == BTN_PRESSED) {
                 if (System.currentTimeMillis() - blink > 500) {
                     toggleBlink = !toggleBlink
                     blink = System.currentTimeMillis()
@@ -67,15 +65,14 @@ class RouteButtonElement : ActivePanelElement {
                 } else {
                     canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, LPaints.btn0Paint)
                 }
-            } else if (state == STATE_NOT_PRESSED) {
+            } else if (state == BTN_NOT_PRESSED) {
                 canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, LPaints.btn0Paint)
-            } else if (state == STATE_UNKNOWN) {
-                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, LPaints.btn0Paint)
+            } else if (state == BTN_MARKED) {
+                canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, LPaints.btnMarkPaint)
             }
 
+            if (prefs.getBoolean(KEY_DRAW_ADR2, false)) doDrawAddresses(canvas)
         }
-
-        if (prefs.getBoolean(KEY_DRAW_ADR2, false)) doDrawAddresses(canvas)
     }
 
     override fun toggle() {
@@ -90,41 +87,46 @@ class RouteButtonElement : ActivePanelElement {
 
         lastToggle = System.currentTimeMillis()  // reset toggle timer
 
-        if ((state == STATE_NOT_PRESSED) or (state == STATE_UNKNOWN)) {
+        if (state == BTN_NOT_PRESSED) {
             //timeSet = System.currentTimeMillis()
             // check first if this is the first button of a currently active route
             // if this is the case then clear this route
             var clearing = false
-            if (DEBUG) Log.d(TAG, "checking for route and compRoute clear")
+            if (DEBUG) Log.d(TAG, "checking for route and compRoute clear, btn#$adr")
             for (rt in routes) {
                 if (rt.isActive && rt.btn1 == adr) {
                     if (DEBUG) Log.d(TAG, "found route matching to btn. requesting to clear route=" + rt.adr)
-                    // we found a route with this button, new clear it
+                    // we found a route with this button, now clear it
                     // now set
                     rt.clearRequest()
                     clearing = true
-                    state = STATE_NOT_PRESSED   // reset btn
+                    state = BTN_NOT_PRESSED   // reset btn
                 }
             }
             for (crt in compRoutes) {
-                 if (crt.isActive && crt.btn1 == adr) {
+                if (crt.isActive && crt.btn1 == adr) {
                     if (DEBUG) Log.d(TAG, "found COMP route matching to btn. requesting to clear COMP route=" + crt.adr)
-                    // we found a route with this button, new clear it
+                    // we found a route with this button, now clear it
                     // now set
                     crt.clearRequest()
                     clearing = true
-                    state = STATE_NOT_PRESSED   // reset btn
+                    state = BTN_NOT_PRESSED   // reset btn
                 }
             }
             if (!clearing) {
-                state = STATE_PRESSED
-                checkForRoute(adr)
+                state = BTN_PRESSED
+                markPossibleRouteEndButtons(adr)
+
+
             } else {
                 appContext!!.longToast("Fahrstraße gelöscht!")
             }
 
-        } else {
-            state = STATE_NOT_PRESSED
+        } else if (state == BTN_MARKED) {
+            state = BTN_PRESSED
+            checkForRoute(adr)
+        }  else {
+            state = BTN_NOT_PRESSED
         }
 
         // state = STATE_UNKNOWN; // until updated via lanbahn message
@@ -155,7 +157,13 @@ class RouteButtonElement : ActivePanelElement {
     }
 
     fun reset() {
-        state = STATE_NOT_PRESSED
+        state = BTN_NOT_PRESSED
+        Log.d(TAG,"btn#$adr not-pressed")
+    }
+
+    fun mark() {
+        state = BTN_MARKED
+        Log.d(TAG,"btn#$adr marked")
     }
 
     companion object {
@@ -172,6 +180,19 @@ class RouteButtonElement : ActivePanelElement {
 
             return null
 
+        }
+
+        fun markPossibleRouteEndButtons(adr1: Int) {
+            for (rt in routes) {
+                if (rt.btn1 == adr1) {
+                    findRouteButtonByAddress(rt.btn2)!!.mark()
+                }
+            }
+            for (crt in compRoutes) {
+                if (crt.btn1 == adr1) {
+                    findRouteButtonByAddress(crt.btn2)!!.mark()
+                }
+            }
         }
 
         fun checkForRoute(adrSecondBtn: Int): Boolean {
@@ -214,7 +235,7 @@ class RouteButtonElement : ActivePanelElement {
                         findRouteButtonByAddress(adrSecondBtn)!!.reset()
 
                         // set the route (i.e. sensors and turnouts)
-                        if (prefs.getBoolean(KEY_ROUTING,true)) {
+                        if (prefs.getBoolean(KEY_ROUTING, true)) {
                             rt.request();
                         }
                         break  // no need to search further
@@ -232,7 +253,7 @@ class RouteButtonElement : ActivePanelElement {
                         findRouteButtonByAddress(adrSecondBtn)!!.reset()
 
                         // set the route (i.e. sensors and turnouts)
-                        if (prefs.getBoolean(KEY_ROUTING,true)) {
+                        if (prefs.getBoolean(KEY_ROUTING, true)) {
                             cr.request();
                         }
                         break  // no need to search further
@@ -242,6 +263,14 @@ class RouteButtonElement : ActivePanelElement {
                     appContext?.toast("keine passende Fahrstrasse.")
                     findRouteButtonByAddress(adrFirstBtn)!!.reset()  // clear the button also
                     findRouteButtonByAddress(adrSecondBtn)!!.reset()  // clear the button also
+                } else {
+                    // route was found, clear all route Buttons
+                    Log.d(TAG,"reset all route buttons")
+                    for (pe in panelElements) {
+                        if (pe is RouteButtonElement) {
+                            pe.reset()
+                        }
+                    }
                 }
 
             } else if (nPressed > 2) {

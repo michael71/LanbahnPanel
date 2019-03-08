@@ -24,6 +24,7 @@ object LPaints {
     var circlePaint = Paint()
     var btn0Paint = Paint()
     var btn1Paint = Paint()
+    var btnMarkPaint = Paint()
     var greenPaint = Paint()
     var redPaint = Paint()
     var linePaintRedDash = Paint()
@@ -158,6 +159,13 @@ object LPaints {
         btn1Paint.isDither = true
         btn1Paint.style = Paint.Style.FILL
         btn1Paint.strokeCap = Paint.Cap.ROUND
+
+        btnMarkPaint.color = Color.YELLOW
+        btnMarkPaint.strokeWidth = 7f * prescale
+        btnMarkPaint.isAntiAlias = true
+        btnMarkPaint.isDither = true
+        btnMarkPaint.style = Paint.Style.FILL
+        btnMarkPaint.strokeCap = Paint.Cap.ROUND
 
         bgPaint.color = BG_COLOR
         bgPaint.isAntiAlias = true
