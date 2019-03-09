@@ -198,6 +198,11 @@ open class Railroad(private val ip: String, private val port: Int) : Thread() {
                             m.what = TYPE_ROUTE_INVALID_MSG
                             m.arg2 = 0
                             appHandler.sendMessage(m)  // send to UI Thread via Message
+                        } else if (info[0] == "ROUTE_LOCKED") {
+                            val m = Message.obtain()
+                            m.what = TYPE_ROUTE_LOCKED_MSG
+                            m.arg2 = 0
+                            appHandler.sendMessage(m)  // send to UI Thread via Message
                         }
                     }
                     2 -> {

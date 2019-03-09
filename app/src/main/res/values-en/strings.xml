@@ -37,7 +37,7 @@
     <string name="wifi_disconnected">No Wifi !</string>
     <string name="draw_routebtn_addresses">Display RouteBtn/Sensor Addresses</string>
     <string name="questionmark">-?-</string>
-    <string name="usageString">to be used with SX3PC program, see SELECTRIX</string>
+    <string name="usageString">to be used with SX4 program or SX3-PC program (SELECTRIX) or LbServer (FREMO, LocoNet)</string>
     <string name="display_five_views">Display 5 Views (full view + 4 quadrants)</string>
     <string name="connect">connect</string>
     <string name="enable_power_control">Enable Global Power Control</string>
@@ -63,4 +63,19 @@
     <string name="selectloco">select Loco</string>
     <string name="server_ip">Server IP address</string>
     <string name="server_port">Server port</string>
+    <string name="route_locked">Route (turnouts) locked, cannot be set!</string>
+    <string name="remove_loco">Remove Loco</string>
+    <string name="no_locos">No Locos</string>
+    <string name="name">Loco Name</string>
+    <string name="error_enter_name_first">ERROR: please enter NAME first!</string>
+    <string name="error_enter_address_first">ERROR: please enter loco ADDRESS first!</string>
+    <string name="edit_loco">Edit Loco</string>
+    <string name="different_icon">anderes Lok-Icon</string>
+    <string name="add_loco">Add new Loco</string>
+    <string name="add_loco_title">"Add  Loco Title "</string>
+    <string name="add_new_loco">Add new Loco?</string>
+    <string name="address">Loco Address</string>
+    <string name="pref_header_loco">Loco Control</string>
+    <string name="store_changes">Store changes?</string>
+    <string name="sx_adresse">Selectrix Adresse</string>
 </resources>

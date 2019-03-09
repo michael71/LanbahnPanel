@@ -23,6 +23,7 @@ import de.blankedv.lanbahnpanel.railroad.Commands
 import de.blankedv.lanbahnpanel.settings.PanelSettings
 import de.blankedv.lanbahnpanel.util.LanbahnBitmaps
 import de.blankedv.lanbahnpanel.util.LPaints
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 
 // TODO: kotlin review and simplify
@@ -88,7 +89,11 @@ class LanbahnPanelApplication : Application() {
                     }
                     TYPE_ROUTE_INVALID_MSG -> {
                         if (DEBUG) Log.d(TAG, "route invalid, can not be set")
-                        toast(getString(R.string.route_invalid)).setGravity(Gravity.CENTER_HORIZONTAL or Gravity.TOP, 0,0)
+                        longToast(getString(R.string.route_invalid)).setGravity(Gravity.CENTER_HORIZONTAL or Gravity.TOP, 0,0)
+                    }
+                    TYPE_ROUTE_LOCKED_MSG -> {
+                        if (DEBUG) Log.d(TAG, "route (turnouts) locked, can not be set")
+                        longToast(getString(R.string.route_locked)).setGravity(Gravity.CENTER_HORIZONTAL or Gravity.TOP, 0,0)
                     }
                     TYPE_GENERIC_MSG -> {
                         PanelElement.updateAcc(chan, data)  // turnout, signal, doubleslip

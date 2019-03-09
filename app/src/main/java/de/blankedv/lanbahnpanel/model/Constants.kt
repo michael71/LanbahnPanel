@@ -4,7 +4,7 @@
 
 package de.blankedv.lanbahnpanel.model
 
-const val DEBUG = true  // false for release-apk
+const val DEBUG = false  // false for release-apk
 const val TAG = "LanbahnPanel"
 
 const val INVALID_INT = -1
@@ -106,7 +106,8 @@ const val TYPE_LOCO_MSG = 10
 const val TYPE_SHUTDOWN_MSG = 11
 const val TYPE_ROUTING_MSG = 12
 const val TYPE_ROUTE_INVALID_MSG = 13
-const val TYPE_TRAIN_MSG = 14
+const val TYPE_ROUTE_LOCKED_MSG = 14
+const val TYPE_TRAIN_MSG = 15
 
 
 // fixed prefix for scaling - should be =1 for small displays and =2 for

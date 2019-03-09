@@ -32,7 +32,7 @@
     <string name="sel_style">Anzeige Stil wählen</string>
     <string name="sel_style_default">US</string>
     <string name="aboutString">"LanbahnPanel is free software - you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3. LanbahnPanel is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  For details about the GNU General Public License see http://www.gnu.org/licenses "</string>
-    <string name="usageString">to be used with SX3PC program, see SELECTRIX </string>
+    <string name="usageString">to be used with SX4 program (SELECTRIX) or LbServer (FREMO, LocoNet)</string>
     <string name="moreInfoString">mehr Info unter https://opensx.net/lanbahnpanel</string>
     <string name="versionUnknown">version x.x</string>
     <string name="unknown">-?-</string>
@@ -63,4 +63,19 @@
     <string name="selectloco">Lok auswählen</string>
     <string name="server_ip" translatable="false">Server IP Adresse</string>
     <string name="server_port" translatable="false">Server Port</string>
+    <string name="route_locked">Weichen verriegelt, Fahrstraße kann nicht gestellt werden!</string>
+    <string name="remove_loco">Lok entfernen</string>
+    <string name="no_locos">Keine Loks</string>
+    <string name="name">Lok/Zug Name</string>
+    <string name="error_enter_name_first">ERROR: Bitte erst Namen eingeben</string>
+    <string name="error_enter_address_first">ERROR: Bitte erst Adresse eingeben</string>
+    <string name="edit_loco">Lok editieren</string>
+    <string name="different_icon">anderes Lok-Icon</string>
+    <string name="add_loco">Lok hinzufügen</string>
+    <string name="add_loco_title">Lok/Zug Name hinzufügen</string>
+    <string name="add_new_loco">Lok hinzufügen</string>
+    <string name="address">Lok Adresse</string>
+    <string name="pref_header_loco">Lok/Zug Regler</string>
+    <string name="sx_adresse">Selectrix Adresse</string>
+    <string name="store_changes">Änderungen abspeichern?</string>
 </resources>
