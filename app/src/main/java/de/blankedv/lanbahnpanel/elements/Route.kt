@@ -9,6 +9,7 @@ import de.blankedv.lanbahnpanel.model.*
  * CENTRAL PC PROGRAM !
  *
  * Class Route stores a complete route, which contains sensors, signals and turnouts
+ * TODO CHECK IF STILL NEEDED
  * it is tried to calculate offending routes automatically (defined as all routes which
  * set on of our turnouts. In addition offending routes can also be defined in the
  * config file (needed to crossing routes, which cannot be found automatically)
@@ -190,7 +191,6 @@ class Route(var adr: Int, var btn1: Int, var btn2: Int, route: String, allSensor
 
     companion object {
 
-
         /**
          * check if we need to update the route state "isActive = true" when
          * data==1 and " = false" when data==0
@@ -200,8 +200,6 @@ class Route(var adr: Int, var btn1: Int, var btn2: Int, route: String, allSensor
             for (rt in routes) {
                 if (rt.adr == addr) {
                     rt.isActive = ( data != 0 )
-                    if (DEBUG)
-                        Log.d(TAG, "route adr=${rt.adr} isActive=${rt.isActive}")
                 }
             }
         }

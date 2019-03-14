@@ -87,12 +87,8 @@ class CompRoute
             for (crt in compRoutes) {
                 if (crt.adr == addr) {
                     crt.isActive = (data != 0)
-                    if (DEBUG)
-                        Log.d(TAG, "route adr=${crt.adr} isActive=${crt.isActive}")
                     for (rt in crt.myroutes) {
                         rt.isActive = (data != 0)
-                        if (DEBUG)
-                            Log.d(TAG, "route adr=${rt.adr} isActive=${rt.isActive}")
                     }
                 }
             }

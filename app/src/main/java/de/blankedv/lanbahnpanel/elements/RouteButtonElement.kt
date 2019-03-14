@@ -15,23 +15,10 @@ import org.jetbrains.anko.toast
  */
 class RouteButtonElement : ActivePanelElement {
 
-    // display a route button
-
     var blink = System.currentTimeMillis()
     var toggleBlink = false
-    //private var timeSet: Long = 0
 
     private val radius = 8f * prescale
-    // private val radiusL = 5.5f * prescale
-
-
-    /**
-     *
-     * @return true if the button is currently pressed, else false
-     */
-    fun isPressed(): Boolean {
-        return (state == BTN_PRESSED)
-    }
 
     constructor(x: Int, y: Int, name: String, adr: Int) : super(x, y, name, adr)
 
@@ -40,17 +27,14 @@ class RouteButtonElement : ActivePanelElement {
         state = BTN_NOT_PRESSED
     }
 
-
-    /** draw route buttons  (vector draw
+    /** draw a route button on canvas (vector draw)
      *
      * @param canvas
      *
-     * */
+     */
     override fun doDraw(canvas: Canvas) {
 
-        if (!prefs.getBoolean(KEY_ROUTING, false)) return
-
-        //canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radiusL, LPaints.whitePaint)
+        if (!prefs.getBoolean(KEY_ROUTING, false)) return  // do not display route keys if not routes are enabled
 
         if (adr == INVALID_INT) {
             canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, LPaints.btn0Paint)
@@ -76,6 +60,7 @@ class RouteButtonElement : ActivePanelElement {
     }
 
     override fun toggle() {
+
         if (!prefs.getBoolean(KEY_ROUTING, false)) return  // do not enable route keys if not routes are enabled
 
         if (adr == INVALID_INT) return  // do nothing if no address defined.
@@ -87,51 +72,48 @@ class RouteButtonElement : ActivePanelElement {
 
         lastToggle = System.currentTimeMillis()  // reset toggle timer
 
-        if (state == BTN_NOT_PRESSED) {
-            //timeSet = System.currentTimeMillis()
-            // check first if this is the first button of a currently active route
-            // if this is the case then clear this route
-            var clearing = false
-            if (DEBUG) Log.d(TAG, "checking for route and compRoute clear, btn#$adr")
-            for (rt in routes) {
-                if (rt.isActive && rt.btn1 == adr) {
-                    if (DEBUG) Log.d(TAG, "found route matching to btn. requesting to clear route=" + rt.adr)
-                    // we found a route with this button, now clear it
-                    // now set
-                    rt.clearRequest()
-                    clearing = true
-                    state = BTN_NOT_PRESSED   // reset btn
+        when (state) {
+            BTN_NOT_PRESSED -> {  // start with a possible new route
+                if (countMarked() == 0) {
+                    if (countPressed() == 0) {
+                        var clearing = checkForClear()
+                        if (clearing) {
+                            resetAll()
+                            appContext!!.longToast("Fahrstraße gelöscht!")
+                        } else {
+                            state = BTN_PRESSED
+                            markPossibleRouteEndButtons(adr)
+                        }
+                    } else {
+                        appContext?.toast("keine passende Fahrstrasse.")
+                        Log.d(TAG, "ignoring rt-button=$adr, because other button already in state PRESSED")
+                    }
+                } else {
+                    // do nothing when 1 button is PRESSED and others are MARKED
                 }
             }
-            for (crt in compRoutes) {
-                if (crt.isActive && crt.btn1 == adr) {
-                    if (DEBUG) Log.d(TAG, "found COMP route matching to btn. requesting to clear COMP route=" + crt.adr)
-                    // we found a route with this button, now clear it
-                    // now set
-                    crt.clearRequest()
-                    clearing = true
-                    state = BTN_NOT_PRESSED   // reset btn
-                }
+            BTN_PRESSED -> {
+                state = BTN_NOT_PRESSED
+                // clear current route or comproute
+                Log.d(TAG, "rt-button=$adr pressed, but no route yet -> clearing this button")
+
             }
-            if (!clearing) {
+            BTN_MARKED -> {
                 state = BTN_PRESSED
-                markPossibleRouteEndButtons(adr)
-
-
-            } else {
-                appContext!!.longToast("Fahrstraße gelöscht!")
+                val result = findRouteAndRequest(adr)  // check for route and set
+                if (result) {
+                    Log.d(TAG, "route found")
+                } else {
+                    Log.e(TAG, "marked rt-btn=$adr, but no route found !")
+                }
+                RouteButtonElement.resetAll()
             }
-
-        } else if (state == BTN_MARKED) {
-            state = BTN_PRESSED
-            checkForRoute(adr)
-        }  else {
-            state = BTN_NOT_PRESSED
+            else -> {
+                Log.d(TAG, "rt-btn=$adr with state=$state : SHOULD NOT HAPPEN")
+            }
         }
 
-        // state = STATE_UNKNOWN; // until updated via lanbahn message
-        // sendQ.add("SET "+adr+" "+state);  // ==> send changed data over network
-        if (DEBUG) Log.d(TAG, "toggle(adr=$adr) new state=$state time=$lastToggle")
+        if (DEBUG) Log.d(TAG, "toggle rt.btn=$adr new state=$state time=$lastToggle")
     }
 
     /**
@@ -158,16 +140,73 @@ class RouteButtonElement : ActivePanelElement {
 
     fun reset() {
         state = BTN_NOT_PRESSED
-        Log.d(TAG,"btn#$adr not-pressed")
+        //Log.d(TAG, "btn#$adr not-pressed")
     }
 
     fun mark() {
         state = BTN_MARKED
-        Log.d(TAG,"btn#$adr marked")
+        //Log.d(TAG, "btn#$adr marked")
     }
+
+
+    /** check if this route button is the first route button of an active route => then clear this route */
+    private fun checkForClear(): Boolean {
+
+        var clearing = false
+        for (rt in routes) {
+            if (rt.isActive && rt.btn1 == adr) {
+                if (DEBUG) Log.d(TAG, "found route matching to rt-btn, requesting to clear route=" + rt.adr)
+                // we found a route with this button, now clear it
+                rt.clearRequest()
+                clearing = true
+            }
+        }
+
+        for (crt in compRoutes) {
+            if (crt.isActive && crt.btn1 == adr) {
+                if (DEBUG) Log.d(TAG, "found COMP route matching to btn. requesting to clear COMP route=" + crt.adr)
+                // we found a route with this button, now clear it
+                // now set
+                crt.clearRequest()
+                clearing = true
+            }
+        }
+        return clearing
+
+    }
+
 
     companion object {
 
+        /** calc how many buttons are currently in the "BTN_PRESSED" state */
+        fun countPressed(): Int {
+            var nPressed = 0
+            for (pe in panelElements) {
+                if ((pe is RouteButtonElement) and (pe.state == BTN_PRESSED)) {
+                    nPressed++
+                }
+            }
+            return nPressed
+        }
+
+        /** calc how many buttons are currently in the "BTN_MARKED" state */
+        fun countMarked(): Int {
+            var nMarked = 0
+            for (pe in panelElements) {
+                if ((pe is RouteButtonElement) and (pe.state == BTN_MARKED)) {
+                    nMarked++
+                }
+            }
+            return nMarked
+        }
+
+        fun resetAll() {
+            for (pe in panelElements) {
+                if (pe is RouteButtonElement) {
+                    pe.reset()
+                }
+            }
+        }
 
         fun findRouteButtonByAddress(address: Int): RouteButtonElement? {
             for (pe in panelElements) {
@@ -177,9 +216,7 @@ class RouteButtonElement : ActivePanelElement {
                     }
                 }
             }
-
             return null
-
         }
 
         fun markPossibleRouteEndButtons(adr1: Int) {
@@ -195,99 +232,53 @@ class RouteButtonElement : ActivePanelElement {
             }
         }
 
-        fun checkForRoute(adrSecondBtn: Int): Boolean {
-
-            if (DEBUG) Log.d(TAG, "checkForRoute called, adrSecondBtn=$adrSecondBtn")
+        fun findRouteAndRequest(adrSecondBtn: Int): Boolean {
+            if (DEBUG) Log.d(TAG, "findRouteAndRequest called, adrSecondBtn=$adrSecondBtn")
             // check if a route needs to be cleared first
 
-            var nPressed = 0
             var adrFirstBtn = 0
-
             if (DEBUG) Log.d(TAG, "checking, if a route can be activated")
             // now check if a route can be activated
             for (pe in panelElements) {
-                if (pe is RouteButtonElement) {
-                    if (pe.isPressed()) {
-                        nPressed++
-                        if (pe.adr != adrSecondBtn) {
-                            // if this is not the "checking" button, then it must be the first button
-                            adrFirstBtn = pe.adr
-                        }
-                    }
+                if ((pe is RouteButtonElement) && (pe.state == BTN_PRESSED) && (pe.adr != adrSecondBtn)) {
+                    // if this is not the "checking" button, then it must be the first button
+                    adrFirstBtn = pe.adr  // we must know which other button was pressed (first)
                 }
             }
-            if (DEBUG) Log.d(TAG, "btns pressed total=$nPressed")
-            if (nPressed == 2) {
-                // this could be a route, 2 buttons are active
+            if (DEBUG) Log.d(TAG, "btns pressed total=${countPressed()}")
+            if (countPressed() == 2) {
+                // this could be a route, 2 buttons are pressed
                 // iterate over all possible routes
-                // we must know which button was pressed first!!
                 if (DEBUG) Log.d(TAG, "checking for a route from btn-$adrFirstBtn turnout btn-$adrSecondBtn")
-                var routeFound = false
                 for (rt in routes) {
                     if (DEBUG) Log.d(TAG, "checking route adr=" + rt.adr)
                     if (rt.btn1 == adrFirstBtn && rt.btn2 == adrSecondBtn) {
-                        // we found a route connecting these buttons,
-                        // now set
-                        routeFound = true
+                        // we found a route connecting these buttons, request this route
                         if (DEBUG) Log.d(TAG, "found the route with adr=" + rt.adr)
-                        // reset buttons
-                        findRouteButtonByAddress(adrFirstBtn)!!.reset()
-                        findRouteButtonByAddress(adrSecondBtn)!!.reset()
-
                         // set the route (i.e. sensors and turnouts)
                         if (prefs.getBoolean(KEY_ROUTING, true)) {
                             rt.request();
                         }
-                        break  // no need to search further
+                        return true  // no need to search further
                     }
                 }
-                for (cr in compRoutes) {
-                    if (DEBUG) Log.d(TAG, "checking composite route adr=" + cr.adr)
-                    if (cr.btn1 == adrFirstBtn && cr.btn2 == adrSecondBtn) {
-                        // we found a route connecting these buttons,
-                        // now set
-                        routeFound = true
-                        if (DEBUG) Log.d(TAG, "found the composite route with adr=" + cr.adr)
-                        // reset buttons
-                        findRouteButtonByAddress(adrFirstBtn)!!.reset()
-                        findRouteButtonByAddress(adrSecondBtn)!!.reset()
-
+                for (crt in compRoutes) {
+                    if (DEBUG) Log.d(TAG, "checking composite route adr=" + crt.adr)
+                    if (crt.btn1 == adrFirstBtn && crt.btn2 == adrSecondBtn) {
+                        // we found a route connecting these buttons, request this CompRoute
+                        if (DEBUG) Log.d(TAG, "found the composite route with adr=" + crt.adr)
                         // set the route (i.e. sensors and turnouts)
                         if (prefs.getBoolean(KEY_ROUTING, true)) {
-                            cr.request();
+                            crt.request();
                         }
-                        break  // no need to search further
+                        return true // no need to search further
                     }
                 }
-                if (!routeFound) {
-                    appContext?.toast("keine passende Fahrstrasse.")
-                    findRouteButtonByAddress(adrFirstBtn)!!.reset()  // clear the button also
-                    findRouteButtonByAddress(adrSecondBtn)!!.reset()  // clear the button also
-                } else {
-                    // route was found, clear all route Buttons
-                    Log.d(TAG,"reset all route buttons")
-                    for (pe in panelElements) {
-                        if (pe is RouteButtonElement) {
-                            pe.reset()
-                        }
-                    }
-                }
-
-            } else if (nPressed > 2) {
-                if (DEBUG) Log.d(TAG, "too many routeButtons pressed, clearing all")
-                // makes no sense, deselect all
-                for (pe in panelElements) {
-                    if (pe is RouteButtonElement) {
-                        pe.reset()
-                    }
-                }
-                appContext?.toast("zu viele Route-Buttons gedrückt.")
             }
-
-
-            return true
+            if (DEBUG) Log.d(TAG, "not exactly 2 routeButtons pressed, clearing all")
+            RouteButtonElement.resetAll()
+            appContext?.toast("nicht genau 2 Route-Buttons gedrückt.")
+            return false
         }
-
-
     }
 }

@@ -110,10 +110,9 @@ class LanbahnPanelApplication : Application() {
                     TYPE_SX_MSG -> {   // data of 8 (or less) lanbahn channels bundled in a data byte
                         // example  X 85 5  => bits 1 and 3 set of SX-addr 85 => set 851 to 1 and 853 to 1
                         //                                  others to zero (only if we have matching lanbahn addresses)
-                        Log.d(TAG,"sx-msg chan=$chan data=$data")
+                        //Log.d(TAG,"sx-msg chan=$chan data=$data")
                         for (i in 1..8) {   // sxbit 1..8
                             val lbChan = chan * 10 + i
-                            if (lbChan == 765) Log.d(TAG,"lbChan=765 - data=$data")
                             val allMatchingPEs = PanelElement.getAllPesByAddress(lbChan)
                             for (pe in allMatchingPEs) {
                                 var d: Int
@@ -122,7 +121,6 @@ class LanbahnPanelApplication : Application() {
                                     if (i % 2 != 0) {
                                         d = data.shr(i - 1) and 0x03
                                         pe.state = d
-                                        if (lbChan == 765) Log.d(TAG,"a=765 - d=$d")
                                     }
                                 } else {
                                     d = data.shr(i - 1) and 0x01
