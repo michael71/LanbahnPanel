@@ -33,7 +33,7 @@ class SignalElement : ActivePanelElement {
         // read data from SX bus and paint position of turnout accordingly
         // draw a line and not a bitmap
         canvas.drawLine((x * prescale).toFloat(), (y * prescale).toFloat(), (x2 * prescale).toFloat(), (y2 * prescale).toFloat(), signalLine)
-        canvas.drawLine((x2 * prescale).toFloat(), (y2 - 2.5f) * prescale, (x2 * prescale).toFloat(), (y2 + 2.5f) * prescale, signalLine)
+        //canvas.drawLine((x2 * prescale).toFloat(), (y2 - 2.5f) * prescale, (x2 * prescale).toFloat(), (y2 + 2.5f) * prescale, signalLine)
         canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, whitePaint)
         if (adr == INVALID_INT) {
             canvas.drawCircle((x * prescale).toFloat(), (y * prescale).toFloat(), radius, whitePaint)
