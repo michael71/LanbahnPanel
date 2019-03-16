@@ -26,10 +26,24 @@ object Dialogs {
     private val NEW_LOCO_NAME = "+ Neue Lok"
 
     fun selectLoco() {
-        if (prefs.getBoolean(KEY_LOCAL_LOCO_LIST,false)) {
+        if (prefs.getBoolean(KEY_LOCAL_LOCO_LIST, false)) {
             selectLocoEditDialog()
         } else {
-            selectLocoDialog()
+
+            val b = AlertDialog.Builder(appContext)
+            val locosToSelect = arrayOfNulls<String>(locolist?.size)
+            var index = 0
+            for (l in locolist) {
+                locosToSelect[index] = l.name + " (" + l.adr + ")"
+                index++
+            }
+            b.setTitle(appContext?.resources!!.getString(R.string.selectloco))
+            b.setItems(locosToSelect) { dialog, sel ->
+                selectedLoco = locolist.get(sel)
+                selectedLoco?.initFromSX()
+                dialog.dismiss()
+            }
+            b.show()
         }
     }
 
@@ -111,77 +125,13 @@ object Dialogs {
                     dialog.dismiss()
                     openEditDialog()
                 }
-                .setNegativeButton("Zurück") { dialog, id ->     //dialog.cancel();
+                .setNegativeButton("Zurück") { dialog, id ->
+                    //dialog.cancel();
                 }
 
                 .show()
 
     }
-
-    private fun selectLocoDialog() {
-
-        val factory = LayoutInflater.from(appContext)
-        val selSxAddressView = factory.inflate(R.layout.alert_dialog_sel_loco_from_list, null)
-        val selLoco = selSxAddressView.findViewById(R.id.spinner) as Spinner
-
-        val locosToSelect = arrayOfNulls<String>(locolist?.size)
-
-        var index = 0
-        var selection = 0
-        for (l in locolist) {
-            locosToSelect[index] = l.name + " (" + l.adr + ")"
-            if (l == selectedLoco) {
-                selection = index
-            }
-            index++
-        }
-
-        val adapter = ArrayAdapter<String>(appContext,
-                android.R.layout.simple_spinner_dropdown_item,
-                locosToSelect)
-
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        selLoco.adapter = adapter
-        selLoco.setSelection(selection)
-
-        selLocoIndex = NOTHING
-        selLoco.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onItemSelected(arg0: AdapterView<*>, arg1: View,
-                                        arg2: Int, arg3: Long) {
-                selLocoIndex = arg2   // save for later use when "SAVE" pressed
-            }
-
-            override fun onNothingSelected(arg0: AdapterView<*>) {
-                selLocoIndex = NOTHING
-            }
-        }
-
-
-        val res = appContext?.resources
-
-        val sxDialog = AlertDialog.Builder(appContext)
-                //, R.style.Animations_GrowFromBottom ) => does  not work
-                //.setMessage("Lok auswählen - "+locolist.name)
-                .setCancelable(true)
-                .setView(selSxAddressView)
-                .setPositiveButton(res!!.getString(R.string.select)) { dialog, id ->
-                    if (selLocoIndex != NOTHING) {
-                        //Toast.makeText(appContext,"Loco-index="+selLocoIndex
-                        //		+" wurde selektiert", Toast.LENGTH_SHORT)
-                        //		.show();
-                        selectedLoco = locolist.get(selLocoIndex)
-                        selectedLoco?.initFromSX()
-                        dialog.dismiss()
-                    }
-                }
-                .setNegativeButton("Zurück") { dialog, id ->     //dialog.cancel();
-                }
-
-                .show()
-
-    }
-
-
 
     private fun openEditDialog() {
 
@@ -196,17 +146,17 @@ object Dialogs {
         mass.minValue = 1
         mass.maxValue = 5
         val vmax = selSxAddressView.findViewById(R.id.vmax_picker) as NumberPicker
-        val vValues = arrayOf("30","60","90","120","160","200","250","300")
+        val vValues = arrayOf("30", "60", "90", "120", "160", "200", "250", "300")
         vmax.displayedValues = vValues
         vmax.value = 160
         vmax.minValue = 0
         vmax.maxValue = vValues.size - 1
         //val newLoco = selectedLoco?.name.equals(NEW_LOCO_NAME)
 
-        sxAddress.value = selectedLoco?.adr   ?: 1
-        mass.value = selectedLoco?.mass  ?: 1
+        sxAddress.value = selectedLoco?.adr ?: 1
+        mass.value = selectedLoco?.mass ?: 1
         lName.setText(selectedLoco?.name)
-        vmax.value = selectedLoco?.vmax  ?: 160
+        vmax.value = selectedLoco?.vmax ?: 160
 
         val sxDialog = AlertDialog.Builder(appContext)
                 //.setMessage("")
