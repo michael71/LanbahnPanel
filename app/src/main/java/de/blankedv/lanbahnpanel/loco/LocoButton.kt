@@ -21,6 +21,7 @@ class LocoButton {
     private var bmOFF: Bitmap? = null
     private var w = 10
     private var h = 10 // half of the bitmap width and height
+    public var name = "?"
 
     // x and y are actual position of bitmap placing, NOT the center!
     var x = 0f
@@ -71,10 +72,10 @@ class LocoButton {
 
     fun isTouched(xt: Float, yt: Float): Boolean {
         if (xt > x && xt < x + w.toFloat() + w.toFloat() && yt > y && yt < y + h.toFloat() + h.toFloat()) {
-            if (DEBUG) Log.d(TAG, this.toString() + " was touched.")
+            if (DEBUG) Log.d(TAG, name + " was touched.")
             return true
         } else {
-            if (DEBUG) Log.d(TAG, this.toString() + " was not touched.")
+            if (DEBUG) Log.d(TAG, name + " was not touched.")
             return false
         }
     }

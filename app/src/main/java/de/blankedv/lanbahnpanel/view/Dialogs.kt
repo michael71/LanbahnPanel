@@ -4,19 +4,15 @@ import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import de.blankedv.lanbahnpanel.R
-import de.blankedv.lanbahnpanel.elements.ActivePanelElement
 import android.content.DialogInterface
-import de.blankedv.lanbahnpanel.elements.PanelElement
 import de.blankedv.lanbahnpanel.loco.Loco
 
-import android.content.ContentValues.TAG
-import android.content.res.Resources
-import android.opengl.Visibility
+
 import android.util.Log
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
-import de.blankedv.lanbahnpanel.elements.SignalElement
 import de.blankedv.lanbahnpanel.model.*
+
 
 /**
  * predefined dialogs
@@ -29,7 +25,15 @@ object Dialogs {
     private val NOTHING = 99999
     private val NEW_LOCO_NAME = "+ Neue Lok"
 
-    fun selectLocoDialog() {
+    fun selectLoco() {
+        if (prefs.getBoolean(KEY_LOCAL_LOCO_LIST,false)) {
+            selectLocoEditDialog()
+        } else {
+            selectLocoDialog()
+        }
+    }
+
+    private fun selectLocoEditDialog() {
 
         val factory = LayoutInflater.from(appContext)
         val selSxAddressView = factory.inflate(R.layout.alert_dialog_sel_loco_from_list, null)
@@ -69,19 +73,10 @@ object Dialogs {
             }
         }
 
-        /*selLoco.setOnItemLongClickListener( new AdapterView.OnItemLongClickListener() {
-            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-                                   int arg2, long arg3) {
-                int removeLocoIndex = arg2;
-                //locolist.remove(removeLocoIndex);
-                Log.d(TAG,"remove index "+removeLocoIndex);
-                return true;
-            }
-        }); funktioniert nicht wie erwartet */
 
         val res = appContext?.resources
 
-        /* val sxDialog = AlertDialog.Builder(appContext)
+        val sxDialog = AlertDialog.Builder(appContext)
                 //, R.style.Animations_GrowFromBottom ) => does  not work
                 //.setMessage("Lok auswählen - "+locolist.name)
                 .setCancelable(true)
@@ -120,8 +115,72 @@ object Dialogs {
                 }
 
                 .show()
-                */
+
     }
+
+    private fun selectLocoDialog() {
+
+        val factory = LayoutInflater.from(appContext)
+        val selSxAddressView = factory.inflate(R.layout.alert_dialog_sel_loco_from_list, null)
+        val selLoco = selSxAddressView.findViewById(R.id.spinner) as Spinner
+
+        val locosToSelect = arrayOfNulls<String>(locolist?.size)
+
+        var index = 0
+        var selection = 0
+        for (l in locolist) {
+            locosToSelect[index] = l.name + " (" + l.adr + ")"
+            if (l == selectedLoco) {
+                selection = index
+            }
+            index++
+        }
+
+        val adapter = ArrayAdapter<String>(appContext,
+                android.R.layout.simple_spinner_dropdown_item,
+                locosToSelect)
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        selLoco.adapter = adapter
+        selLoco.setSelection(selection)
+
+        selLocoIndex = NOTHING
+        selLoco.onItemSelectedListener = object : OnItemSelectedListener {
+            override fun onItemSelected(arg0: AdapterView<*>, arg1: View,
+                                        arg2: Int, arg3: Long) {
+                selLocoIndex = arg2   // save for later use when "SAVE" pressed
+            }
+
+            override fun onNothingSelected(arg0: AdapterView<*>) {
+                selLocoIndex = NOTHING
+            }
+        }
+
+
+        val res = appContext?.resources
+
+        val sxDialog = AlertDialog.Builder(appContext)
+                //, R.style.Animations_GrowFromBottom ) => does  not work
+                //.setMessage("Lok auswählen - "+locolist.name)
+                .setCancelable(true)
+                .setView(selSxAddressView)
+                .setPositiveButton(res!!.getString(R.string.select)) { dialog, id ->
+                    if (selLocoIndex != NOTHING) {
+                        //Toast.makeText(appContext,"Loco-index="+selLocoIndex
+                        //		+" wurde selektiert", Toast.LENGTH_SHORT)
+                        //		.show();
+                        selectedLoco = locolist.get(selLocoIndex)
+                        selectedLoco?.initFromSX()
+                        dialog.dismiss()
+                    }
+                }
+                .setNegativeButton("Zurück") { dialog, id ->     //dialog.cancel();
+                }
+
+                .show()
+
+    }
+
 
 
     private fun openEditDialog() {

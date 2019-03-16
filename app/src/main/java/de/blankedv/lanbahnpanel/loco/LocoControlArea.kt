@@ -61,16 +61,22 @@ class LocoControlArea(internal var ctx: Context) {
         white.color = WHITE
 
         addressBtn = LocoButton(0.09f, 0.5f)  // only text.
+        addressBtn.name = "addr"
         stopBtn = LocoButton(0.18f, 0.5f)  // only text
+        stopBtn.name = "stop"
         lampBtn = LocoButton(0.848f, 0.5f,
                 bitmaps?.get("lamp1")!!,     // bitmap for "on" state
                 bitmaps?.get("lamp0")!!)     // bitmap for "off" state
+        lampBtn.name = "lamp"
         functionBtn = LocoButton(0.796f, 0.5f,
                 bitmaps?.get("func1")!!,
                 bitmaps?.get("func0")!!)
+        functionBtn.name = "func"
 
         leftBtn = LocoButton(0.03f, 0.5f, bitmaps?.get("left")!!, bitmaps?.get("left")!!)
+        leftBtn.name = "left"
         rightBtn = LocoButton(0.97f, 0.5f, bitmaps?.get("right")!!)
+        rightBtn.name = "right"
 
     }
 
@@ -183,7 +189,7 @@ class LocoControlArea(internal var ctx: Context) {
             } else if (functionBtn.isTouched(x, y)) {
                 selectedLoco?.toggleFunc()
             } else if (addressBtn.isTouched(x, y)) {
-                Dialogs.selectLocoDialog()
+                Dialogs.selectLoco()
             } else if (leftBtn.isTouched(x, y)) {
                 selectedLoco?.decrLocoSpeed()
             } else if (rightBtn.isTouched(x, y)) {
@@ -191,7 +197,7 @@ class LocoControlArea(internal var ctx: Context) {
             }
         } else {
             if (addressBtn.isTouched(x, y)) {
-                Dialogs.selectLocoDialog()
+                Dialogs.selectLoco()
             }
 
         }
