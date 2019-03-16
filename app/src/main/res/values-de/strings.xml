@@ -60,7 +60,7 @@
     <string name="adresse2">Adr. 2</string>
     <string name="display_five_quadrants">Display 5 views (full + 4 quadrants)</string>
     <string name="select">Auswählen</string>
-    <string name="selectloco">Lok auswählen</string>
+    <string name="selectloco">Zug/Lok auswählen</string>
     <string name="server_ip" translatable="false">Server IP Adresse</string>
     <string name="server_port" translatable="false">Server Port</string>
     <string name="route_locked">Weichen verriegelt, Fahrstraße kann nicht gestellt werden!</string>
