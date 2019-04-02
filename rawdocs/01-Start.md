@@ -4,7 +4,7 @@ In den [„Einstellungen“](04_Einstellungen.md) des Programms muss man zunäch
 
 Bei korrekter Einstellung der Server-Adresse und laufendem SX4-(PC)-Programm ist dann ein solcher oder ähnlicher Screen zu sehen:
 
-![](lbpanel11.png)
+![](lbpanel1.png)
 
 Oben rechts wird mit den beiden grünen Pfeilen angezeigt, dass die Verbindung besteht, daneben zeigt ein rotes Stop-Zeichern oder grüner Punkt an, ob an der Zentrale die Gleisspannung eingeschaltet ist. Wenn in den Einstellungen die „Power-Kontrolle“ aktiviert wurde, so kann man durch Anklicken dieses Punkts die Spannung ein- und ausschalten.
 
