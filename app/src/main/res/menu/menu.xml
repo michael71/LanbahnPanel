@@ -12,6 +12,11 @@
         android:title="@string/about"
         app:showAsAction="never" />
     <item
+        android:id="@+id/menu_help"
+        android:orderInCategory="100"
+        android:title="@string/help"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/menu_get_panel"
         android:orderInCategory="100"
         android:title="@string/get_panel_from_server"

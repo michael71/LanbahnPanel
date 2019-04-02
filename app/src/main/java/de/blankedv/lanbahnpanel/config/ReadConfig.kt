@@ -359,8 +359,8 @@ object ReadConfig {
     private fun getIntegerNodeValueArray(a: Node): IntArray {
         // remove "." first to convert SX addresses like 72.1 to LB addr (=721)
         // remove whitespace also
-        val s = a.nodeValue.replace(".", "").replace("\\s+".toRegex(), "")
-        val sArr = s.split(",")
+        val s2 = a.nodeValue.replace(".", "").replace("\\s+".toRegex(), "")
+        val sArr = s2.split(",")
         var iArr = intArrayOf()
         for (s in sArr) {
             var n = INVALID_INT

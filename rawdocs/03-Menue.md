@@ -10,7 +10,11 @@ mehr zu den [Einstellungen hier](04-Einstellungen.md)
 
 ## Info 
 
-*Info* Fenster mit Programm Version und *Hilfe-Texten*
+Info (About) Fenster mit Programm Version
+
+## Hilfe / Handbuch
+
+Anzeige der Dokumentation (Handbuch von LanbahnPanel)
 
 ## Panel-File vom Server laden 
 

@@ -17,7 +17,6 @@ android {
         applicationId "de.blankedv.lanbahnpanel"
         minSdkVersion 15
         targetSdkVersion 27
-        buildToolsVersion '28.0.3'
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_7
             targetCompatibility JavaVersion.VERSION_1_7

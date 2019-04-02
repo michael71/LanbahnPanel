@@ -7,7 +7,8 @@
     <string name="port">Multicast Port</string>
     <string name="panel">Panel</string>
     <string name="settings">Settings</string>
-    <string name="about">Info</string>
+    <string name="about">Info / About</string>
+    <string name="help">Help / Manual</string>
     <string name="reconnect">Re-Connect</string>
     <string name="connect">Connect</string>
     <string name="cancel">Cancel</string>
@@ -72,9 +73,6 @@
     <string name="add_loco">Add new Loco</string>
     <string name="remove_loco">Remove Loco</string>
     <string name="edit_loco">Edit Loco</string>
-    <string name="are_you_sure_this_will_overwrite_existing_current_data">Are you sure (this will overwrite existing current data)?</string>
-    <string name="are_you_sure_this_will_overwrite_any_existing_backup_data">Are you sure (this will overwrite any existing backup data)?</string>
-    <string name="external_storage_is_not_available_unable_to_export_data">External storage is not available, unable to export data.</string>
     <string name="different_icon">anderes Lok-Icon</string>
     <string name="add_loco_to_xml_file" translatable="false">add_loco_to_xml_file</string>
     <string name="add_loco_title">Add Loco Title</string>

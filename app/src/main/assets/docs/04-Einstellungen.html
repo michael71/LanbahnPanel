@@ -449,8 +449,8 @@
 <li><a class="" href="index.html">index</a></li>
 <li><a class="" href="01-Start.html">Start</a></li>
 <li><a class="" href="02-Ansicht.html">Ansicht</a></li>
-<li><a class="active" href="03-Menue.html">Menue</a></li>
-<li><a class="" href="04-Einstellungen.html">Einstellungen</a></li>
+<li><a class="" href="03-Menue.html">Menue</a></li>
+<li><a class="active" href="04-Einstellungen.html">Einstellungen</a></li>
 <li><a class="" href="05-Bedienung.html">Bedienung</a></li>
 <li><a class="" href="06-Fahrstrassen.html">Fahrstrassen</a></li>
 <li><a class="" href="97-Source_Code.html">Source Code</a></li>
@@ -461,22 +461,35 @@
           <img src="lanbahn_ico.png" /></a>
     </nav>
     <article id="main" class="content">
-      <h1>Menü</h1>
-<p>Durch Berühren der 3 Punkte ganz rechts oben öffnet sich ein übliches Menü, in diesem Fall mit der Auswahl:</p>
-<p><img src="lb-menue.png" alt=""></p>
-<h2>Einstellungen</h2>
-<p>mehr zu den <a href="04-Einstellungen.html">Einstellungen hier</a></p>
-<h2>Info</h2>
-<p>Info (About) Fenster mit Programm Version</p>
-<h2>Hilfe / Handbuch</h2>
-<p>Anzeige der Dokumentation (Handbuch von LanbahnPanel)</p>
-<h2>Panel-File vom Server laden</h2>
-<p>Über das SX4 Programm kann ein Panel-File (der im aktuellen Verzeichnis des SX4-Programms auf dem PC liegt) auf das Tablet heruntergeladen, gespeichert und dann in den Einstellung zum Betrieb ausgewählt werden.</p>
-<h2>Layout auf den Kopf stellen</h2>
-<p>Oben und unten in der Ansicht des Panels vertauschen</p>
-<h2>Programm beenden</h2>
-<p>Schliesst auch die Kommunikation zum Server (die bei einfachen Pausieren der App durch den „Zurück Pfeil“ oder den „Home Button“ sonst weiterläuft) - bitte also im Interesse der Batterielaufzeit immer „Programm beenden“ benutzen.</p>
-<h3>==&gt; Weiter zu <a href="04-Einstellungen.html">Einstellungen</a></h3>
+      <h1>Einstellungen</h1>
+<p>Es gibt vier Bereiche:</p>
+<ul>
+<li>Server</li>
+<li>Display</li>
+<li>Control</li>
+<li>LocoControl</li>
+</ul>
+<h2>Server</h2>
+<p>IP und Port des Rechners, auf dem das SX4 Programm läuft</p>
+<p><img src="lb-einst1.png" alt=""></p>
+<h2>Disply (Art der Anzeige)</h2>
+<p><img src="lb-einst2.png" alt=""></p>
+<h2>Skalierung</h2>
+<p>zur Auswahl werden drei Möglichkeiten angeboten:</p>
+<ol>
+<li>Automatische Skalierung: sinnvoll, wenn man ein neues Layout-File zum ersten Mal ausgewählt hat.</li>
+<li>Manuell (Zoom/Pan): damit kann man dann Finetuning des Ausschnitts machen (mit 2 Fingern Zoom, mit einem Finger Pan (Verschieben)</li>
+<li>danach kann man den Ausschnitt fixieren durch Auswahl von „Skala fest“</li>
+</ol>
+<p>Ein Tip zur Skalierung: die automatische Skalierung erzeugt im Moment keinen Overlap zwischen den 4 Quadranten-Ansichten eines Panels. Dies kann man aber durch Punkt (2) korrigieren, indem man in allen 4 Quadranten manuell einen Ausschnitt wählt und dann (3) in den Settings auf “Skala fest” umschaltet. Diese Skalierung geht auch nach dem Beenden des Programms nicht verloren  (AUSSER: man schaltet zwischendurch mal auf Automatische Skalierung um, dann werden ALLE Quadranten neu berechnet! )</p>
+<h2>Control</h2>
+<p><img src="lb-einst3.png" alt=""></p>
+<p>Mit „Panel XML Config File“ kann ein neuer Config-File ausgewählt werden. Er muss im Verzeichnis „sdcard/lanbahnpanel“ liegen – es werden alle Files mit der Endung „.xml“ zur Auswahl angezeigt.</p>
+<p><img src="lb-einst4.png" alt=""></p>
+<h2>Loco Control</h2>
+<p>Falls aktiviert, wird zwischen Kopfzeile/Menü des Programms und dem Gleisbild ein Regler angezeigt, mit dem man eine Lok steuern kann.</p>
+<p><img src="lb-einst5.png" alt=""></p>
+<h3>==&gt; Weiter zu <a href="05-Bedienung.html">Bedienung</a></h3>
 
     </article>
   </div>

@@ -281,9 +281,12 @@ class LanbahnPanelActivity : AppCompatActivity() {
                 togglePower() // toast("switching power ON/OFF not allowed")
                 return true
             }
-            R.id.menu_about // call preferences activity
-            -> {
+            R.id.menu_about -> {
                 startActivity(Intent(this, AboutActivity::class.java))
+                return true
+            }
+            R.id.menu_help -> {
+                startActivity(Intent(this, HelpActivity::class.java))
                 return true
             }
             R.id.menu_get_panel -> {
