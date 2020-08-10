@@ -15,7 +15,7 @@ import de.blankedv.lanbahnpanel.util.Utils
 
 class TurnoutElement : ActivePanelElement {
 
-    // for turnouts which can be interactivly set from panel
+    // for turnouts which can be interactively set from panel
 
     constructor() {
         adr = INVALID_INT
