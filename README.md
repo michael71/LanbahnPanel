@@ -8,6 +8,10 @@ Hierzu verbindet sich das Tablet per TCP/IP (SXnet Protokoll) mit dem [SX4 Progr
 
 unter [opensx.net/sx4](https://opensx.net/sx4)
 
+Das Layout wird in einem XML File beschrieben, es kann mit dem Programm SX4Draw graphisch erstellt werden, siehe
+[michael71.github.io/SX4Draw](https://michael71.github.io/SX4Draw) - source code unter 
+[https://github.com/michael71/SX4Draw](https://github.com/michael71/SX4Draw)
+
 ## Programmdokumentation
 
  unter 
@@ -35,6 +39,12 @@ must be defined and turnouts (=crossing tracks) are then calculated by the progr
 example under
 
          /app/src/main/assets/demo-panel.xml
+         
+This type of XML file can be generated graphically with the SX4Draw program. See:
+[michael71.github.io/SX4Draw](https://michael71.github.io/SX4Draw) 
+
+source code:
+[https://github.com/michael71/SX4Draw](https://github.com/michael71/SX4Draw)
 
 ## License: GPL v3
 
