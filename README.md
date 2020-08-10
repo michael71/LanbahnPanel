@@ -13,7 +13,7 @@ unter [opensx.net/sx4](https://opensx.net/sx4)
  unter 
 [michael71.github.io/LanbahnPanel](https://michael71.github.io/LanbahnPanel)
 
-<img src="http://www.lanbahn.net/wp-content/uploads/2014/08/stellpult-lonstoke2-604x270.png" />
+<img src="https://michael71.github.io/LanbahnPanel/lbpanel1.png" />
 
 
 ___
@@ -26,7 +26,7 @@ Android Program for Model Railroad Turnout and Signal control using the "SXnet" 
 
 For more info, have a look at http://www.lanbahn.net or send a mail to michael2 (AT) oscale.net
 
-<img src="http://www.lanbahn.net/wp-content/uploads/2014/08/stellpult-lonstoke2-604x270.png" />
+<img src="https://michael71.github.io/LanbahnPanel/lbpanel1.png" />
 
 Currently only Selectrix based Command Stations are supported.
 
@@ -38,4 +38,4 @@ example under
 
 ## License: GPL v3
 
-(c) Michael Blank - 2014-2019
+(c) Michael Blank - 2014-2020
